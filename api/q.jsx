@@ -87,7 +87,7 @@ export const getSpecificGenre = async (url) => {
 
     return inGenres;
   } catch (error) {
-    console.error("Error fetching genre:", error);
+    console.error("Error fetching specific genres:", error);
     return [];
   }
 };
