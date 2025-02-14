@@ -26,7 +26,7 @@ const Styles = StyleSheet.create({
   },
   rowImageComponent: {
     width: width * 0.45,
-    height: height * 0.12,
+    height: height * 0.14,
     borderRadius: 8,
   },
   rowMusicItemTitle: {
@@ -66,7 +66,7 @@ const Styles = StyleSheet.create({
   },
   rowMusicCardsContainer: {
     height: height * 0.23,
-    // marginTop: 5,
+    marginTop: 5,
     paddingTop: 5,
   },
   pagerHeader: {
