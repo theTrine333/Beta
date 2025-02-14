@@ -105,7 +105,7 @@ const Player = () => {
         >
           <AntDesign
             name={isPlaying ? "pausecircle" : "play"}
-            size={50}
+            size={70}
             color={"#e17645"}
           />
         </TouchableOpacity>
