@@ -14,15 +14,19 @@ export interface rowMusicCardItem {
   image: string;
   link: string;
   duration: string;
+  router?: any;
 }
 
 export interface genreTypes {
   name: string;
   link: string;
+  db?: any;
+  router?: any;
 }
 
 export interface genreItemTypes {
   name: string;
   image: string;
   link: string;
+  router?: any;
 }

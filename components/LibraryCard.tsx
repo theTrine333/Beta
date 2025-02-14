@@ -7,9 +7,22 @@ import { Image } from "expo-image";
 import { TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-const Card = ({ name, image, link, duration }: rowMusicCardItem) => {
+const Card = ({ name, image, link, duration, router }: rowMusicCardItem) => {
   return (
-    <ThemedView style={Styles.libraryCard}>
+    <TouchableOpacity
+      style={Styles.libraryCard}
+      onPress={() => {
+        router.push({
+          pathname: "player",
+          params: {
+            Name: name,
+            Image: image,
+            duration: duration,
+            Link: link,
+          },
+        });
+      }}
+    >
       <Image
         style={Styles.libraryImageComponent}
         source={image}
@@ -31,7 +44,7 @@ const Card = ({ name, image, link, duration }: rowMusicCardItem) => {
       <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
         <AntDesign name="playcircleo" size={25} color={"grey"} />
       </TouchableOpacity>
-    </ThemedView>
+    </TouchableOpacity>
   );
 };
 

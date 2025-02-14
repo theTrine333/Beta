@@ -17,6 +17,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           marginLeft: 20,
           borderRadius: 12,

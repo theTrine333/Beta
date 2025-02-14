@@ -6,9 +6,20 @@ import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
 import { TouchableOpacity } from "react-native";
 
-const GenreMusicCardItem = ({ name, link, image }: genreItemTypes) => {
+const GenreMusicCardItem = ({ name, link, image, router }: genreItemTypes) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        router.push({
+          pathname: "genre",
+          params: {
+            Name: name,
+            Link: link,
+            Image: image,
+          },
+        });
+      }}
+    >
       <Image
         style={Styles.rowImageComponent}
         source={image}

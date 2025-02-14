@@ -15,31 +15,43 @@ import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import GenreMusicCardItem from "./GenreMusicCardItem";
 import { get_sub_genre } from "@/api/q";
+import { get_sub_genres, insertGenre, insertSubGenre } from "@/api/database";
 
-const MusicCard = ({ name, link }: genreTypes) => {
+const MusicCard = ({ name, link, db, router }: genreTypes) => {
   const theme = useColorScheme() ?? "light";
   const [state, setState] = useState<"idle" | "loading" | "error">("loading");
   const [data, setData] = useState();
+
   const loader = async () => {
-    await get_sub_genre(link)
-      .then((e: any) => {
-        setData(e);
-        setState("idle");
-      })
-      .catch((e) => {
-        setState("error");
+    try {
+      setState("loading");
+      const subGenre = await get_sub_genres(db, link);
+      await subGenre.forEach(async (element: any) => {
+        await insertSubGenre(
+          db,
+          element.name,
+          element.link,
+          element.image,
+          link
+        );
       });
+      setData(subGenre);
+      setState("idle");
+    } catch {
+      setState("idle");
+    }
   };
 
   useEffect(() => {
     loader();
   }, []);
+
   return (
     <>
       {state == "error" ? (
         <></>
       ) : (
-        <TouchableOpacity style={Styles.rowMusicCardsContainer}>
+        <ThemedView style={Styles.rowMusicCardsContainer}>
           {/* Showing title and nav button */}
           <View
             style={{
@@ -95,11 +107,12 @@ const MusicCard = ({ name, link }: genreTypes) => {
                   name={item.name}
                   link={item.link}
                   image={item.image}
+                  router={router}
                 />
               )}
             />
           )}
-        </TouchableOpacity>
+        </ThemedView>
       )}
     </>
   );
