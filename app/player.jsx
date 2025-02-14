@@ -59,6 +59,12 @@ const Player = () => {
     if (status.isLoaded) {
       setPosition(status.positionMillis);
       setDuration(status.durationMillis);
+
+      if (status.didJustFinish) {
+        setIsPlaying(false);
+        setSound(null);
+        setPosition(0);
+      }
     }
   };
 
@@ -74,18 +80,19 @@ const Player = () => {
       />
       <AnimatedText text={params.Name} />
       <View style={Styles.durationHolder}>
-        <ThemedText>0:00</ThemedText>
+        <ThemedText>{formatTime(position)}</ThemedText>
         <Slider
           style={Styles.playerSlider}
           minimumValue={0}
           maximumValue={duration}
           value={position}
+          onSlidingComplete={(value) => sound && sound.setPositionAsync(value)}
           // onSlidingComplete={handleSeek}
           minimumTrackTintColor="#e17645"
           maximumTrackTintColor="#4a4a4a"
           thumbTintColor="#e17645"
         />
-        <ThemedText>0:00</ThemedText>
+        <ThemedText>{formatTime(duration)}</ThemedText>
       </View>
       {/* Control buttons */}
       <View style={Styles.playerControlsContainer}>
