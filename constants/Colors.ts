@@ -27,4 +27,8 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     primeBlue: "#1D3D47",
   },
+  Slider: {
+    primary: "#e17645",
+    background: "#4a4a4a",
+  },
 };

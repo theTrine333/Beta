@@ -30,6 +30,7 @@ const AnimatedText = ({ text }) => {
             transform: [{ translateX: translateX }],
           },
         ]}
+        numberOfLines={1}
       >
         {text}
       </Animated.Text>
@@ -40,10 +41,11 @@ const AnimatedText = ({ text }) => {
 export default AnimatedText;
 const styles = StyleSheet.create({
   container: {
-    width: width * 0.9,
+    marginTop: 10,
+    minWidth: width * 0.9,
     alignSelf: "center",
     borderColor: "white",
-    height: height * 0.05,
+    height: height * 0.03,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden", // Ensure the text doesn't overflow the container
@@ -52,6 +54,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     position: "absolute", // Position the text absolutely
     right: 0, // Align to the left edge of the container
-    // whiteSpace: "nowrap", // Prevent text from wrapping
+    alignSelf: "flex-end",
   },
 });

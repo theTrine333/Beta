@@ -54,7 +54,6 @@ export const get_sub_genre = async (genre_url) => {
         console.error("Error parsing element:", error);
       }
     });
-
     return subGenres;
   } catch (error) {
     return [];
@@ -91,3 +90,77 @@ export const getSpecificGenre = async (url) => {
     return [];
   }
 };
+
+export function extractAudioHash(script) {
+  const match = script.match(/Api\.track\('([^']+)'\)/);
+  return match ? match[1] : null;
+}
+
+export function extractVideoHash(script) {
+  const match = script.match(/App\.video\('([^']+)'\)/);
+  return match ? match[1] : null;
+}
+
+export async function getHashes(link) {
+  const url = `${link}`;
+
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = Cheerio.load(html);
+
+    const scripts = $("script").toArray();
+    const audioHash = extractAudioHash($(scripts[2]).html());
+    const videoHash = extractVideoHash($(scripts[4]).html());
+    return {
+      audio_hash: audioHash,
+      video_hash: videoHash,
+      referrer: url,
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
+
+export async function getFormats(load) {
+  const url = "https://tubidy.guru/api/video/formats";
+
+  const payload = {
+    payload: `${load}`,
+  };
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return await response.json();
+  } catch (error) {
+    // console.error("Error fetching formats:", error);
+    return null;
+  }
+}
+
+export async function get_downloadLink(load) {
+  const url = "https://tubidy.guru/api/video/download";
+  const payload = {
+    payload: `${load}`,
+  };
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return null;
+  }
+}

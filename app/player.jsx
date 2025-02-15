@@ -10,19 +10,41 @@ import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import { Audio } from "expo-av";
+import { Colors } from "@/constants/Colors";
+import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 const Player = () => {
   const params = useLocalSearchParams();
+  const theme = useColorScheme() ?? "light";
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [songLink, setSongLink] = useState("");
+
   const formatTime = (millis) => {
     const minutes = Math.floor(millis / 60000);
     const seconds = ((millis % 60000) / 1000).toFixed(0);
     return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
   };
+  const loader = async () => {
+    setIsBuffering(true);
+    const hashes = await getHashes(params.Link);
+    const formats = await getFormats(hashes.video_hash);
+    const link = await get_downloadLink(formats["formats"][0].payload);
+    setSongLink(link.link);
+    setIsBuffering(false);
+  };
+  useEffect(() => {
+    loader();
+  }, []);
   useEffect(() => {
     return () => {
       if (sound) {
@@ -35,7 +57,7 @@ const Player = () => {
     if (!sound) {
       const { sound: newSound } = await Audio.Sound.createAsync(
         {
-          uri: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+          uri: `${songLink}`,
         },
         { shouldPlay: true },
         onPlaybackStatusUpdate
@@ -59,7 +81,7 @@ const Player = () => {
     if (status.isLoaded) {
       setPosition(status.positionMillis);
       setDuration(status.durationMillis);
-
+      setIsBuffering(status.isBuffering);
       if (status.didJustFinish) {
         setIsPlaying(false);
         setSound(null);
@@ -99,10 +121,14 @@ const Player = () => {
         <TouchableOpacity style={Styles.playerBtn}>
           <AntDesign name="stepbackward" size={30} color={"#e17645"} />
         </TouchableOpacity>
+
         <TouchableOpacity
           hitSlop={20}
           style={Styles.playerBtn}
           onPress={() => {
+            if (isBuffering) {
+              return;
+            }
             if (isPlaying) {
               pause();
               return;
@@ -110,18 +136,29 @@ const Player = () => {
             loadAndPlay();
           }}
         >
+          {isBuffering ? (
+            <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
+              <ActivityIndicator
+                color={Colors[theme ?? "light"].text}
+                size={"small"}
+              />
+            </View>
+          ) : (
+            <></>
+          )}
           <AntDesign
             name={isPlaying ? "pausecircle" : "play"}
             size={70}
             color={"#e17645"}
           />
         </TouchableOpacity>
+
         <TouchableOpacity hitSlop={20} style={Styles.playerBtn}>
           <AntDesign name="stepforward" size={30} color={"#e17645"} />
         </TouchableOpacity>
       </View>
       {/* Other buttons */}
-      <View style={[Styles.playerControlsContainer, { gap: 30 }]}>
+      <View style={[Styles.playerControlsContainer, { gap: 20 }]}>
         <TouchableOpacity style={Styles.playerBtn}>
           <Ionicons name="heart-outline" size={25} color={"#e17645"} />
         </TouchableOpacity>
@@ -130,6 +167,9 @@ const Player = () => {
         </TouchableOpacity>
         <TouchableOpacity style={Styles.playerBtn}>
           <Ionicons name="repeat-outline" size={25} color={"#e17645"} />
+        </TouchableOpacity>
+        <TouchableOpacity style={Styles.playerBtn}>
+          <Ionicons name="cloud-download-outline" size={25} color={"#e17645"} />
         </TouchableOpacity>
         <TouchableOpacity style={Styles.playerBtn}>
           <Ionicons name="list-outline" size={25} color={"#e17645"} />

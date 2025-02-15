@@ -17,6 +17,15 @@ const Styles = StyleSheet.create({
     // borderRadius: 150,
     alignSelf: "center",
   },
+  bufferingIndicator: {
+    alignSelf: "center",
+    alignItems: "center",
+    borderRadius: 1000,
+    height: height * 0.09,
+    width: width * 0.2,
+    justifyContent: "center",
+    position: "absolute",
+  },
   playerSlider: {
     width: width * 0.7,
   },
@@ -57,6 +66,7 @@ const Styles = StyleSheet.create({
     width: width * 0.45,
     height: height * 0.14,
     borderRadius: 8,
+    margin: 5,
   },
   genreImage: {
     width: width,

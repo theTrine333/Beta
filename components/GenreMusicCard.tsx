@@ -21,6 +21,7 @@ const MusicCard = ({ name, link, db, router }: genreTypes) => {
   const theme = useColorScheme() ?? "light";
   const [state, setState] = useState<"idle" | "loading" | "error">("loading");
   const [data, setData] = useState();
+  const [fullData, setFullData] = useState();
 
   const loader = async () => {
     try {
@@ -35,7 +36,9 @@ const MusicCard = ({ name, link, db, router }: genreTypes) => {
           link
         );
       });
-      setData(subGenre);
+
+      setData(subGenre.slice(0, 4));
+      setFullData(subGenre);
       setState("idle");
     } catch {
       setState("idle");
@@ -68,7 +71,18 @@ const MusicCard = ({ name, link, db, router }: genreTypes) => {
                 <SkeletonLoader.Item style={Styles.moreLoadingBtn} />
               </SkeletonLoader>
             ) : (
-              <TouchableOpacity style={Styles.moreBtn}>
+              <TouchableOpacity
+                style={Styles.moreBtn}
+                onPress={() => {
+                  router.push({
+                    pathname: "moreGenres",
+                    params: {
+                      Heading: name,
+                      Link: link,
+                    },
+                  });
+                }}
+              >
                 <ThemedText style={{ fontSize: 11 }}>More</ThemedText>
                 <AntDesign
                   name="right"
