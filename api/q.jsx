@@ -164,3 +164,39 @@ export async function get_downloadLink(load) {
     return null;
   }
 }
+
+export const getSongSearch = async (search) => {
+  try {
+    const formattedSearch = search.replace(/ /g, "+");
+    const searchUrl = `https://tubidy.guru/search?q=${formattedSearch}`;
+
+    const response = await fetch(searchUrl);
+    const body = await response.text();
+    const $ = Cheerio.load(body);
+
+    const container = $(".video-list.row.mt-4");
+    const items = container.find(".col-lg-6");
+
+    let hits = [];
+
+    items.each((_, item) => {
+      const detailsContainer = $(item).find("a");
+      const link = detailsContainer.attr("href");
+      const poster = detailsContainer.find("img").attr("data-src");
+      const name = detailsContainer.find("img").attr("alt");
+      const duration = $(item).find(".duration").text().trim();
+
+      hits.push({
+        Name: name,
+        Poster: poster,
+        Link: link,
+        Time: duration,
+      });
+    });
+
+    return hits;
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    return [];
+  }
+};

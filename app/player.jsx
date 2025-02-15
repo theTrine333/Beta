@@ -1,6 +1,4 @@
 import AnimatedText from "@/components/AnimatedTitle";
-import MarqueeText from "@/components/AnimatedTitle";
-import SpinningDisk from "@/components/Disk";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Styles, { blurhash } from "@/style";
@@ -42,9 +40,11 @@ const Player = () => {
     setSongLink(link.link);
     setIsBuffering(false);
   };
+
   useEffect(() => {
     loader();
   }, []);
+
   useEffect(() => {
     return () => {
       if (sound) {

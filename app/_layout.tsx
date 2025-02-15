@@ -99,7 +99,7 @@ export default function RootLayout() {
             <Stack.Screen name="player" options={{ headerShown: false }} />
             <Stack.Screen name="genre" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
-            <Stack.Screen name="search" />
+            <Stack.Screen name="search" options={{ headerShown: false }} />
           </Stack>
         </SQLiteProvider>
       </Suspense>

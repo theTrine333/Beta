@@ -7,6 +7,7 @@ import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import { get_db_Genres, insertGenre } from "@/api/database";
 import { useRouter } from "expo-router";
+import SearchCard from "@/components/searchCard";
 
 const PAGE_SIZE = 2; // Load 2 items at a time
 
@@ -61,7 +62,9 @@ const Genres = () => {
         title="Genres"
         description="The home of free endless music"
       />
+
       <ThemedView style={Styles.verticalListContainer}>
+        <SearchCard inType="genres" shouldNavigate />
         {state === "loading" ? (
           <ActivityIndicator />
         ) : (

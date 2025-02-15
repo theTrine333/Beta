@@ -9,6 +9,22 @@ const Styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
   },
+  searchCard: {
+    borderWidth: 1,
+    flexDirection: "row",
+    borderColor: "grey",
+    alignSelf: "center",
+    height: height * 0.05,
+    width: width * 0.9,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  searchInput: {
+    width: width * 0.75,
+    height: height * 0.05,
+  },
   playerImage: {
     borderRadius: 8,
     elevation: 4,

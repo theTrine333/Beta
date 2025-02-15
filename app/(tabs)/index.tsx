@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import Styles from "@/style";
 import PagerHeader from "@/components/PagerHeader";
 import RowMusicCard from "@/components/RowMusicCard";
+import SearchCard from "@/components/searchCard";
 
 const data = [
   {
@@ -36,6 +37,7 @@ export default function HomeScreen() {
         description="The home of free endless music"
       />
       <ThemedView style={Styles.verticalListContainer}>
+        <SearchCard shouldNavigate={true} inType="songs" />
         <FlatList
           showsVerticalScrollIndicator={false}
           data={data}

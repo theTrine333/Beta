@@ -30,3 +30,11 @@ export interface genreItemTypes {
   link: string;
   router?: any;
 }
+
+export interface SearchCardProps {
+  inType?: "songs" | "genres";
+  shouldNavigate?: boolean;
+  setter?: any;
+  action?: any;
+  word?: string | any;
+}

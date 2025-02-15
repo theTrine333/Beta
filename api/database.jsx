@@ -61,3 +61,17 @@ export const get_all_sub_genres = async (db, link) => {
     return [];
   }
 };
+
+export const getGenreSearch = async (db, text) => {
+  try {
+    let results = await db.getAllAsync(
+      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM subGenres WHERE name LIKE ?",
+      [`%${text}%`] // Use '%' wildcards within the parameter array
+    );
+
+    return results;
+  } catch (error) {
+    console.error("Database error:", error);
+    return [];
+  }
+};
