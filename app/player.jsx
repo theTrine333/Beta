@@ -33,7 +33,7 @@ const Player = () => {
   const db = useSQLiteContext();
 
   const handleFavourite = async () => {
-    if (sound) {
+    if (songLink) {
       if (Favourite) {
         deleteFavourite(db, params.Name);
         setFavourite(false);
