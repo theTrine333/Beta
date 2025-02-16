@@ -7,6 +7,7 @@ import { FlatList } from "react-native";
 import { data } from "@/data";
 import Card from "@/components/LibraryCard";
 import { useRouter } from "expo-router";
+import Tabs from "../library/_layout";
 
 const Library = () => {
   const router = useRouter();
@@ -16,8 +17,15 @@ const Library = () => {
         title="Library"
         description="Downloads and local music will appear here"
       />
-      <ThemedView style={Styles.verticalListContainer}>
-        <FlatList
+
+      <ThemedView
+        style={[
+          Styles.verticalListContainer,
+          { marginTop: 0, paddingHorizontal: 0 },
+        ]}
+      >
+        <Tabs />
+        {/* <FlatList
           data={data}
           renderItem={({ item }) => (
             <Card
@@ -28,7 +36,7 @@ const Library = () => {
               router={router}
             />
           )}
-        />
+        /> */}
       </ThemedView>
     </ThemedView>
   );

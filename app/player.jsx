@@ -108,7 +108,11 @@ const Player = () => {
       setDuration(status.durationMillis);
       setIsBuffering(status.isBuffering);
 
-      if (status.didJustFinish) {
+      if (isLoop) {
+        // If looping is enabled, restart the audio from the beginning
+        sound.replayAsync({ positionMillis: 0, shouldPlay: true });
+      } else {
+        // If looping is disabled, stop the audio and reset states
         setIsPlaying(false);
         setSound(null);
         setPosition(0);

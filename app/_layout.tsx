@@ -27,15 +27,12 @@ const loadDatabase = async () => {
   const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
   const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  if (!fileInfo.exists) {
-    await FileSystem.makeDirectoryAsync(
-      `${FileSystem.documentDirectory}SQLite`,
-      {
-        intermediates: true,
-      }
-    );
-    await FileSystem.downloadAsync(dbUri, dbFilePath);
-  }
+  // if (!fileInfo.exists) {
+  await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, {
+    intermediates: true,
+  });
+  await FileSystem.downloadAsync(dbUri, dbFilePath);
+  // }
 };
 
 const LoadingScreen = ({ text = "Loading..." }) => (

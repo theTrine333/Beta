@@ -72,9 +72,10 @@ const Styles = StyleSheet.create({
   },
   libraryCard: {
     flexDirection: "row",
-    borderWidth: 0.5,
+    borderBottomWidth: 1,
     borderColor: "grey",
     margin: 5,
+    marginTop: 0,
     paddingTop: 3,
     borderRadius: 8,
   },
