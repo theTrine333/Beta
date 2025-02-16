@@ -68,10 +68,51 @@ export const getGenreSearch = async (db, text) => {
       "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM subGenres WHERE name LIKE ?",
       [`%${text}%`] // Use '%' wildcards within the parameter array
     );
-
     return results;
   } catch (error) {
     console.error("Database error:", error);
     return [];
+  }
+};
+
+export const insertFavourite = async (db, name, image, link, inType) => {
+  try {
+    await db.runAsync(
+      "INSERT INTO favourites (name, image, link, inType) VALUES (?, ?, ?, ?)",
+      [name, image, link, inType]
+    );
+  } catch (error) {
+    console.error("Error inserting favourite:", error);
+  }
+};
+
+export const getFavourites = async (db) => {
+  try {
+    const results = await db.runAsync("SELECT * FROM favourites");
+    return results.rows._array; // Returns an array of favourites
+  } catch (error) {
+    console.error("Error fetching favourites:", error);
+    return [];
+  }
+};
+
+export const deleteFavourite = async (db, name) => {
+  try {
+    await db.runAsync("DELETE FROM favourites WHERE name = ?", [name]);
+  } catch (error) {
+    console.error("Error deleting favourite:", error);
+  }
+};
+
+export const isFavourite = async (db, name) => {
+  try {
+    const results = await db.getFirstAsync(
+      `SELECT * FROM favourites WHERE name="${name}"`
+    );
+
+    return results !== null; // If result exists, return true; otherwise, false
+  } catch (error) {
+    console.error("Error checking favourite:", error);
+    return false;
   }
 };

@@ -2,7 +2,7 @@ import AnimatedText from "@/components/AnimatedTitle";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Styles, { blurhash } from "@/style";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
@@ -17,6 +17,8 @@ import {
 import { Audio } from "expo-av";
 import { Colors } from "@/constants/Colors";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
+import { useSQLiteContext } from "expo-sqlite";
+import { deleteFavourite, insertFavourite, isFavourite } from "@/api/database";
 const Player = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
@@ -26,6 +28,21 @@ const Player = () => {
   const [duration, setDuration] = useState(1);
   const [isBuffering, setIsBuffering] = useState(false);
   const [songLink, setSongLink] = useState("");
+  const [isLoop, setLoop] = useState(false);
+  const [Favourite, setFavourite] = useState(false);
+  const db = useSQLiteContext();
+
+  const handleFavourite = async () => {
+    if (sound) {
+      if (Favourite) {
+        deleteFavourite(db, params.Name);
+        setFavourite(false);
+        return;
+      }
+      insertFavourite(db, params.Name, params.Image, songLink, "songs");
+      setFavourite(true);
+    }
+  };
 
   const formatTime = (millis) => {
     const minutes = Math.floor(millis / 60000);
@@ -34,9 +51,12 @@ const Player = () => {
   };
   const loader = async () => {
     setIsBuffering(true);
+    const checkFavourite = await isFavourite(db, params.Name);
+    setFavourite(checkFavourite);
     const hashes = await getHashes(params.Link);
     const formats = await getFormats(hashes.video_hash);
     const link = await get_downloadLink(formats["formats"][0].payload);
+
     setSongLink(link.link);
     setIsBuffering(false);
   };
@@ -59,7 +79,7 @@ const Player = () => {
         {
           uri: `${songLink}`,
         },
-        { shouldPlay: true },
+        { shouldPlay: true, isLooping: isLoop },
         onPlaybackStatusUpdate
       );
       setSound(newSound);
@@ -77,11 +97,17 @@ const Player = () => {
     }
   };
 
+  useEffect(() => {
+    if (sound) {
+      sound.setIsLoopingAsync(isLoop);
+    }
+  }, [isLoop]);
   const onPlaybackStatusUpdate = (status) => {
     if (status.isLoaded) {
       setPosition(status.positionMillis);
       setDuration(status.durationMillis);
       setIsBuffering(status.isBuffering);
+
       if (status.didJustFinish) {
         setIsPlaying(false);
         setSound(null);
@@ -109,7 +135,6 @@ const Player = () => {
           maximumValue={duration}
           value={position}
           onSlidingComplete={(value) => sound && sound.setPositionAsync(value)}
-          // onSlidingComplete={handleSeek}
           minimumTrackTintColor="#e17645"
           maximumTrackTintColor="#4a4a4a"
           thumbTintColor="#e17645"
@@ -159,14 +184,31 @@ const Player = () => {
       </View>
       {/* Other buttons */}
       <View style={[Styles.playerControlsContainer, { gap: 20 }]}>
-        <TouchableOpacity style={Styles.playerBtn}>
-          <Ionicons name="heart-outline" size={25} color={"#e17645"} />
+        <TouchableOpacity style={Styles.playerBtn} onPress={handleFavourite}>
+          {Favourite ? (
+            <Ionicons name="heart" size={25} color={"#e17645"} />
+          ) : (
+            <Ionicons name="heart-outline" size={25} color={"#e17645"} />
+          )}
         </TouchableOpacity>
         <TouchableOpacity style={Styles.playerBtn}>
           <Ionicons name="shuffle" size={25} color={"#e17645"} />
         </TouchableOpacity>
-        <TouchableOpacity style={Styles.playerBtn}>
-          <Ionicons name="repeat-outline" size={25} color={"#e17645"} />
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            setLoop(!isLoop);
+          }}
+        >
+          {isLoop ? (
+            <FontAwesome6
+              name="repeat"
+              size={23}
+              color={Colors.Slider.primary}
+            />
+          ) : (
+            <Ionicons name="repeat-outline" size={25} color={"#e17645"} />
+          )}
         </TouchableOpacity>
         <TouchableOpacity style={Styles.playerBtn}>
           <Ionicons name="cloud-download-outline" size={25} color={"#e17645"} />
