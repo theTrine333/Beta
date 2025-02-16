@@ -27,12 +27,15 @@ const loadDatabase = async () => {
   const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
   const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-  // if (!fileInfo.exists) {
-  await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, {
-    intermediates: true,
-  });
-  await FileSystem.downloadAsync(dbUri, dbFilePath);
-  // }
+  if (!fileInfo.exists) {
+    await FileSystem.makeDirectoryAsync(
+      `${FileSystem.documentDirectory}SQLite`,
+      {
+        intermediates: true,
+      }
+    );
+    await FileSystem.downloadAsync(dbUri, dbFilePath);
+  }
 };
 
 const LoadingScreen = ({ text = "Loading..." }) => (
@@ -97,6 +100,7 @@ export default function RootLayout() {
             <Stack.Screen name="genre" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
             <Stack.Screen name="search" options={{ headerShown: false }} />
+            <Stack.Screen name="Playlist" options={{ headerShown: false }} />
           </Stack>
         </SQLiteProvider>
       </Suspense>

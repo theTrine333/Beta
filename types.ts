@@ -17,6 +17,11 @@ export interface rowMusicCardItem {
   router?: any;
 }
 
+export interface playlistCardItem {
+  title: string;
+  counter: number;
+  router?: any;
+}
 export interface genreTypes {
   name: string;
   link: string;

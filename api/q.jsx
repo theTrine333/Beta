@@ -196,7 +196,6 @@ export const getSongSearch = async (search) => {
 
     return hits;
   } catch (error) {
-    console.error("Error fetching search results:", error);
-    return [];
+    return null;
   }
 };

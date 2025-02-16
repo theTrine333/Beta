@@ -70,8 +70,7 @@ export const getGenreSearch = async (db, text) => {
     );
     return results;
   } catch (error) {
-    console.error("Database error:", error);
-    return [];
+    return null;
   }
 };
 
@@ -86,16 +85,26 @@ export const insertFavourite = async (db, name, image, link, inType) => {
   }
 };
 
-export const getFavourites = async (db) => {
+export const getFavouritesLenght = async (db) => {
   try {
-    const results = await db.runAsync("SELECT * FROM favourites");
-    return results.rows._array; // Returns an array of favourites
+    const results = await db.getAllAsync("SELECT * FROM favourites");
+    return results.length;
   } catch (error) {
     console.error("Error fetching favourites:", error);
     return [];
   }
 };
 
+export const getFavourites = async (db) => {
+  try {
+    const results = await db.getAllAsync("SELECT * FROM favourites");
+    return results;
+  } catch (error) {
+    console.error("Error fetching favourites:", error);
+    return [];
+  }
+};
+export const getPlaylistItems = async (db, name) => {};
 export const deleteFavourite = async (db, name) => {
   try {
     await db.runAsync("DELETE FROM favourites WHERE name = ?", [name]);
@@ -110,7 +119,7 @@ export const isFavourite = async (db, name) => {
       `SELECT * FROM favourites WHERE name="${name}"`
     );
 
-    return results !== null; // If result exists, return true; otherwise, false
+    return results !== null;
   } catch (error) {
     console.error("Error checking favourite:", error);
     return false;

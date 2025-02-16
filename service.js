@@ -8,3 +8,4 @@ module.exports = async function () {
     TrackPlayer.skipToPrevious()
   );
 };
+import TrackPlayer from "react-native-track-player";

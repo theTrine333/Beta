@@ -23,7 +23,7 @@ const Search = () => {
   const [data, setData] = useState<any>();
   const [text, setText] = useState(params.word);
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
-    "loading"
+    "idle"
   );
   const loader = async () => {
     let results;
@@ -48,6 +48,7 @@ const Search = () => {
   useEffect(() => {
     loader();
   }, []);
+
   return (
     <ThemedView style={Styles.container}>
       <SearchCard word={params.word} action={loader} setter={setText} />
