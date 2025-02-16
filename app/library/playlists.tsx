@@ -6,6 +6,9 @@ import ListCard from "@/components/PlayListCard";
 import { useSQLiteContext } from "expo-sqlite";
 import { getFavouritesLenght, getPlaylistItems } from "@/api/database";
 import { useRouter } from "expo-router";
+import { TouchableOpacity, useColorScheme, View } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 const Playlists = () => {
   const db = useSQLiteContext();
@@ -16,7 +19,7 @@ const Playlists = () => {
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
-
+  const theme = useColorScheme() ?? "light";
   const loader = async () => {
     let fav = await getFavouritesLenght(db);
     let otherPlalists = await getPlaylistItems(db);
@@ -30,6 +33,24 @@ const Playlists = () => {
 
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
+      <View
+        style={{
+          paddingHorizontal: 15,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 10,
+        }}
+      >
+        <ThemedText style={{ fontSize: 13 }}>Playlists</ThemedText>
+        <TouchableOpacity>
+          <AntDesign
+            name="pluscircleo"
+            size={20}
+            color={Colors[theme ?? "light"].text}
+          />
+        </TouchableOpacity>
+      </View>
       <ListCard counter={favNumber} title={"Favourites"} router={router} />
     </ThemedView>
   );

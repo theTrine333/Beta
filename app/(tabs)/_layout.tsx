@@ -32,15 +32,6 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons size={28} name="music-note" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="genres"
         options={{
           title: "Genres",
@@ -49,22 +40,21 @@ export default function TabLayout() {
           ),
         }}
       />
-
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Search",
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons size={28} name="search" color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="library"
         options={{
           title: "Library",
           tabBarIcon: ({ color }) => (
             <MaterialIcons size={28} name="library-music" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons size={28} name="settings" color={color} />
           ),
         }}
       />

@@ -12,6 +12,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "api/q.js",
-    "app/player.jsx"
+    "app/player.jsx",
+    "hooks/audioPlayer.js"
   ]
 }

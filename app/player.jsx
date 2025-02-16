@@ -84,48 +84,52 @@ const Player = () => {
   const loadAndPlay = async () => {
     if (!sound) {
       const { sound: newSound } = await Audio.Sound.createAsync(
-        {
-          uri: `${songLink}`,
-        },
+        { uri: songLink },
         { shouldPlay: true },
         onPlaybackStatusUpdate
       );
-      await sound.playAsync();
       setSound(newSound);
       setIsPlaying(true);
+      newSound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
     } else {
       await sound.playAsync();
       setIsPlaying(true);
     }
   };
 
+  const onPlaybackStatusUpdate = (status) => {
+    if (!status.isLoaded) return;
+
+    setPosition(status.positionMillis);
+    setDuration(status.durationMillis);
+
+    if (status.isPlaying) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
+
+    if (status.didJustFinish) {
+      if (isLoop) {
+        sound.replayAsync();
+      } else {
+        setIsPlaying(false);
+        setPosition(0);
+      }
+    }
+  };
+
+  // Ensure we track the playback
+  useEffect(() => {
+    if (sound) {
+      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    }
+  }, [sound]);
+
   const pause = async () => {
     if (sound) {
       await sound.pauseAsync();
       setIsPlaying(false);
-    }
-  };
-
-  useEffect(() => {
-    if (sound) {
-      sound.setIsLoopingAsync(isLoop);
-    }
-  }, [isLoop]);
-  const onPlaybackStatusUpdate = (status) => {
-    if (status.isLoaded) {
-      setPosition(status.positionMillis);
-      setDuration(status.durationMillis);
-      setIsBuffering(status.isBuffering);
-
-      if (isLoop) {
-        // If looping is enabled, restart the audio from the beginning
-        sound.replayAsync({ positionMillis: 0, shouldPlay: true });
-      } else {
-        // If looping is disabled, stop the audio and reset states
-        setIsPlaying(false);
-        setSound(null);
-        setPosition(0);
-      }
     }
   };
 
@@ -196,13 +200,13 @@ const Player = () => {
                 Quality :
               </ThemedText>
               <Toggle
-                Text={"LOW  = " + mp3}
+                Text={"LOW  : " + mp3}
                 Parent={downloadQuality}
                 setParent={setDownloadQuality}
                 isSelectable
               />
               <Toggle
-                Text="BEST = COMING SOON"
+                Text="BEST : COMING SOON"
                 isSelectable={false}
                 Parent={downloadQuality}
                 setParent={setDownloadQuality}
@@ -266,9 +270,9 @@ const Player = () => {
           hitSlop={20}
           style={Styles.playerBtn}
           onPress={() => {
-            if (isBuffering) {
-              return;
-            }
+            // if (!sound) {
+            //   return;
+            // }
             if (isPlaying) {
               pause();
               return;
@@ -278,10 +282,7 @@ const Player = () => {
         >
           {isBuffering ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
-              <ActivityIndicator
-                color={Colors[theme ?? "light"].text}
-                size={"small"}
-              />
+              <ActivityIndicator color={Colors.dark.text} size={"small"} />
             </View>
           ) : (
             <></>

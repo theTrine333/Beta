@@ -11,6 +11,7 @@ import { StatusBar } from "expo-status-bar";
 import { getSpecificGenre } from "@/api/q";
 import Card from "@/components/LibraryCard";
 import SkeletonLoader from "expo-skeleton-loader";
+import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 const Genre = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
@@ -24,9 +25,13 @@ const Genre = () => {
     try {
       setState("loading");
       const temp = await getSpecificGenre(params.Link);
+      if (temp.length == 0) {
+        setState("empty");
+        return;
+      }
       setData(temp);
       setState("idle");
-    } catch {
+    } catch (error) {
       setState("error");
     }
   };
@@ -63,6 +68,10 @@ const Genre = () => {
             <SkeletonLoader.Item style={Styles.genreLoaderCard} />
           </SkeletonLoader>
         </ScrollView>
+      ) : state == "error" ? (
+        <ErrorCard />
+      ) : state == "empty" ? (
+        <NoResultsCard />
       ) : (
         <ThemedView
           style={[

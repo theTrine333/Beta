@@ -162,7 +162,7 @@ const Styles = StyleSheet.create({
   },
   moreBtn: {
     flexDirection: "row",
-    backgroundColor: "orange",
+    backgroundColor: Colors.Slider.primary,
     gap: 5,
     alignItems: "center",
     paddingHorizontal: 10,

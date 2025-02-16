@@ -19,6 +19,7 @@ import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
 import { LinearGradient } from "expo-linear-gradient";
+import { AudioPlayerProvider } from "@/hooks/audioPlayer";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,7 +42,7 @@ const loadDatabase = async () => {
   }
 };
 
-const LoadingScreen = ({ text = "Loading...", theme }) => (
+const LoadingScreen = ({ text = "Loading..." }) => (
   <ThemedView
     style={{
       flex: 1,
@@ -55,7 +56,7 @@ const LoadingScreen = ({ text = "Loading...", theme }) => (
       transition={1000}
     />
     <LinearGradient
-      colors={["transparent", Colors[theme ?? "light"].background]} // Adjust colors for fade effect
+      colors={["transparent", Colors.dark.background]} // Adjust colors for fade effect
       style={Styles.genreGradient}
     />
     <ActivityIndicator
@@ -66,6 +67,7 @@ const LoadingScreen = ({ text = "Loading...", theme }) => (
     <StatusBar style="dark" />
   </ThemedView>
 );
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [dbLoaded, setDbLoaded] = useState(false);
@@ -78,7 +80,7 @@ export default function RootLayout() {
   useEffect(() => {
     loadDatabase()
       .then(() => {
-        setDbLoaded(false);
+        setDbLoaded(true);
       })
       .catch((e) => console.error("Database load error: ", e));
   }, []);
@@ -90,27 +92,30 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <LoadingScreen theme={colorScheme} />;
+    return <LoadingScreen />;
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Suspense
-        fallback={<LoadingScreen text="Setting up..." theme={colorScheme} />}
-      >
-        <SQLiteProvider databaseName="play.db" useSuspense>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="moreGenres" options={{ headerShown: false }} />
-            <Stack.Screen name="player" options={{ headerShown: false }} />
-            <Stack.Screen name="genre" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-            <Stack.Screen name="search" options={{ headerShown: false }} />
-            <Stack.Screen name="Playlist" options={{ headerShown: false }} />
-          </Stack>
-        </SQLiteProvider>
-      </Suspense>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <AudioPlayerProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Suspense fallback={<LoadingScreen text="Setting up..." />}>
+          <SQLiteProvider databaseName="play.db" useSuspense>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="moreGenres"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen name="player" options={{ headerShown: false }} />
+              <Stack.Screen name="genre" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+              <Stack.Screen name="search" options={{ headerShown: false }} />
+              <Stack.Screen name="Playlist" options={{ headerShown: false }} />
+            </Stack>
+          </SQLiteProvider>
+        </Suspense>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </AudioPlayerProvider>
   );
 }
