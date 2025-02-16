@@ -9,6 +9,23 @@ const Styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
   },
+  toggleContainer: {
+    borderBottomWidth: 1,
+    borderColor: "grey",
+    width: width * 0.7,
+    alignSelf: "center",
+    marginTop: 20,
+    paddingBottom: 4,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  toggleisSelector: {
+    width: width * 0.03,
+    height: height * 0.013,
+    borderRadius: 100,
+  },
+
   searchCard: {
     borderWidth: 1,
     flexDirection: "row",
@@ -69,6 +86,22 @@ const Styles = StyleSheet.create({
     borderRadius: 10,
     width: width * 0.2,
     height: height * 0.07,
+  },
+  bottomModal: {
+    borderTopRightRadius: 28,
+    borderTopLeftRadius: 28,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    height: height * 0.4,
+    width: width,
   },
   libraryCard: {
     flexDirection: "row",

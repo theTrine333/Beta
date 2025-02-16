@@ -33,6 +33,12 @@ export interface genreTypes {
   router?: any;
 }
 
+export interface toggleButtonProp {
+  Text: string;
+  Parent: string;
+  setParent: any;
+  isSelectable: boolean;
+}
 export interface genreItemTypes {
   name: string;
   image: string;

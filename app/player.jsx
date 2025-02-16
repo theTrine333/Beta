@@ -1,15 +1,17 @@
 import AnimatedText from "@/components/AnimatedTitle";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import Styles, { blurhash } from "@/style";
+import Styles, { blurhash, width } from "@/style";
 import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { Image } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
+  StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
@@ -19,6 +21,8 @@ import { Colors } from "@/constants/Colors";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { useSQLiteContext } from "expo-sqlite";
 import { deleteFavourite, insertFavourite, isFavourite } from "@/api/database";
+import { BlurView } from "expo-blur";
+import Toggle from "@/components/FormatToggle";
 const Player = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
@@ -30,6 +34,8 @@ const Player = () => {
   const [songLink, setSongLink] = useState("");
   const [isLoop, setLoop] = useState(false);
   const [Favourite, setFavourite] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); // "idle" | "downloads" | "list" | "options"
+  const [downloadQuality, setDownloadQuality] = useState("");
   const db = useSQLiteContext();
 
   const handleFavourite = async () => {
@@ -55,6 +61,7 @@ const Player = () => {
     setFavourite(checkFavourite);
     const hashes = await getHashes(params.Link);
     const formats = await getFormats(hashes.video_hash);
+    console.log(formats["formats"]);
     const link = await get_downloadLink(formats["formats"][0].payload);
 
     setSongLink(link.link);
@@ -79,9 +86,10 @@ const Player = () => {
         {
           uri: `${songLink}`,
         },
-        { shouldPlay: true, isLooping: isLoop },
+        { shouldPlay: true },
         onPlaybackStatusUpdate
       );
+      await sound.playAsync();
       setSound(newSound);
       setIsPlaying(true);
     } else {
@@ -122,7 +130,109 @@ const Player = () => {
 
   return (
     <ThemedView style={[Styles.container, { justifyContent: "center" }]}>
+      <ImageBackground
+        source={params.Image}
+        style={StyleSheet.absoluteFill}
+        blurRadius={100}
+      />
       {/* <SpinningDisk imageSource={params.Image} /> */}
+
+      {/* Download modal */}
+      <Modal
+        transparent
+        visible={modalVisible && modalVisible == "downloads"}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <BlurView
+          style={{ flex: 1, justifyContent: "flex-end" }}
+          intensity={0}
+          tint="systemThinMaterialLight"
+          experimentalBlurMethod="dimezisBlurView"
+        >
+          <ThemedView
+            style={[
+              Styles.bottomModal,
+              { backgroundColor: Colors[theme ?? "light"].background },
+            ]}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                width: width * 0.9,
+              }}
+            >
+              <Image
+                style={Styles.libraryImageComponent}
+                source={params.Image}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+                transition={1000}
+              />
+              <View
+                style={{
+                  width: width * 0.55,
+                  marginVertical: 5,
+                }}
+              >
+                <ThemedText numberOfLines={1} style={{ fontSize: 12 }}>
+                  {params.Name}
+                </ThemedText>
+                <ThemedText style={{ fontSize: 11 }}>
+                  {formatTime(duration)}
+                </ThemedText>
+              </View>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                width: width * 0.9,
+                padding: 10,
+              }}
+            >
+              <ThemedText style={{ fontSize: 16, fontWeight: "bold" }}>
+                Quality :
+              </ThemedText>
+              <Toggle
+                Text="LOW  = 3: 45 MB"
+                Parent={downloadQuality}
+                setParent={setDownloadQuality}
+                isSelectable
+              />
+              <Toggle
+                Text="BEST = COMING SOON"
+                isSelectable={false}
+                Parent={downloadQuality}
+                setParent={setDownloadQuality}
+              />
+              <TouchableOpacity
+                style={[
+                  Styles.moreBtn,
+                  {
+                    padding: 10,
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    width: width * 0.7,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Download
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </ThemedView>
+        </BlurView>
+      </Modal>
       <Image
         style={Styles.playerImage}
         source={params.Image}
@@ -214,7 +324,12 @@ const Player = () => {
             <Ionicons name="repeat-outline" size={25} color={"#e17645"} />
           )}
         </TouchableOpacity>
-        <TouchableOpacity style={Styles.playerBtn}>
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            setModalVisible("downloads");
+          }}
+        >
           <Ionicons name="cloud-download-outline" size={25} color={"#e17645"} />
         </TouchableOpacity>
         <TouchableOpacity style={Styles.playerBtn}>
