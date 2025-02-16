@@ -1,6 +1,7 @@
 import { getDownloadsSearch, getGenreSearch } from "@/api/database";
 import { getSongSearch } from "@/api/q";
 import GenreMusicCardItem from "@/components/GenreMusicCardItem";
+import MiniPlayer from "@/components/MiniPlayer";
 import {
   ErrorCard,
   NoResultsCard,
@@ -102,6 +103,7 @@ const Search = () => {
           />
         )}
       </ThemedView>
+      <MiniPlayer style={{ bottom: 20 }} router={router} />
     </ThemedView>
   );
 };

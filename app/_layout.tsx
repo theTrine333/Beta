@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { Suspense, useEffect, useState } from "react";
@@ -106,11 +106,11 @@ export default function RootLayout() {
                 name="moreGenres"
                 options={{ headerShown: false }}
               />
-              <Stack.Screen name="player" options={{ headerShown: false }} />
               <Stack.Screen name="genre" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="search" options={{ headerShown: false }} />
               <Stack.Screen name="Playlist" options={{ headerShown: false }} />
+              <Stack.Screen name="player" options={{ headerShown: false }} />
             </Stack>
           </SQLiteProvider>
         </Suspense>

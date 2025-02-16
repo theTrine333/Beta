@@ -19,7 +19,21 @@ const Styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-
+  miniPlayerContainer: {
+    flexDirection: "row",
+    marginLeft: 10,
+    borderBottomWidth: 0,
+    borderRadius: 12,
+    height: height * 0.07,
+    elevation: 2,
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    position: "absolute",
+    width: width * 0.9,
+    alignItems: "center",
+    bottom: 70,
+    left: 10,
+  },
   toggleisSelector: {
     width: width * 0.03,
     height: height * 0.013,

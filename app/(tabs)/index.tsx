@@ -6,6 +6,7 @@ import PagerHeader from "@/components/PagerHeader";
 import RowMusicCard from "@/components/RowMusicCard";
 import SearchCard from "@/components/searchCard";
 import { useRouter } from "expo-router";
+import MiniPlayer from "@/components/MiniPlayer";
 
 const data = [
   {

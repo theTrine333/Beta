@@ -59,7 +59,11 @@ export const get_sub_genre = async (genre_url) => {
     return [];
   }
 };
-
+export const formatTime = (millis) => {
+  const minutes = Math.floor(millis / 60000);
+  const seconds = ((millis % 60000) / 1000).toFixed(0);
+  return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
+};
 export const getSpecificGenre = async (url) => {
   try {
     const response = await fetch(url);
