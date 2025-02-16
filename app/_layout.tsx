@@ -16,6 +16,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedView } from "@/components/ThemedView";
 import { ActivityIndicator } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { Image } from "expo-image";
+import Styles, { blurhash } from "@/style";
+import { LinearGradient } from "expo-linear-gradient";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,27 +41,28 @@ const loadDatabase = async () => {
   }
 };
 
-const LoadingScreen = ({ text = "Loading..." }) => (
+const LoadingScreen = ({ text = "Loading...", theme }) => (
   <ThemedView
     style={{
       flex: 1,
-      paddingTop: 40,
-      justifyContent: "center",
-      alignContent: "center",
     }}
   >
-    {/* <Image
-      source={require("./assets/foodSearve.png")}
-      style={{
-        height: 80,
-        width: 80,
-        alignSelf: "center",
-        borderWidth: 1,
-        borderColor: "lightgrey",
-        borderRadius: 50,
-      }}
-    /> */}
-    <ActivityIndicator size={32} style={{ marginTop: 10 }} />
+    <Image
+      style={Styles.genreImage}
+      source={require("@/assets/images/icon.png")}
+      placeholder={{ blurhash }}
+      contentFit="cover"
+      transition={1000}
+    />
+    <LinearGradient
+      colors={["transparent", Colors[theme ?? "light"].background]} // Adjust colors for fade effect
+      style={Styles.genreGradient}
+    />
+    <ActivityIndicator
+      size={32}
+      style={{ marginTop: 10 }}
+      color={Colors.Slider.primary}
+    />
     <StatusBar style="dark" />
   </ThemedView>
 );
@@ -74,7 +78,7 @@ export default function RootLayout() {
   useEffect(() => {
     loadDatabase()
       .then(() => {
-        setDbLoaded(true);
+        setDbLoaded(false);
       })
       .catch((e) => console.error("Database load error: ", e));
   }, []);
@@ -86,12 +90,14 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <LoadingScreen />;
+    return <LoadingScreen theme={colorScheme} />;
   }
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Suspense fallback={<LoadingScreen text="Setting up..." />}>
+      <Suspense
+        fallback={<LoadingScreen text="Setting up..." theme={colorScheme} />}
+      >
         <SQLiteProvider databaseName="play.db" useSuspense>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -104,7 +110,6 @@ export default function RootLayout() {
           </Stack>
         </SQLiteProvider>
       </Suspense>
-
       <StatusBar style="auto" />
     </ThemeProvider>
   );

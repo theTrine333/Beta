@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList } from "react-native";
+import { View, Text, ScrollView, FlatList, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -18,10 +18,11 @@ const Downloads = () => {
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
-
+  const [refresh, setRefresh] = useState(false);
   const loader = async () => {
     const results = await getDownloads(db);
     setData(results);
+    setRefresh(false);
   };
 
   useEffect(() => {
@@ -67,6 +68,9 @@ const Downloads = () => {
           <FlatList
             data={data}
             contentContainerStyle={{ paddingBottom: 120 }}
+            refreshControl={
+              <RefreshControl onRefresh={loader} refreshing={refresh} />
+            }
             renderItem={({ item }) => (
               <Card
                 name={item.name}

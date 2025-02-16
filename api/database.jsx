@@ -122,7 +122,7 @@ export const getPlaylistItems = async (db, name) => {};
 
 export const getDownloads = async (db) => {
   try {
-    const results = await db.getAllAsync("SELECT * FROM favourites");
+    const results = await db.getAllAsync("SELECT * FROM Downloads");
     return results;
   } catch (error) {
     console.error("Error fetching favourites:", error);

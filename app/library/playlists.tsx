@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/ThemedText";
 import Styles from "@/style";
 import ListCard from "@/components/PlayListCard";
 import { useSQLiteContext } from "expo-sqlite";
-import { getFavouritesLenght } from "@/api/database";
+import { getFavouritesLenght, getPlaylistItems } from "@/api/database";
 import { useRouter } from "expo-router";
 
 const Playlists = () => {
@@ -12,13 +12,16 @@ const Playlists = () => {
   const router = useRouter();
   const [data, setData] = useState();
   const [favNumber, setFavNumber] = useState(0);
+  const [refresh, setRefresh] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
 
   const loader = async () => {
-    const fav = await getFavouritesLenght(db);
+    let fav = await getFavouritesLenght(db);
+    let otherPlalists = await getPlaylistItems(db);
     setFavNumber(fav);
+    setRefresh(false);
   };
 
   useEffect(() => {

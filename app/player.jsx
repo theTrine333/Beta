@@ -55,15 +55,16 @@ const Player = () => {
     const seconds = ((millis % 60000) / 1000).toFixed(0);
     return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
   };
+
+  const [mp3, setMp3] = useState("");
   const loader = async () => {
     setIsBuffering(true);
     const checkFavourite = await isFavourite(db, params.Name);
     setFavourite(checkFavourite);
     const hashes = await getHashes(params.Link);
     const formats = await getFormats(hashes.video_hash);
-    console.log(formats["formats"]);
+    setMp3(formats["formats"][0].size);
     const link = await get_downloadLink(formats["formats"][0].payload);
-
     setSongLink(link.link);
     setIsBuffering(false);
   };
@@ -195,7 +196,7 @@ const Player = () => {
                 Quality :
               </ThemedText>
               <Toggle
-                Text="LOW  = 3: 45 MB"
+                Text={"LOW  = " + mp3}
                 Parent={downloadQuality}
                 setParent={setDownloadQuality}
                 isSelectable
@@ -327,7 +328,9 @@ const Player = () => {
         <TouchableOpacity
           style={Styles.playerBtn}
           onPress={() => {
-            setModalVisible("downloads");
+            if (songLink) {
+              setModalVisible("downloads");
+            }
           }}
         >
           <Ionicons name="cloud-download-outline" size={25} color={"#e17645"} />

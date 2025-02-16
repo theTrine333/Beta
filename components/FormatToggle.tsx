@@ -22,13 +22,15 @@ const Toggle = ({
   }, [Parent]);
   return (
     <TouchableOpacity
-      style={Styles.toggleContainer}
+      style={[Styles.toggleContainer, { opacity: isSelectable ? 1 : 0.5 }]}
       onPress={() => {
-        setParent(Text);
-        if (Text == Parent) {
-          setSelected(true);
-        } else {
-          setSelected(false);
+        if (isSelectable) {
+          setParent(Text);
+          if (Text == Parent) {
+            setSelected(true);
+          } else {
+            setSelected(false);
+          }
         }
       }}
     >
