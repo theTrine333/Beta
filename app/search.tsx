@@ -1,4 +1,4 @@
-import { getGenreSearch } from "@/api/database";
+import { getDownloadsSearch, getGenreSearch } from "@/api/database";
 import { getSongSearch } from "@/api/q";
 import GenreMusicCardItem from "@/components/GenreMusicCardItem";
 import {
@@ -31,6 +31,8 @@ const Search = () => {
       setState("loading");
       if (type == "songs") {
         results = await getSongSearch(text);
+      } else if (type == "downloads") {
+        results = await getDownloadsSearch(db, text);
       } else {
         results = await getGenreSearch(db, text);
       }

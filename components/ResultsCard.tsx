@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
-import { genreItemTypes } from "@/types";
+import { genreItemTypes, NoResultCardProp } from "@/types";
 
 export const ResultCardItem = ({
   name,
@@ -39,7 +39,7 @@ export const ResultCardItem = ({
     </TouchableOpacity>
   );
 };
-export const NoResultsCard = () => {
+export const NoResultsCard = ({ noDesc }: NoResultCardProp) => {
   const theme = useColorScheme() ?? "light";
   return (
     <ThemedView
@@ -52,9 +52,13 @@ export const NoResultsCard = () => {
     >
       <Ionicons name="search-outline" size={50} color="gray" />
       <ThemedText style={styles.text}>No Results Found</ThemedText>
-      <ThemedText style={styles.subtext}>
-        Try searching for something else.
-      </ThemedText>
+      {noDesc ? (
+        <></>
+      ) : (
+        <ThemedText style={styles.subtext}>
+          Try searching for something else.
+        </ThemedText>
+      )}
     </ThemedView>
   );
 };

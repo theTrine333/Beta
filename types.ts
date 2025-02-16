@@ -22,6 +22,10 @@ export interface playlistCardItem {
   counter: number;
   router?: any;
 }
+
+export interface NoResultCardProp {
+  noDesc?: boolean;
+}
 export interface genreTypes {
   name: string;
   link: string;
@@ -37,7 +41,7 @@ export interface genreItemTypes {
 }
 
 export interface SearchCardProps {
-  inType?: "songs" | "genres";
+  inType?: "songs" | "genres" | "downloads";
   shouldNavigate?: boolean;
   setter?: any;
   action?: any;

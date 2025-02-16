@@ -74,6 +74,20 @@ export const getGenreSearch = async (db, text) => {
   }
 };
 
+export const getDownloadsSearch = async (db, text) => {
+  try {
+    let results = await db.getAllAsync(
+      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM Downloads WHERE name LIKE ?",
+      [`%${text}%`] // Use '%' wildcards within the parameter array
+    );
+    return results;
+  } catch (error) {
+    console.log("Error on downloads search", error);
+
+    return null;
+  }
+};
+
 export const insertFavourite = async (db, name, image, link, inType) => {
   try {
     await db.runAsync(
@@ -105,6 +119,17 @@ export const getFavourites = async (db) => {
   }
 };
 export const getPlaylistItems = async (db, name) => {};
+
+export const getDownloads = async (db) => {
+  try {
+    const results = await db.getAllAsync("SELECT * FROM favourites");
+    return results;
+  } catch (error) {
+    console.error("Error fetching favourites:", error);
+    return [];
+  }
+};
+
 export const deleteFavourite = async (db, name) => {
   try {
     await db.runAsync("DELETE FROM favourites WHERE name = ?", [name]);

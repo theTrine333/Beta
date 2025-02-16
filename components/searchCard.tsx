@@ -44,7 +44,11 @@ const SearchCard = ({
       <TextInput
         style={[Styles.searchInput, { color: Colors[theme ?? "light"].text }]}
         placeholder={
-          inType == "songs" ? "Search for a song" : "Search in genres"
+          inType == "songs"
+            ? "Search for a song"
+            : inType == "downloads"
+            ? "Search in downloads"
+            : "Search in genres"
         }
         placeholderTextColor={"grey"}
         value={Word}

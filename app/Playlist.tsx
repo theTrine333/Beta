@@ -1,6 +1,7 @@
 import { getFavourites, getPlaylistItems } from "@/api/database";
 import Card from "@/components/LibraryCard";
 import PagerHeader from "@/components/PagerHeader";
+import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import Styles, { blurhash, height } from "@/style";
@@ -30,6 +31,10 @@ const Playlist = () => {
     } else {
       results = await getPlaylistItems(db, params.Title);
     }
+    if (results.length == 0) {
+      setState("empty");
+      return;
+    }
 
     setData(results);
     setState("idle");
@@ -38,6 +43,7 @@ const Playlist = () => {
   useEffect(() => {
     loader();
   }, []);
+
   return (
     <ThemedView style={{ flex: 1 }}>
       <Image
@@ -72,6 +78,10 @@ const Playlist = () => {
             <SkeletonLoader.Item style={Styles.genreLoaderCard} />
           </SkeletonLoader>
         </ScrollView>
+      ) : state == "error" ? (
+        <ErrorCard />
+      ) : state == "empty" ? (
+        <NoResultsCard noDesc />
       ) : (
         <ThemedView
           style={[
