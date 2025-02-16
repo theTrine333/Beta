@@ -174,9 +174,12 @@ const Styles = StyleSheet.create({
     borderRadius: 8,
   },
   rowMusicCardsContainer: {
-    height: height * 0.23,
-    marginTop: 5,
+    minHeight: height * 0.23,
+    maxHeight: height * 0.4,
+    marginTop: 20,
     paddingTop: 5,
+    // borderWidth: 1,
+    borderColor: "white",
   },
   pagerHeader: {
     borderBottomWidth: 0.5,

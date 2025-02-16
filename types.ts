@@ -7,6 +7,7 @@ export interface rowMusicCardProps {
   Title: string;
   url: string;
   url_path: string;
+  router?: any;
 }
 
 export interface rowMusicCardItem {

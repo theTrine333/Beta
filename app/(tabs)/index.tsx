@@ -5,6 +5,7 @@ import Styles from "@/style";
 import PagerHeader from "@/components/PagerHeader";
 import RowMusicCard from "@/components/RowMusicCard";
 import SearchCard from "@/components/searchCard";
+import { useRouter } from "expo-router";
 
 const data = [
   {
@@ -30,6 +31,7 @@ const data = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
     <ThemedView style={Styles.container}>
       <PagerHeader
@@ -38,7 +40,7 @@ export default function HomeScreen() {
       />
       <ThemedView style={Styles.verticalListContainer}>
         <SearchCard shouldNavigate={true} inType="songs" />
-        <FlatList
+        {/* <FlatList
           showsVerticalScrollIndicator={false}
           data={data}
           // keyExtractor={({ item }) =>(item.url)}
@@ -47,9 +49,10 @@ export default function HomeScreen() {
               Title={item.Title}
               url={item.url}
               url_path={item.url_type}
+              router={router}
             />
           )}
-        />
+        /> */}
       </ThemedView>
     </ThemedView>
   );

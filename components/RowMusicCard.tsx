@@ -14,6 +14,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import SkeletonLoader from "expo-skeleton-loader";
 import MusicCardItem from "./RowMusicCardItem";
+import Card from "./LibraryCard";
 
 const data = [
   {
@@ -197,7 +198,7 @@ const data = [
     duration: "3:16",
   },
 ];
-const RowMusicCard = ({ Title }: rowMusicCardProps) => {
+const RowMusicCard = ({ Title, router }: rowMusicCardProps) => {
   const theme = useColorScheme() ?? "light";
   const [state, setState] = useState<"idle" | "loading">("idle");
   return (
@@ -248,16 +249,17 @@ const RowMusicCard = ({ Title }: rowMusicCardProps) => {
         </ScrollView>
       ) : (
         <FlatList
-          data={data}
+          data={data.slice(0, 4)}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={Styles.rowMusicIListContainer}
           renderItem={({ item }) => (
-            <MusicCardItem
+            <Card
               duration={item.duration}
               name={item.name}
               link={item.link}
               image={item.image}
+              router={router}
             />
           )}
         />
