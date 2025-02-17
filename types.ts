@@ -54,3 +54,8 @@ export interface SearchCardProps {
   action?: any;
   word?: string | any;
 }
+
+export interface downloadsModalProps {
+  setVisible?: any;
+  router?: any;
+}

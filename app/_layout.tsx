@@ -20,7 +20,7 @@ import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
 import { LinearGradient } from "expo-linear-gradient";
 import { AudioPlayerProvider } from "@/hooks/audioPlayer";
-
+import { DownloadProvider } from "@/hooks/downloadContext";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -96,26 +96,33 @@ export default function RootLayout() {
   }
 
   return (
-    <AudioPlayerProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Suspense fallback={<LoadingScreen text="Setting up..." />}>
-          <SQLiteProvider databaseName="play.db" useSuspense>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="moreGenres"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="genre" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-              <Stack.Screen name="search" options={{ headerShown: false }} />
-              <Stack.Screen name="Playlist" options={{ headerShown: false }} />
-              <Stack.Screen name="player" options={{ headerShown: false }} />
-            </Stack>
-          </SQLiteProvider>
-        </Suspense>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AudioPlayerProvider>
+    <DownloadProvider>
+      <AudioPlayerProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Suspense fallback={<LoadingScreen text="Setting up..." />}>
+            <SQLiteProvider databaseName="play.db" useSuspense>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="moreGenres"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="genre" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+                <Stack.Screen name="search" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="Playlist"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="player" options={{ headerShown: false }} />
+              </Stack>
+            </SQLiteProvider>
+          </Suspense>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AudioPlayerProvider>
+    </DownloadProvider>
   );
 }

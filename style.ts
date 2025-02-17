@@ -10,8 +10,6 @@ const Styles = StyleSheet.create({
     paddingTop: 40,
   },
   toggleContainer: {
-    borderBottomWidth: 1,
-    borderColor: "grey",
     width: width * 0.7,
     alignSelf: "center",
     marginTop: 20,
@@ -35,8 +33,8 @@ const Styles = StyleSheet.create({
     left: 10,
   },
   toggleisSelector: {
-    width: width * 0.03,
-    height: height * 0.013,
+    width: width * 0.033,
+    height: height * 0.01,
     borderRadius: 100,
   },
 
@@ -105,6 +103,7 @@ const Styles = StyleSheet.create({
     borderTopRightRadius: 28,
     borderTopLeftRadius: 28,
     padding: 25,
+    alignSelf: "flex-end",
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

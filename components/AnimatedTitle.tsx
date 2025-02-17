@@ -26,7 +26,7 @@ const AnimatedText = ({ text }) => {
         style={[
           styles.text,
           {
-            color: Colors[theme ?? "light"].text,
+            color: "white",
             transform: [{ translateX: translateX }],
           },
         ]}

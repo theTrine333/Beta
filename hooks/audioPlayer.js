@@ -17,24 +17,39 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isLoop, setLoop] = useState(false);
   const [songLink, setSongLink] = useState(null);
-  const [songName, setSongName] = useState(""); // New state for song name
-  const [songImageLink, setSongImageLink] = useState(""); // New state for song image
+  const [songName, setSongName] = useState("");
+  const [songImageLink, setSongImageLink] = useState("");
+  const [quality, setQuality] = useState();
+
+  useEffect(() => {
+    const enableAudioMode = async () => {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        staysActiveInBackground: true, // Keeps audio playing in background
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
+      });
+    };
+    enableAudioMode();
+  }, []);
 
   const loadAndPlay = async (uri, name = "", imageLink = "") => {
     try {
       if (soundRef.current) {
         await soundRef.current.unloadAsync();
       }
+
       const { sound } = await Audio.Sound.createAsync(
         { uri },
-        { shouldPlay: true },
+        { shouldPlay: true, staysActiveInBackground: true },
         onPlaybackStatusUpdate
       );
       soundRef.current = sound;
       setIsPlaying(true);
-      setSongLink(uri);
-      setSongName(name); // Set song name
-      setSongImageLink(imageLink); // Set song image link
+      // setSongLink(uri);
+      setSongName(name);
+      setSongImageLink(imageLink);
     } catch (error) {
       console.error("Error loading sound:", error);
     }
@@ -66,6 +81,7 @@ export const AudioPlayerProvider = ({ children }) => {
       setIsPlaying(true);
     }
   };
+
   const stop = async () => {
     if (soundRef.current) {
       await soundRef.current.stopAsync();
@@ -75,10 +91,11 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsPlaying(false);
     setPosition(0);
     setDuration(1);
-    setSongLink(null);
+    // setSongLink(null);
     setSongName("");
     setSongImageLink("");
   };
+
   const seek = async (value) => {
     if (soundRef.current) {
       await soundRef.current.setPositionAsync(value);
@@ -111,6 +128,8 @@ export const AudioPlayerProvider = ({ children }) => {
         setSongName,
         songImageLink,
         setSongImageLink,
+        quality,
+        setQuality,
       }}
     >
       {children}
