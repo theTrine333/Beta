@@ -25,7 +25,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
     useDownload();
 
   const [downloadQuality, setDownloadQuality] = useState(""); // Selected quality
-  const [downloadUrl, setDownloadUrl] = useState(""); // Actual download URL
+  const [downloadUrl, setDownloadUrl] = useState(); // Actual download URL
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

@@ -4,7 +4,6 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
-  ProgressBarAndroid,
   ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -19,6 +18,8 @@ import SkeletonLoader from "expo-skeleton-loader";
 import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import Card from "@/components/LibraryCard";
 import { useDownload } from "@/hooks/downloadContext"; // Import your DownloadContext
+import * as Progress from "react-native-progress"; // Import the Progress component
+import { Colors } from "@/constants/Colors";
 
 const Downloads = () => {
   const db = useSQLiteContext();
@@ -85,12 +86,13 @@ const Downloads = () => {
                 Currently Downloading:
               </ThemedText>
               <View style={Styles.downloadItem}>
-                <Text>{currentDownload.name}</Text>
-                <ProgressBarAndroid
-                  styleAttr="Horizontal"
-                  indeterminate={false}
+                <ThemedText>{currentDownload.name}</ThemedText>
+                <Progress.Bar
                   progress={progress / 100}
-                  color="#3498db"
+                  width={null}
+                  color={Colors.Slider.primary}
+                  borderWidth={0}
+                  height={8}
                 />
                 <Text>{Math.round(progress)}%</Text>
               </View>
