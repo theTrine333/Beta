@@ -83,7 +83,6 @@ const Player = () => {
         setModalVisible("loading");
         const hashes = await getHashes(params.Link);
         setSongLink(params.Link);
-        console.log("Player link : ", params.Link);
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
         setQuality(formats["formats"]);

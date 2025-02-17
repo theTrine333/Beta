@@ -17,13 +17,13 @@ import { Colors } from "@/constants/Colors";
 import Toggle from "./FormatToggle";
 import { ErrorCard } from "./ResultsCard";
 import { useDownload } from "../hooks/downloadContext"; // Import your context
+import * as Progress from "react-native-progress";
 
 export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
   const { addToQueue, isDownloading, currentDownload, progress } =
     useDownload();
-
   const [downloadQuality, setDownloadQuality] = useState(""); // Selected quality
   const [downloadUrl, setDownloadUrl] = useState(); // Actual download URL
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
             text: "Retry",
             isPreferred: true,
             onPress: () => {
-              fetchDownloadLinks;
+              fetchDownloadLinks();
             },
             style: "default",
           },
@@ -59,13 +59,13 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
   }, []);
 
   const handleDownload = () => {
-    console.log("Download clicked");
     if (!downloadUrl) return;
     const file = {
-      name: `${songName}.mp3`,
+      duration: duration,
+      image: songImageLink,
+      name: songName,
       uri: downloadUrl,
     };
-
     addToQueue(file);
     setVisible(false);
   };
@@ -138,14 +138,17 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
                 padding: 10,
                 justifyContent: "center",
                 marginTop: 10,
-                opacity: !downloadQuality || isDownloading ? 0.5 : 1,
+                opacity:
+                  !downloadQuality || currentDownload?.name === songName
+                    ? 0.5
+                    : 1,
               },
             ]}
             onPress={handleDownload}
-            disabled={!downloadQuality || isDownloading}
+            disabled={!downloadQuality || currentDownload?.name === songName}
           >
             <ThemedText style={{ fontWeight: "bold", fontSize: 18 }}>
-              {isDownloading && currentDownload?.name === `${songName}.mp3`
+              {isDownloading && currentDownload?.name === songName
                 ? `Downloading... ${Math.round(progress)}%`
                 : "Download"}
             </ThemedText>
@@ -153,6 +156,70 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
         </ThemedView>
       </ThemedView>
     </Modal>
+  );
+};
+
+export const DownloadCard = ({
+  title,
+  duration,
+  position,
+  image,
+}: downloadsModalProps) => {
+  return (
+    <ThemedView
+      style={[
+        Styles.libraryCard,
+        { borderColor: "white", height: height * 0.08 },
+      ]}
+    >
+      {image ? (
+        <Image
+          style={Styles.libraryImageComponent}
+          source={image}
+          placeholder={{ blurhash }}
+          contentFit="cover"
+          transition={1000}
+        />
+      ) : (
+        <></>
+      )}
+
+      <View>
+        <ThemedText
+          numberOfLines={1}
+          style={{
+            fontSize: 11,
+            width: width * 0.65,
+          }}
+        >
+          {title}
+        </ThemedText>
+        {position ? (
+          <Progress.Bar
+            height={10}
+            progress={position / 100}
+            color={Colors.Slider.primary}
+            width={width * 0.65}
+            borderColor={Colors.Slider.primary}
+          />
+        ) : (
+          <></>
+        )}
+
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <ThemedText style={{ fontSize: 11 }}>
+            {formatTime(duration)}
+          </ThemedText>
+          {position ? (
+            <ThemedText style={{ fontSize: 11 }}>
+              {Math.round(position)}%
+            </ThemedText>
+          ) : (
+            <></>
+          )}
+        </View>
+      </View>
+    </ThemedView>
   );
 };
 

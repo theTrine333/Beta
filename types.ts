@@ -58,4 +58,8 @@ export interface SearchCardProps {
 export interface downloadsModalProps {
   setVisible?: any;
   router?: any;
+  image?: any;
+  title?: any;
+  duration?: any;
+  position?: number;
 }

@@ -5,6 +5,7 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  useColorScheme,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
@@ -17,13 +18,16 @@ import SearchCard from "@/components/searchCard";
 import SkeletonLoader from "expo-skeleton-loader";
 import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import Card from "@/components/LibraryCard";
-import { useDownload } from "@/hooks/downloadContext"; // Import your DownloadContext
-import * as Progress from "react-native-progress"; // Import the Progress component
+import { useDownload } from "@/hooks/downloadContext";
+import * as Progress from "react-native-progress";
 import { Colors } from "@/constants/Colors";
+import { DownloadCard } from "@/components/CustomModals";
+import { formatTime } from "@/api/q";
 
 const Downloads = () => {
   const db = useSQLiteContext();
   const router = useRouter();
+  const theme = useColorScheme() ?? "light";
   const { downloadQueue, currentDownload, progress, downloadedFiles } =
     useDownload();
   const [data, setData] = useState([]);
@@ -45,7 +49,6 @@ const Downloads = () => {
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
       <SearchCard inType="downloads" shouldNavigate />
-
       {state == "loading" ? (
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -81,29 +84,16 @@ const Downloads = () => {
         >
           {/* Active Download Section */}
           {currentDownload && (
-            <ThemedView style={Styles.downloadSection}>
-              <ThemedText style={Styles.downloadHeader}>
-                Currently Downloading:
-              </ThemedText>
-              <View style={Styles.downloadItem}>
-                <ThemedText>{currentDownload.name}</ThemedText>
-                <Progress.Bar
-                  progress={progress / 100}
-                  width={null}
-                  color={Colors.Slider.primary}
-                  borderWidth={0}
-                  height={8}
-                />
-                <Text>{Math.round(progress)}%</Text>
-              </View>
-            </ThemedView>
+            <DownloadCard
+              title={currentDownload.name}
+              position={progress}
+              image={currentDownload.image}
+              duration={currentDownload.duration}
+            />
           )}
 
           {/* Downloaded Files Section */}
-          <ThemedView style={Styles.downloadSection}>
-            <ThemedText style={Styles.downloadHeader}>
-              Downloaded Files:
-            </ThemedText>
+          <ThemedView>
             <FlatList
               data={downloadedFiles}
               contentContainerStyle={{ paddingBottom: 120 }}
@@ -113,7 +103,7 @@ const Downloads = () => {
               renderItem={({ item }) => (
                 <Card
                   name={item.name}
-                  duration={item.duration}
+                  duration={formatTime(item.duration)}
                   image={item.image}
                   link={item.uri} // Using the uri for downloaded file
                   router={router}
@@ -123,22 +113,21 @@ const Downloads = () => {
           </ThemedView>
 
           {/* Queue Section */}
-          {downloadQueue.length > 0 && (
-            <ThemedView style={Styles.downloadSection}>
-              <ThemedText style={Styles.downloadHeader}>
-                Queued Files:
-              </ThemedText>
+          {downloadQueue.length > 1 && (
+            <>
+              <ThemedText style={{}}>Queue:</ThemedText>
               <FlatList
                 data={downloadQueue}
                 contentContainerStyle={{ paddingBottom: 120 }}
                 renderItem={({ item }) => (
-                  <View style={Styles.downloadItem}>
-                    <Text>{item.name}</Text>
-                    <ActivityIndicator size="small" color="#999" />
-                  </View>
+                  <DownloadCard
+                    title={item.name}
+                    image={item.image}
+                    duration={item.duration}
+                  />
                 )}
               />
-            </ThemedView>
+            </>
           )}
         </ThemedView>
       )}
