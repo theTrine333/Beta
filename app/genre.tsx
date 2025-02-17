@@ -5,7 +5,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Styles, { blurhash, height } from "@/style";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { FlatList, ScrollView, useColorScheme } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  useColorScheme,
+} from "react-native";
 import { Colors } from "@/constants/Colors";
 import { StatusBar } from "expo-status-bar";
 import { getSpecificGenre } from "@/api/q";
@@ -20,6 +25,7 @@ const Genre = () => {
   );
   const [data, setData] = useState<any>();
   const router = useRouter();
+  const [refresh, setRefresh] = useState(false);
 
   const loader = async () => {
     try {
@@ -35,6 +41,7 @@ const Genre = () => {
       setState("error");
     }
   };
+
   useEffect(() => {
     loader();
   }, []);
@@ -87,6 +94,9 @@ const Genre = () => {
           <FlatList
             data={data}
             contentContainerStyle={{ paddingBottom: 120 }}
+            refreshControl={
+              <RefreshControl onRefresh={loader} refreshing={refresh} />
+            }
             renderItem={({ item }) => (
               <Card
                 name={item.name}

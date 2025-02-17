@@ -12,7 +12,12 @@ import SkeletonLoader from "expo-skeleton-loader";
 import { useSQLiteContext } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { FlatList, ScrollView, useColorScheme } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  useColorScheme,
+} from "react-native";
 
 const Playlist = () => {
   const params = useLocalSearchParams();
@@ -23,6 +28,7 @@ const Playlist = () => {
   const [data, setData] = useState<any>();
   const router = useRouter();
   const db = useSQLiteContext();
+  const [refresh, setRefresh] = useState(false);
   const loader = async () => {
     let results;
     setState("loading");
@@ -97,6 +103,9 @@ const Playlist = () => {
           <FlatList
             data={data}
             contentContainerStyle={{ paddingBottom: 120 }}
+            refreshControl={
+              <RefreshControl onRefresh={loader} refreshing={refresh} />
+            }
             renderItem={({ item }) => (
               <Card
                 name={item.name}

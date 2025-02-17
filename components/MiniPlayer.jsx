@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   TouchableOpacity,
   useColorScheme,
   View,
@@ -40,6 +39,11 @@ const MiniPlayer = (props) => {
       pause();
       return;
     } else {
+      if (position == duration) {
+        seek(0);
+        resume();
+        return;
+      }
       resume();
       return;
     }
@@ -56,6 +60,7 @@ const MiniPlayer = (props) => {
         from: "miniplayer",
         Name: songName,
         Image: songImageLink,
+        Link: songLink,
       },
     });
   };

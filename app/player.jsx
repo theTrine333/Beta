@@ -29,12 +29,16 @@ const Player = () => {
   const {
     loadAndPlay,
     pause,
+    resume,
     position,
     duration,
     isPlaying,
     isBuffering,
+    stop,
     isLoop,
     setLoop,
+    seek,
+    songName,
   } = useAudioPlayer();
 
   const [songLink, setSongLink] = useState("");
@@ -44,7 +48,7 @@ const Player = () => {
   const db = useSQLiteContext();
 
   const handleFavourite = async () => {
-    if (songLink) {
+    if (songName) {
       if (Favourite) {
         deleteFavourite(db, params.Name);
         setFavourite(false);
@@ -62,24 +66,39 @@ const Player = () => {
   };
 
   useEffect(() => {
-    const loader = async () => {
+    const isFav = async () => {
       const checkFavourite = await isFavourite(db, params.Name);
       setFavourite(checkFavourite);
+    };
+    const loader = async () => {
       const hashes = await getHashes(params.Link);
       const formats = await getFormats(hashes.video_hash);
       const link = await get_downloadLink(formats["formats"][0].payload);
-      setSongLink(link.link);
+      setSongLink(params.Link);
       loadAndPlay(link.link, params.Name, params.Image);
     };
-
-    if (params?.from) {
+    isFav();
+    if (params?.from || params.Name == songName) {
       return;
     }
-    console.log(params);
-
+    stop();
     loader();
   }, []);
 
+  const handlePlayPause = async () => {
+    if (isPlaying) {
+      pause();
+      return;
+    } else {
+      if (position == duration) {
+        seek(0);
+        resume();
+        return;
+      }
+      resume();
+      return;
+    }
+  };
   return (
     <ThemedView style={[Styles.container, { justifyContent: "center" }]}>
       <ImageBackground
@@ -102,9 +121,7 @@ const Player = () => {
           minimumValue={0}
           maximumValue={duration}
           value={position}
-          onSlidingComplete={(value) =>
-            loadAndPlay(link.link, params.Name, params.Image, value)
-          }
+          onSlidingComplete={seek}
           minimumTrackTintColor="#e17645"
           maximumTrackTintColor="#4a4a4a"
           thumbTintColor="#e17645"
@@ -112,7 +129,7 @@ const Player = () => {
         <ThemedText>{formatTime(duration)}</ThemedText>
       </View>
       <View style={Styles.playerControlsContainer}>
-        <TouchableOpacity style={Styles.playerBtn} onPress={pause}>
+        <TouchableOpacity style={Styles.playerBtn} onPress={handlePlayPause}>
           {isBuffering ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
               <ActivityIndicator color={Colors.dark.text} size={"small"} />

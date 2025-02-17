@@ -14,7 +14,7 @@ import Styles, { height } from "@/style";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 
 const Search = () => {
   const params = useLocalSearchParams();
@@ -26,6 +26,7 @@ const Search = () => {
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
+  const [refresh, setRefresh] = useState(false);
   const loader = async () => {
     let results;
     try {
@@ -76,6 +77,9 @@ const Search = () => {
             keyExtractor={(item, index) => index.toString()}
             numColumns={2}
             contentContainerStyle={{ gap: 10 }}
+            refreshControl={
+              <RefreshControl onRefresh={loader} refreshing={refresh} />
+            }
             renderItem={({ item }) => (
               <ResultCardItem
                 name={item.Name}
@@ -92,6 +96,9 @@ const Search = () => {
             keyExtractor={(item, index) => index.toString()}
             numColumns={2}
             contentContainerStyle={{ gap: 10 }}
+            refreshControl={
+              <RefreshControl onRefresh={loader} refreshing={refresh} />
+            }
             renderItem={({ item }) => (
               <GenreMusicCardItem
                 name={item.Name}

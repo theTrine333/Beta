@@ -5,6 +5,7 @@ import {
 } from "@/api/database";
 import MusicCard from "@/components/GenreMusicCard";
 import GenreMusicCardItem from "@/components/GenreMusicCardItem";
+import MiniPlayer from "@/components/MiniPlayer";
 import PagerHeader from "@/components/PagerHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -22,6 +23,7 @@ const moreGenres = () => {
   const [state, setState] = useState<"idle" | "loading" | "error">("loading");
   const [data, setData] = useState();
   const [fullData, setFullData] = useState();
+  const [refresh, setRefresh] = useState(false);
   const loader = async () => {
     try {
       setState("loading");
@@ -47,6 +49,7 @@ const moreGenres = () => {
           borderColor: "white",
           marginTop: 10,
           height: height * 0.8,
+          paddingBottom: 40,
           paddingHorizontal: 10,
         }}
       >
@@ -56,6 +59,9 @@ const moreGenres = () => {
           keyExtractor={(item) => item.link}
           numColumns={2}
           contentContainerStyle={{ gap: 10 }}
+          refreshControl={
+            <RefreshControl onRefresh={loader} refreshing={refresh} />
+          }
           renderItem={({ item }) => (
             <GenreMusicCardItem
               name={item.name}
@@ -66,6 +72,7 @@ const moreGenres = () => {
           )}
         />
       </ThemedView>
+      <MiniPlayer style={{ bottom: 10 }} />
     </ThemedView>
   );
 };
