@@ -17,7 +17,10 @@ const Styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  plaListContainer: { borderWidth: 1, borderColor: "white" },
+  plaListContainer: {
+    width: width,
+    height: height * 0.3,
+  },
   miniPlayerContainer: {
     flexDirection: "row",
     marginLeft: 10,

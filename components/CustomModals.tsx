@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   useColorScheme,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "./ThemedView";
@@ -22,9 +23,10 @@ import { ErrorCard } from "./ResultsCard";
 import { useDownload } from "../hooks/downloadContext"; // Import your context
 import * as Progress from "react-native-progress";
 import { insertPlaylist } from "@/api/database";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
-  const { duration, songName, songLink, songImageLink, quality } =
+  const { duration, songName, songLink, songImageLink, quality, playList } =
     useAudioPlayer();
 
   return (
@@ -41,10 +43,90 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
         }}
       >
         <ThemedView style={Styles.bottomModal}>
-          <ThemedView style={Styles.plaListContainer}></ThemedView>
+          <ThemedText
+            style={{
+              alignSelf: "flex-start",
+              color: Colors.Slider.primary,
+              fontSize: 16,
+              fontWeight: "bold",
+              paddingBottom: 10,
+            }}
+          >
+            Playing Queue : {playList.length} Songs
+          </ThemedText>
+          <ThemedView style={Styles.plaListContainer}>
+            <FlatList
+              data={playList}
+              contentContainerStyle={{ paddingLeft: 10, paddingRight: 10 }}
+              renderItem={({ item }) => <PlayListItem item={item} />}
+            />
+          </ThemedView>
         </ThemedView>
       </ThemedView>
     </Modal>
+  );
+};
+
+export const PlayListItem = ({ item }) => {
+  const theme = useColorScheme() ?? "light";
+  const { playSpecificTrack, songName, removeTrackFromList } = useAudioPlayer();
+  return (
+    <View
+      style={{
+        paddingHorizontal: 10,
+        borderColor: "grey",
+        flexDirection: "row",
+        // borderBottomWidth: 0.5,
+        marginTop: 10,
+      }}
+    >
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          gap: 10,
+          alignItems: "center",
+        }}
+        onPress={() => {
+          playSpecificTrack(item.name);
+        }}
+      >
+        <MaterialCommunityIcons
+          name="playlist-play"
+          size={20}
+          style={{ alignSelf: "flex-end" }}
+          color={
+            songName == item.name
+              ? Colors.Slider.primary
+              : Colors[theme ?? "light"].text
+          }
+        />
+        <ThemedText
+          style={{
+            fontSize: 13,
+            width: width * 0.75,
+            color:
+              songName == item.name
+                ? Colors.Slider.primary
+                : Colors[theme ?? "light"].text,
+          }}
+          numberOfLines={1}
+        >
+          {item.name}
+        </ThemedText>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          removeTrackFromList(item.name);
+        }}
+      >
+        <MaterialCommunityIcons
+          name="window-close"
+          size={23}
+          style={{ alignSelf: "flex-end" }}
+          color={Colors[theme ?? "light"].text}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 

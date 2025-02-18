@@ -177,11 +177,16 @@ export const AudioPlayerProvider = ({ children }) => {
       loadAndPlay(index);
     }
   };
+
+  const removeTrackFromList = (name) => {
+    setPlaylist((prevList) => prevList.filter((track) => track.name !== name));
+  };
   const addAndPlaySingleTrack = (track) => {
     setPlaylist([track]); // Set the playlist to only contain this track
     setCurrentIndex(0); // Reset index to 0
     loadAndPlay(0); // Play the newly added track immediately
   };
+
   return (
     <AudioPlayerContext.Provider
       value={{
@@ -218,6 +223,7 @@ export const AudioPlayerProvider = ({ children }) => {
         previousSong,
         playSpecificTrack,
         addAndPlaySingleTrack,
+        removeTrackFromList,
       }}
     >
       {children}

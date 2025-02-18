@@ -25,6 +25,8 @@ const Favourites = () => {
     let results;
     setState("loading");
     results = await getFavourites(db);
+    console.log(results);
+
     if (results.length == 0) {
       setState("idle");
       return;

@@ -38,7 +38,6 @@ const Downloads = () => {
     const results = await getDownloads(db);
     setData(results);
     setPlaylist(results);
-    console.log(JSON.stringify(results, undefined, 2));
     setRefresh(false);
   };
 
