@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as FileSystem from "expo-file-system";
+import { useSQLiteContext } from "expo-sqlite";
+import { getDownloads, insertDownload } from "@/api/database";
 
 const DownloadContext = createContext();
 
@@ -10,7 +12,7 @@ export const DownloadProvider = ({ children }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadedFiles, setDownloadedFiles] = useState([]);
   const [imageLink, setImageLink] = useState(null);
-
+  const db = useSQLiteContext();
   // Add files to download queue if they are not already downloading
   const addToQueue = (file) => {
     if (currentDownload && currentDownload.name === file.name) {
@@ -42,8 +44,27 @@ export const DownloadProvider = ({ children }) => {
 
     try {
       const { uri } = await downloadResumable.downloadAsync();
-      setDownloadedFiles((prev) => [...prev, { ...nextFile, filePath: uri }]); // Save completed download
-      console.log(`Download complete: ${uri}`); // Print file path when download completes
+
+      // Save completed download
+      setDownloadedFiles((prev) => [
+        ...prev,
+        {
+          name: nextFile.name,
+          image: nextFile.image,
+          duration: nextFile.duration,
+          link: uri,
+        },
+      ]);
+
+      insertDownload(
+        db,
+        nextFile.name,
+        nextFile.image,
+        nextFile.duration,
+        nextFile.uri,
+        uri
+      );
+
       setDownloadQueue((prev) => prev.slice(1)); // Remove downloaded file from queue
       setProgress(0); // Reset progress
       setCurrentDownload(null); // Reset current download
@@ -54,6 +75,13 @@ export const DownloadProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    const loader = async () => {
+      const data = await getDownloads(db);
+      setDownloadedFiles(data);
+    };
+    loader();
+  }, []);
   // Effect to start the next download once the previous download is done
   useEffect(() => {
     if (!isDownloading && downloadQueue.length > 0) {

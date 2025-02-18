@@ -16,6 +16,7 @@ export interface rowMusicCardItem {
   link: string;
   duration: string;
   router?: any;
+  isDownload?: boolean;
 }
 
 export interface playlistCardItem {

@@ -7,11 +7,31 @@ import { Image } from "expo-image";
 import { TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-const Card = ({ name, image, link, duration, router }: rowMusicCardItem) => {
+const Card = ({
+  name,
+  image,
+  link,
+  duration,
+  router,
+  isDownload,
+}: rowMusicCardItem) => {
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
       onPress={() => {
+        if (isDownload) {
+          router.push({
+            pathname: "player",
+            params: {
+              Name: name,
+              Image: image,
+              duration: duration,
+              Link: link,
+              isDownload: true,
+            },
+          });
+          return;
+        }
         router.push({
           pathname: "player",
           params: {

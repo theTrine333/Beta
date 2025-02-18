@@ -53,6 +53,7 @@ const Player = () => {
   const [downloadQuality, setDownloadQuality] = useState("");
   const db = useSQLiteContext();
   const router = useRouter();
+
   const handleFavourite = async () => {
     if (songName) {
       if (Favourite) {
@@ -70,7 +71,9 @@ const Player = () => {
     const seconds = ((millis % 60000) / 1000).toFixed(0);
     return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
   };
+
   const [qlt, setQlt] = useState();
+
   useEffect(() => {
     const isFav = async () => {
       const checkFavourite = await isFavourite(db, params.Name);
@@ -93,14 +96,18 @@ const Player = () => {
         setModalVisible("error");
       }
     };
-
     if (params?.from || params.Name == songName) {
       setModalVisible(false);
       return;
     }
     stop();
+
+    if (params?.isDownload) {
+      setModalVisible(false);
+      loadAndPlay(params.Link, params.Name, params.Image);
+      return;
+    }
     loader();
-    // setModalVisible(false);
   }, []);
 
   const handlePlayPause = async () => {
@@ -185,7 +192,7 @@ const Player = () => {
         </TouchableOpacity>
       </View>
 
-      {songName && quality ? (
+      {songName ? (
         <View style={[Styles.playerControlsContainer, { gap: 20 }]}>
           <TouchableOpacity style={Styles.playerBtn} onPress={handleFavourite}>
             <Ionicons
@@ -204,23 +211,26 @@ const Player = () => {
               color={"#e17645"}
             />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={Styles.playerBtn}
-            onPress={() => {
-              setModalVisible("download");
-            }}
-          >
-            {modalVisible == "download" ? (
-              <Ionicons name="cloud-download" size={25} color={"#e17645"} />
-            ) : (
-              <Ionicons
-                name="cloud-download-outline"
-                size={25}
-                color={Colors.Slider.primary}
-              />
-            )}
-          </TouchableOpacity>
+          {quality ? (
+            <TouchableOpacity
+              style={Styles.playerBtn}
+              onPress={() => {
+                setModalVisible("download");
+              }}
+            >
+              {modalVisible == "download" ? (
+                <Ionicons name="cloud-download" size={25} color={"#e17645"} />
+              ) : (
+                <Ionicons
+                  name="cloud-download-outline"
+                  size={25}
+                  color={Colors.Slider.primary}
+                />
+              )}
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
         </View>
       ) : (
         <></>

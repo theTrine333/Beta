@@ -99,6 +99,24 @@ export const insertFavourite = async (db, name, image, link, inType) => {
   }
 };
 
+export const insertDownload = async (
+  db,
+  name,
+  image,
+  duration,
+  link,
+  location
+) => {
+  try {
+    await db.runAsync(
+      "INSERT INTO Downloads (Name, Image, Duration,Link, location) VALUES (?, ?, ?, ?, ?)",
+      [name, image, duration, link, location]
+    );
+  } catch (error) {
+    console.error("Error inserting download:", error);
+  }
+};
+
 export const getFavouritesLenght = async (db) => {
   try {
     const results = await db.getAllAsync("SELECT * FROM favourites");
@@ -122,7 +140,9 @@ export const getPlaylistItems = async (db, name) => {};
 
 export const getDownloads = async (db) => {
   try {
-    const results = await db.getAllAsync("SELECT * FROM Downloads");
+    const results = await db.getAllAsync(
+      "SELECT Name as name,Image as image,Duration as duration,Location as uri FROM Downloads ORDER BY id DESC"
+    );
     return results;
   } catch (error) {
     console.error("Error fetching favourites:", error);

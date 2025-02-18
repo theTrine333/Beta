@@ -107,6 +107,7 @@ const Downloads = () => {
                   image={item.image}
                   link={item.uri} // Using the uri for downloaded file
                   router={router}
+                  isDownload
                 />
               )}
             />
