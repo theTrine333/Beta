@@ -6,9 +6,7 @@ export const insertSubGenre = async (db, name, link, image, parent) => {
       "INSERT INTO subGenres(name, link, image, parent) VALUES (?, ?, ?, ?)",
       [`${name}`, `${link}`, `${image}`, `${parent}`]
     );
-  } catch (error) {
-    console.log("An error occured while recording sub-genres\n", error);
-  }
+  } catch (error) {}
 };
 
 export const insertGenre = async (db, name, link) => {
@@ -82,8 +80,6 @@ export const getDownloadsSearch = async (db, text) => {
     );
     return results;
   } catch (error) {
-    console.log("Error on downloads search", error);
-
     return null;
   }
 };
@@ -96,8 +92,6 @@ export const getFavouritesSearch = async (db, text) => {
     );
     return results;
   } catch (error) {
-    console.log("Error on downloads search", error);
-
     return null;
   }
 };
@@ -192,9 +186,7 @@ export const isFavourite = async (db, name) => {
 export const insertPlaylist = async (db, name) => {
   try {
     await db.runAsync("INSERT INTO Playlists(Name) VALUES(?)", [name]);
-  } catch (error) {
-    console.log("SOmething went wrong", error);
-  }
+  } catch (error) {}
 };
 export const getPlaylists = async (db) => {
   try {
@@ -209,11 +201,8 @@ export const getPlaylists = async (db) => {
       GROUP BY 
         Playlists.Name;`
     );
-    console.log(results);
-
     return results;
   } catch (error) {
-    console.error("Error fetching playlists:", error);
     throw error;
   }
 };
