@@ -91,7 +91,7 @@ export const getDownloadsSearch = async (db, text) => {
 export const getFavouritesSearch = async (db, text) => {
   try {
     let results = await db.getAllAsync(
-      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM Downloads WHERE name LIKE ?",
+      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM favourites WHERE name LIKE ?",
       [`%${text}%`] // Use '%' wildcards within the parameter array
     );
     return results;
