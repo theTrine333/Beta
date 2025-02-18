@@ -32,18 +32,14 @@ const Search = () => {
     "idle"
   );
   const [refresh, setRefresh] = useState(false);
-  const { playList, setPlaylist } = useAudioPlayer();
+  let { playList } = useAudioPlayer();
   const loader = async () => {
     let results;
     try {
       setState("loading");
       if (type == "songs") {
         results = await getSongSearch(text);
-        setPlaylist(results);
-        console.log(
-          "============================================================================================="
-        );
-        console.log(JSON.stringify(results, undefined, 2));
+        playList = results;
       } else if (type == "downloads") {
         results = await getDownloadsSearch(db, text);
       } else if (type == "favourites") {

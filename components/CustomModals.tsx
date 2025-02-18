@@ -23,6 +23,31 @@ import { useDownload } from "../hooks/downloadContext"; // Import your context
 import * as Progress from "react-native-progress";
 import { insertPlaylist } from "@/api/database";
 
+export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
+  const { duration, songName, songLink, songImageLink, quality } =
+    useAudioPlayer();
+
+  return (
+    <Modal
+      transparent
+      onRequestClose={() => setVisible(false)}
+      animationType="slide"
+    >
+      <ThemedView
+        style={{
+          flex: 1,
+          backgroundColor: "transparent",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ThemedView style={Styles.bottomModal}>
+          <ThemedView style={Styles.plaListContainer}></ThemedView>
+        </ThemedView>
+      </ThemedView>
+    </Modal>
+  );
+};
+
 export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
@@ -41,10 +66,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
     const fetchDownloadLinks = async () => {
       setLoading(true);
       try {
-        const hashes = await getHashes(songLink);
-        const formats = await getFormats(hashes?.video_hash);
-        const link = await get_downloadLink(formats["formats"][0]?.payload);
-        setDownloadUrl(link.link);
+        setDownloadUrl(songLink);
       } catch (error) {
         Alert.alert("Error", "Unknown error occured while downloading file", [
           {
@@ -69,6 +91,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
 
   const handleDownload = () => {
     if (!downloadUrl) return;
+
     const isAlreadyDownloaded = downloadedFiles.some(
       (file: any) => file.name === songName
     );

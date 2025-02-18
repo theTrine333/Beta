@@ -13,15 +13,13 @@ export default function HomeScreen() {
   const router = useRouter();
   const [data, setData] = useState<any>([]);
   const [state, setState] = useState<"idle" | "loading">();
-  const { playList, setPlaylist } = useAudioPlayer();
+  let { playList } = useAudioPlayer();
   const loader = async () => {
     try {
       setState("loading");
       const results: any = await getSongSearch("Trending+Songs+In+Kenya");
       const shuffleData = shuffleArray(results);
-      setPlaylist(shuffleData);
-      console.log(shuffleData);
-
+      playList = shuffleData;
       setData(shuffleData);
       setState("idle");
     } catch {
@@ -46,7 +44,6 @@ export default function HomeScreen() {
           data={data}
           keyExtractor={(item, index) => index.toString()}
           numColumns={2}
-          // keyExtractor={({ item }) =>(item.url)}
           renderItem={({ item }) => (
             <ResultCardItem
               name={item.name}

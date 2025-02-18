@@ -37,6 +37,7 @@ import {
   DownloadModal,
   PlayerErrorModal,
   PlayerLoadingModal,
+  PlaylistModal,
 } from "@/components/CustomModals";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -53,7 +54,7 @@ const Player = () => {
     isBuffering,
     stop,
     isLoop,
-    setIsLoop,
+    setLoop,
     seek,
     setSongLink,
     songImageLink,
@@ -62,6 +63,7 @@ const Player = () => {
     setQuality,
     previousSong,
     nextSong,
+    setSongImageLink,
     playSpecificTrack,
   } = useAudioPlayer();
 
@@ -84,6 +86,7 @@ const Player = () => {
 
   const [qlt, setQlt] = useState();
   useEffect(() => {
+    // setSongImageLink(params.image);
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -98,8 +101,8 @@ const Player = () => {
     const loader = async () => {
       try {
         setModalVisible("loading");
-        const hashes = await getHashes(params.link);
-        setSongLink(params.link);
+        const hashes = await getHashes(params.Link);
+        setSongLink(params.Link);
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
         setQuality(formats["formats"]);
@@ -119,7 +122,6 @@ const Player = () => {
     if (params?.isDownload) {
       setModalVisible(false);
       playSpecificTrack(params.Name);
-      // loadAndPlay(params.Link, params.Name, params.Image);
       return;
     }
 
@@ -140,6 +142,7 @@ const Player = () => {
       return;
     }
   };
+
   return (
     <ThemedView
       style={[Styles.container, { justifyContent: "center", paddingTop: 0 }]}
@@ -151,6 +154,8 @@ const Player = () => {
         <PlayerErrorModal setVisible={setModalVisible} />
       ) : modalVisible && modalVisible == "loading" ? (
         <PlayerLoadingModal setVisible={setModalVisible} router={router} />
+      ) : modalVisible && modalVisible == "list" ? (
+        <PlaylistModal setVisible={setModalVisible} />
       ) : (
         <></>
       )}
@@ -245,7 +250,7 @@ const Player = () => {
 
           <TouchableOpacity
             style={Styles.playerBtn}
-            onPress={() => setIsLoop(!isLoop)}
+            onPress={() => setLoop(!isLoop)}
           >
             {isLoop ? (
               <FontAwesome6
@@ -258,7 +263,7 @@ const Player = () => {
             )}
           </TouchableOpacity>
 
-          {quality ? (
+          {quality && !params.isDownload ? (
             <TouchableOpacity
               style={Styles.playerBtn}
               onPress={() => {
@@ -279,7 +284,12 @@ const Player = () => {
             <></>
           )}
 
-          <TouchableOpacity style={Styles.playerBtn}>
+          <TouchableOpacity
+            style={Styles.playerBtn}
+            onPress={() => {
+              setModalVisible("list");
+            }}
+          >
             <MaterialCommunityIcons
               name="playlist-music-outline"
               size={30}

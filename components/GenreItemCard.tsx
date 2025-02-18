@@ -1,50 +1,36 @@
+import { View, Text, useColorScheme, TouchableOpacity } from "react-native";
 import React from "react";
-import { rowMusicCardItem } from "@/types";
-import { ThemedView } from "./ThemedView";
-import { ThemedText } from "./ThemedText";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 import Styles, { blurhash, width } from "@/style";
 import { Image } from "expo-image";
-import { TouchableOpacity, useColorScheme, View } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { useAudioPlayer } from "@/hooks/audioPlayer";
+import { ThemedText } from "./ThemedText";
 import { Colors } from "@/constants/Colors";
+import { rowMusicCardItem } from "@/types";
 
-const Card = ({
-  name,
-  image,
-  link,
-  duration,
-  router,
-  isDownload,
-}: rowMusicCardItem) => {
-  const { songName } = useAudioPlayer();
+const Card = ({ name, image, link, duration, router }: rowMusicCardItem) => {
+  const {
+    songName,
+    setSongName,
+    playSpecificTrack,
+    addAndPlaySingleTrack,
+    playList,
+    loadAndPlay,
+  } = useAudioPlayer();
+
   const theme = useColorScheme() ?? "light";
+
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
       onPress={() => {
-        if (isDownload) {
-          router.push({
-            pathname: "player",
-            params: {
-              Name: name,
-              Image: image,
-              duration: duration,
-              Link: link,
-              isDownload: true,
-            },
-          });
-          return;
-        }
-        router.push({
-          pathname: "player",
-          params: {
-            Name: name,
-            Image: image,
-            duration: duration,
-            Link: link,
-          },
-        });
+        const track = {
+          name: name,
+          image: image,
+          link: link,
+          duration: duration,
+        };
+        addAndPlaySingleTrack(track);
+        playSpecificTrack(name);
       }}
     >
       <Image
