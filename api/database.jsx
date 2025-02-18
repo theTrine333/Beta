@@ -149,7 +149,6 @@ export const getFavourites = async (db) => {
     return [];
   }
 };
-export const getPlaylistItems = async (db, name) => {};
 
 export const getDownloads = async (db) => {
   try {
@@ -190,3 +189,33 @@ export const isFavourite = async (db, name) => {
     return false;
   }
 };
+export const insertPlaylist = async (db, name) => {
+  try {
+    await db.runAsync("INSERT INTO Playlists(Name) VALUES(?)", [name]);
+  } catch (error) {
+    console.log("SOmething went wrong", error);
+  }
+};
+export const getPlaylists = async (db) => {
+  try {
+    const results = await db.getAllAsync(
+      `SELECT 
+        Playlists.Name,
+        COUNT(PlaylistItems.Id) AS TotalItems
+      FROM 
+        Playlists
+      LEFT JOIN 
+        PlaylistItems ON PlaylistItems.Parent = Playlists.Id
+      GROUP BY 
+        Playlists.Name;`
+    );
+    console.log(results);
+
+    return results;
+  } catch (error) {
+    console.error("Error fetching playlists:", error);
+    throw error;
+  }
+};
+
+export const getPlaylistItems = async (db, name) => {};

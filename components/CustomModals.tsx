@@ -21,6 +21,7 @@ import Toggle from "./FormatToggle";
 import { ErrorCard } from "./ResultsCard";
 import { useDownload } from "../hooks/downloadContext"; // Import your context
 import * as Progress from "react-native-progress";
+import { insertPlaylist } from "@/api/database";
 
 export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality } =
@@ -299,14 +300,15 @@ export const PlaylistAddModal = ({
   setVisible,
   onClose,
   onSave,
+  connector,
 }: downloadsModalProps) => {
   const [playlistName, setPlaylistName] = useState("");
 
   const handleSave = () => {
     if (playlistName.trim() !== "") {
-      onSave(playlistName);
-      setPlaylistName(""); // Reset input after saving
-      onClose();
+      insertPlaylist(connector, playlistName);
+      setPlaylistName("");
+      setVisible(false);
     }
   };
   const theme = useColorScheme() ?? "light";
@@ -344,7 +346,9 @@ export const PlaylistAddModal = ({
               style={[styles.button, styles.cancelButton]}
               onPress={() => {
                 setVisible(false);
-                onClose && onClose();
+                if (onClose) {
+                  onClose();
+                }
               }}
             >
               <ThemedText style={styles.buttonText}>Cancel</ThemedText>

@@ -22,12 +22,10 @@ export const AudioPlayerProvider = ({ children }) => {
   const [quality, setQuality] = useState(false);
   const enableAudioMode = async () => {
     await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false, // Disables recording
-      staysActiveInBackground: true, // Keeps audio playing when the app goes to background
-      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX, // Prevents other audio from mixing
-      playsInSilentModeIOS: true, // Allows audio to play even when the phone is on silent mode
-      shouldDuckAndroid: false, // Keeps the volume of other apps unchanged
-      playThroughEarpieceAndroid: false, // Prevents audio from being played through the earpiece
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      shouldDuckAndroid: true,
+      // playThroughEarpieceAndroid: false,
     });
   };
   useEffect(() => {

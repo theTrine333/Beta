@@ -4,9 +4,13 @@ import { ThemedText } from "@/components/ThemedText";
 import Styles from "@/style";
 import ListCard from "@/components/PlayListCard";
 import { useSQLiteContext } from "expo-sqlite";
-import { getFavouritesLenght, getPlaylistItems } from "@/api/database";
+import {
+  getFavouritesLenght,
+  getPlaylistItems,
+  getPlaylists,
+} from "@/api/database";
 import { useRouter } from "expo-router";
-import { TouchableOpacity, useColorScheme, View } from "react-native";
+import { FlatList, TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { PlaylistAddModal } from "@/components/CustomModals";
@@ -23,19 +27,22 @@ const Playlists = () => {
   );
   const theme = useColorScheme() ?? "light";
   const loader = async () => {
-    let fav = await getFavouritesLenght(db);
-    let otherPlalists = await getPlaylistItems(db);
-    setFavNumber(fav);
+    const result = await getPlaylists(db);
+    setData(result);
     setRefresh(false);
   };
 
   useEffect(() => {
     loader();
-  }, []);
+  }, [db]);
 
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
-      {modalVisible ? <PlaylistAddModal setVisible={setModalVisible} /> : <></>}
+      {modalVisible ? (
+        <PlaylistAddModal setVisible={setModalVisible} connector={db} />
+      ) : (
+        <></>
+      )}
 
       <View
         style={{
@@ -60,7 +67,16 @@ const Playlists = () => {
           />
         </TouchableOpacity>
       </View>
-      {/* <ListCard counter={favNumber} title={"Favourites"} router={router} /> */}
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <ListCard
+            counter={item.TotalItems}
+            title={item.Name}
+            router={router}
+          />
+        )}
+      />
     </ThemedView>
   );
 };

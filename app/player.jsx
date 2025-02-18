@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
-import { get_downloadLink, getFormats, getHashes } from "@/api/q";
+import { formatTime, get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { useSQLiteContext } from "expo-sqlite";
 import {
   deleteFavourite,
@@ -70,14 +70,7 @@ const Player = () => {
     }
   };
 
-  const formatTime = (millis) => {
-    const minutes = Math.floor(millis / 60000);
-    const seconds = ((millis % 60000) / 1000).toFixed(0);
-    return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
-  };
-
   const [qlt, setQlt] = useState();
-
   useEffect(() => {
     const checkDownload = async () => {
       const isInDownload = await isDownload(db, params.Link);
