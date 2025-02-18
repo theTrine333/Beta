@@ -9,6 +9,7 @@ import { useRouter } from "expo-router";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { PlaylistAddModal } from "@/components/CustomModals";
 
 const Playlists = () => {
   const db = useSQLiteContext();
@@ -16,6 +17,7 @@ const Playlists = () => {
   const [data, setData] = useState();
   const [favNumber, setFavNumber] = useState(0);
   const [refresh, setRefresh] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
@@ -33,6 +35,8 @@ const Playlists = () => {
 
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
+      {modalVisible ? <PlaylistAddModal setVisible={setModalVisible} /> : <></>}
+
       <View
         style={{
           paddingHorizontal: 15,
@@ -43,7 +47,12 @@ const Playlists = () => {
         }}
       >
         <ThemedText style={{ fontSize: 13 }}>Playlists</ThemedText>
-        <TouchableOpacity>
+        <TouchableOpacity
+          hitSlop={20}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
           <AntDesign
             name="pluscircleo"
             size={20}

@@ -20,21 +20,22 @@ export const AudioPlayerProvider = ({ children }) => {
   const [songName, setSongName] = useState("");
   const [songImageLink, setSongImageLink] = useState("");
   const [quality, setQuality] = useState(false);
-
+  const enableAudioMode = async () => {
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false, // Disables recording
+      staysActiveInBackground: true, // Keeps audio playing when the app goes to background
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX, // Prevents other audio from mixing
+      playsInSilentModeIOS: true, // Allows audio to play even when the phone is on silent mode
+      shouldDuckAndroid: false, // Keeps the volume of other apps unchanged
+      playThroughEarpieceAndroid: false, // Prevents audio from being played through the earpiece
+    });
+  };
   useEffect(() => {
-    const enableAudioMode = async () => {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true, // Keeps audio playing in background
-        playsInSilentModeIOS: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
-      });
-    };
     enableAudioMode();
   }, []);
 
   const loadAndPlay = async (uri, name = "", imageLink = "") => {
+    enableAudioMode();
     try {
       if (soundRef.current) {
         await soundRef.current.unloadAsync();
@@ -42,7 +43,7 @@ export const AudioPlayerProvider = ({ children }) => {
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
-        { shouldPlay: true, staysActiveInBackground: true },
+        { shouldPlay: true, isLooping: isLoop, staysActiveInBackground: true },
         onPlaybackStatusUpdate
       );
       soundRef.current = sound;
@@ -56,18 +57,18 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const onPlaybackStatusUpdate = (status) => {
+    enableAudioMode();
     if (!status.isLoaded) return;
 
     setPosition(status.positionMillis);
     setDuration(status.durationMillis);
     setIsPlaying(status.isPlaying);
     setIsBuffering(status.isBuffering);
-
-    if (status.didJustFinish && isLoop) {
-      soundRef.current?.replayAsync();
-    }
   };
-
+  const setIsLoop = (state) => {
+    setLoop(state);
+    soundRef.current.setIsLoopingAsync(state);
+  };
   const pause = async () => {
     if (soundRef.current) {
       await soundRef.current.pauseAsync();
@@ -76,6 +77,7 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const resume = async () => {
+    enableAudioMode();
     if (soundRef.current) {
       await soundRef.current.playAsync();
       setIsPlaying(true);
@@ -130,6 +132,7 @@ export const AudioPlayerProvider = ({ children }) => {
         setSongImageLink,
         quality,
         setQuality,
+        setIsLoop,
       }}
     >
       {children}

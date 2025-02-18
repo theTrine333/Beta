@@ -63,4 +63,6 @@ export interface downloadsModalProps {
   title?: any;
   duration?: any;
   position?: number;
+  onClose?: any;
+  onSave?: any;
 }

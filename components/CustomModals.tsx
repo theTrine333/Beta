@@ -4,6 +4,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  StyleSheet,
+  TextInput,
+  useColorScheme,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "./ThemedView";
@@ -291,3 +294,113 @@ export const PlayerLoadingModal = ({
     </Modal>
   );
 };
+
+export const PlaylistAddModal = ({
+  setVisible,
+  onClose,
+  onSave,
+}: downloadsModalProps) => {
+  const [playlistName, setPlaylistName] = useState("");
+
+  const handleSave = () => {
+    if (playlistName.trim() !== "") {
+      onSave(playlistName);
+      setPlaylistName(""); // Reset input after saving
+      onClose();
+    }
+  };
+  const theme = useColorScheme() ?? "light";
+  return (
+    <Modal
+      transparent
+      animationType="slide"
+      onRequestClose={() => {
+        setVisible(false);
+      }}
+    >
+      <View style={styles.overlay}>
+        <View
+          style={[
+            styles.modalContainer,
+            {
+              backgroundColor:
+                theme == "light" ? Colors.dark.tint : "rgb(18, 17, 17)",
+            },
+          ]}
+        >
+          <ThemedText style={styles.title}>Create Playlist</ThemedText>
+          <TextInput
+            style={[styles.input, { color: Colors[theme ?? "light"].text }]}
+            placeholder="Enter playlist name"
+            placeholderTextColor={"grey"}
+            value={playlistName}
+            onChangeText={setPlaylistName}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleSave}>
+              <ThemedText style={styles.buttonText}>Save</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.cancelButton]}
+              onPress={() => {
+                setVisible(false);
+                onClose && onClose();
+              }}
+            >
+              <ThemedText style={styles.buttonText}>Cancel</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  button: {
+    flex: 1,
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: "red",
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+});

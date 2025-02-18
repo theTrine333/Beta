@@ -45,7 +45,7 @@ const Player = () => {
     isBuffering,
     stop,
     isLoop,
-    setLoop,
+    setIsLoop,
     seek,
     setSongLink,
     songName,
@@ -220,13 +220,17 @@ const Player = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={Styles.playerBtn}
-            onPress={() => setLoop(!isLoop)}
+            onPress={() => setIsLoop(!isLoop)}
           >
-            <Ionicons
-              name={isLoop ? "repeat" : "repeat-outline"}
-              size={25}
-              color={"#e17645"}
-            />
+            {isLoop ? (
+              <FontAwesome6
+                name={"repeat"}
+                size={23}
+                color={Colors.Slider.primary}
+              />
+            ) : (
+              <Ionicons name={"repeat"} size={25} color={"#e17645"} />
+            )}
           </TouchableOpacity>
           {quality ? (
             <TouchableOpacity

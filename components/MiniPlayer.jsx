@@ -1,10 +1,11 @@
 import {
+  Keyboard,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
@@ -34,6 +35,30 @@ const MiniPlayer = (props) => {
   } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
   const router = useRouter();
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  // Listen for keyboard visibility changes
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyboardVisible(true); // Hide player when keyboard is shown
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyboardVisible(false); // Show player when keyboard is hidden
+      }
+    );
+
+    // Clean up listeners on unmount
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   const handlePlayPause = async () => {
     if (isPlaying) {
       pause();
@@ -67,7 +92,7 @@ const MiniPlayer = (props) => {
 
   return (
     <>
-      {songName == "" ? (
+      {songName == "" || isKeyboardVisible ? (
         <></>
       ) : (
         <ThemedView
@@ -141,5 +166,3 @@ const MiniPlayer = (props) => {
 };
 
 export default MiniPlayer;
-
-const styles = StyleSheet.create({});
