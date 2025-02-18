@@ -68,3 +68,11 @@ export interface downloadsModalProps {
   onClose?: any;
   onSave?: any;
 }
+export interface SegmentedControlProps {
+  options: string[];
+  onChange?: (selectedOption: any) => void;
+}
+
+export interface SegmentedControlState {
+  selectedIndex: number;
+}

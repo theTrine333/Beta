@@ -14,7 +14,7 @@ import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedView } from "@/components/ThemedView";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
@@ -43,9 +43,10 @@ const loadDatabase = async () => {
 };
 
 const LoadingScreen = ({ text = "Loading..." }) => (
-  <ThemedView
+  <View
     style={{
       flex: 1,
+      backgroundColor: Colors.dark.background,
     }}
   >
     <Image
@@ -65,7 +66,7 @@ const LoadingScreen = ({ text = "Loading..." }) => (
       color={Colors.Slider.primary}
     />
     <StatusBar style="dark" />
-  </ThemedView>
+  </View>
 );
 
 export default function RootLayout() {

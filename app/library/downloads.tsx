@@ -1,10 +1,7 @@
 import {
-  View,
-  Text,
   ScrollView,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
   useColorScheme,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -19,8 +16,6 @@ import SkeletonLoader from "expo-skeleton-loader";
 import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import Card from "@/components/LibraryCard";
 import { useDownload } from "@/hooks/downloadContext";
-import * as Progress from "react-native-progress";
-import { Colors } from "@/constants/Colors";
 import { DownloadCard } from "@/components/CustomModals";
 import { formatTime } from "@/api/q";
 
