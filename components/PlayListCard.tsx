@@ -26,6 +26,7 @@ const ListCard = ({ title, counter, router }: playlistCardItem) => {
           params: { Title: title, Counter: counter },
         });
       }}
+      onLongPress={() => {}}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <FontAwesome5

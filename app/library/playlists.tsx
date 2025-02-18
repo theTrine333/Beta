@@ -47,7 +47,6 @@ const Playlists = () => {
       ) : (
         <></>
       )}
-
       <View
         style={{
           paddingHorizontal: 15,
