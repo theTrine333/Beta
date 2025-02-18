@@ -18,11 +18,14 @@ import Card from "@/components/LibraryCard";
 import { useDownload } from "@/hooks/downloadContext";
 import { DownloadCard } from "@/components/CustomModals";
 import { formatTime } from "@/api/q";
+import { Colors } from "@/constants/Colors";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 
 const Downloads = () => {
   const db = useSQLiteContext();
   const router = useRouter();
   const theme = useColorScheme() ?? "light";
+  const { playList, setPlaylist } = useAudioPlayer();
   const { downloadQueue, currentDownload, progress, downloadedFiles } =
     useDownload();
   const [data, setData] = useState([]);
@@ -34,6 +37,8 @@ const Downloads = () => {
   const loader = async () => {
     const results = await getDownloads(db);
     setData(results);
+    setPlaylist(results);
+    console.log(JSON.stringify(results, undefined, 2));
     setRefresh(false);
   };
 
@@ -71,8 +76,8 @@ const Downloads = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-              height: height * 0.53,
-              paddingBottom: 0,
+              height: height * 0.63,
+              paddingBottom: 80,
               paddingHorizontal: 0,
             },
           ]}
@@ -91,7 +96,7 @@ const Downloads = () => {
           <ThemedView>
             <FlatList
               data={downloadedFiles}
-              contentContainerStyle={{ paddingBottom: 120 }}
+              contentContainerStyle={{}}
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }
@@ -111,9 +116,21 @@ const Downloads = () => {
           {/* Queue Section */}
           {downloadQueue.length > 1 && (
             <>
-              <ThemedText style={{}}>Queue:</ThemedText>
+              <ThemedText
+                style={{
+                  color: Colors.Slider.primary,
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  marginTop: 10,
+                  paddingLeft: 10,
+                }}
+              >
+                Queue:
+              </ThemedText>
               <FlatList
-                data={downloadQueue}
+                data={downloadQueue.filter(
+                  (item: any) => item.name !== currentDownload?.name
+                )}
                 contentContainerStyle={{ paddingBottom: 120 }}
                 renderItem={({ item }) => (
                   <DownloadCard

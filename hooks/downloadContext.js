@@ -15,7 +15,10 @@ export const DownloadProvider = ({ children }) => {
   const db = useSQLiteContext();
   // Add files to download queue if they are not already downloading
   const addToQueue = (file) => {
-    if (currentDownload && currentDownload.name === file.name) {
+    if (
+      currentDownload?.name === file.name ||
+      downloadQueue.some((queuedFile) => queuedFile.name === file.name)
+    ) {
       return;
     }
     setDownloadQueue((prevQueue) => [...prevQueue, file]);
@@ -45,41 +48,30 @@ export const DownloadProvider = ({ children }) => {
     try {
       const { uri } = await downloadResumable.downloadAsync();
 
-      // Save completed download
-      setDownloadedFiles((prev) => [
-        {
-          name: nextFile.name,
-          image: nextFile.image,
-          duration: nextFile.duration,
-          link: uri,
-        },
-        ...prev,
-      ]);
-
       insertDownload(
         db,
-        nextFile.name,
-        nextFile.image,
-        nextFile.duration,
-        nextFile.uri,
-        uri
+        `${nextFile.name}`,
+        `${nextFile.image}`,
+        `${nextFile.duration}`,
+        `${nextFile.uri}`,
+        `${uri}`
       );
 
       setDownloadQueue((prev) => prev.slice(1));
       setProgress(0);
       setCurrentDownload(null);
       setIsDownloading(false);
+      loader();
     } catch (error) {
       console.error("Download error:", error);
       setIsDownloading(false);
     }
   };
-
+  const loader = async () => {
+    const data = await getDownloads(db);
+    setDownloadedFiles(data);
+  };
   useEffect(() => {
-    const loader = async () => {
-      const data = await getDownloads(db);
-      setDownloadedFiles(data);
-    };
     loader();
   }, []);
   useEffect(() => {

@@ -7,17 +7,22 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { getSongSearch, shuffleArray } from "@/api/q";
 import { ResultCardItem } from "@/components/ResultsCard";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 
 export default function HomeScreen() {
   const router = useRouter();
   const [data, setData] = useState<any>([]);
   const [state, setState] = useState<"idle" | "loading">();
-
+  const { playList, setPlaylist } = useAudioPlayer();
   const loader = async () => {
     try {
       setState("loading");
       const results: any = await getSongSearch("Trending+Songs+In+Kenya");
-      setData(shuffleArray(results));
+      const shuffleData = shuffleArray(results);
+      setPlaylist(shuffleData);
+      console.log(shuffleData);
+
+      setData(shuffleData);
       setState("idle");
     } catch {
       setState("idle");
@@ -44,9 +49,9 @@ export default function HomeScreen() {
           // keyExtractor={({ item }) =>(item.url)}
           renderItem={({ item }) => (
             <ResultCardItem
-              name={item.Name}
-              link={item.Link}
-              image={item.Poster}
+              name={item.name}
+              link={item.link}
+              image={item.image}
               router={router}
             />
           )}

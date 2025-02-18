@@ -14,6 +14,7 @@ import {
 import SearchCard from "@/components/searchCard";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 import Styles, { height } from "@/style";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
@@ -31,12 +32,18 @@ const Search = () => {
     "idle"
   );
   const [refresh, setRefresh] = useState(false);
+  const { playList, setPlaylist } = useAudioPlayer();
   const loader = async () => {
     let results;
     try {
       setState("loading");
       if (type == "songs") {
         results = await getSongSearch(text);
+        setPlaylist(results);
+        console.log(
+          "============================================================================================="
+        );
+        console.log(JSON.stringify(results, undefined, 2));
       } else if (type == "downloads") {
         results = await getDownloadsSearch(db, text);
       } else if (type == "favourites") {
@@ -88,9 +95,9 @@ const Search = () => {
             }
             renderItem={({ item }) => (
               <ResultCardItem
-                name={item.Name}
-                link={item.Link}
-                image={item.Poster}
+                name={item.name}
+                link={item.link}
+                image={item.image}
                 router={router}
               />
             )}

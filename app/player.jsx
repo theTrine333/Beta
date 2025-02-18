@@ -1,13 +1,20 @@
 import AnimatedText from "@/components/AnimatedTitle";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import Styles, { blurhash, width } from "@/style";
-import { AntDesign, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import Styles, { blurhash } from "@/style";
+import {
+  AntDesign,
+  FontAwesome6,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+
 import Slider from "@react-native-community/slider";
 import { Image, ImageBackground } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
+
 import {
   ActivityIndicator,
   StyleSheet,
@@ -15,6 +22,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 import { formatTime, get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { useSQLiteContext } from "expo-sqlite";
@@ -48,9 +56,13 @@ const Player = () => {
     setIsLoop,
     seek,
     setSongLink,
+    songImageLink,
     songName,
     quality,
     setQuality,
+    previousSong,
+    nextSong,
+    playSpecificTrack,
   } = useAudioPlayer();
 
   const [Favourite, setFavourite] = useState(false);
@@ -65,22 +77,13 @@ const Player = () => {
         setFavourite(false);
         return;
       }
-      insertFavourite(db, params.Name, params.Image, params.Link, "songs");
+      insertFavourite(db, songName, songImageLink, params.Link, "songs");
       setFavourite(true);
     }
   };
 
   const [qlt, setQlt] = useState();
   useEffect(() => {
-    const checkDownload = async () => {
-      const isInDownload = await isDownload(db, params.Link);
-      if (isInDownload) {
-        setModalVisible(false);
-        loadAndPlay(params.link, params.Name, params.Image);
-        return;
-      }
-    };
-    checkDownload();
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -89,18 +92,20 @@ const Player = () => {
         setFavourite(false);
       }
     };
+
     isFav();
 
     const loader = async () => {
       try {
         setModalVisible("loading");
-        const hashes = await getHashes(params.Link);
-        setSongLink(params.Link);
+        const hashes = await getHashes(params.link);
+        setSongLink(params.link);
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
         setQuality(formats["formats"]);
         setModalVisible(false);
-        loadAndPlay(link.link, params.Name, params.Image);
+        playSpecificTrack(params.Name);
+        // loadAndPlay(link.link, params.Name, params.Image);
       } catch (error) {
         setModalVisible("error");
       }
@@ -113,7 +118,8 @@ const Player = () => {
 
     if (params?.isDownload) {
       setModalVisible(false);
-      loadAndPlay(params.Link, params.Name, params.Image);
+      playSpecificTrack(params.Name);
+      // loadAndPlay(params.Link, params.Name, params.Image);
       return;
     }
 
@@ -150,20 +156,20 @@ const Player = () => {
       )}
 
       <ImageBackground
-        source={params.Image}
+        source={songImageLink}
         style={StyleSheet.absoluteFill}
         blurRadius={100}
       />
 
       <Image
         style={Styles.playerImage}
-        source={params.Image}
+        source={songImageLink}
         placeholder={{ blurhash }}
         contentFit="cover"
         transition={1000}
       />
 
-      <AnimatedText text={params.Name} />
+      <AnimatedText text={songName} />
 
       <View style={Styles.durationHolder}>
         <ThemedText style={{ color: "white" }}>
@@ -186,6 +192,19 @@ const Player = () => {
       </View>
 
       <View style={Styles.playerControlsContainer}>
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            previousSong();
+          }}
+        >
+          <AntDesign
+            name="stepbackward"
+            size={25}
+            color={Colors.Slider.primary}
+          />
+        </TouchableOpacity>
+
         <TouchableOpacity style={Styles.playerBtn} onPress={handlePlayPause}>
           {isBuffering ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
@@ -197,7 +216,19 @@ const Player = () => {
           <AntDesign
             name={isPlaying ? "pausecircleo" : "playcircleo"}
             size={70}
-            color={"#e17645"}
+            color={Colors.Slider.primary}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            nextSong();
+          }}
+        >
+          <AntDesign
+            name="stepforward"
+            size={25}
+            color={Colors.Slider.primary}
           />
         </TouchableOpacity>
       </View>
@@ -211,6 +242,7 @@ const Player = () => {
               color={"#e17645"}
             />
           </TouchableOpacity>
+
           <TouchableOpacity
             style={Styles.playerBtn}
             onPress={() => setIsLoop(!isLoop)}
@@ -225,6 +257,7 @@ const Player = () => {
               <Ionicons name={"repeat"} size={25} color={"#e17645"} />
             )}
           </TouchableOpacity>
+
           {quality ? (
             <TouchableOpacity
               style={Styles.playerBtn}
@@ -245,6 +278,14 @@ const Player = () => {
           ) : (
             <></>
           )}
+
+          <TouchableOpacity style={Styles.playerBtn}>
+            <MaterialCommunityIcons
+              name="playlist-music-outline"
+              size={30}
+              color={Colors.Slider.primary}
+            />
+          </TouchableOpacity>
         </View>
       ) : (
         <></>

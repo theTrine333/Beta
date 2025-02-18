@@ -189,10 +189,10 @@ export const getSongSearch = async (search) => {
       const duration = $(item).find(".duration").text().trim();
 
       hits.push({
-        Name: name,
-        Poster: poster,
-        Link: link,
-        Time: duration,
+        name: name,
+        image: poster,
+        link: link,
+        duration: duration,
       });
     });
 

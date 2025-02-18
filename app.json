@@ -38,7 +38,7 @@
           "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#4c4a51"
+          "backgroundColor": "#fff"
         }
       ],
       "expo-audio"
