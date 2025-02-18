@@ -301,12 +301,14 @@ export const PlaylistAddModal = ({
   onClose,
   onSave,
   connector,
+  reloader,
 }: downloadsModalProps) => {
   const [playlistName, setPlaylistName] = useState("");
 
   const handleSave = () => {
     if (playlistName.trim() !== "") {
       insertPlaylist(connector, playlistName);
+      reloader();
       setPlaylistName("");
       setVisible(false);
     }

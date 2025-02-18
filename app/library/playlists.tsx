@@ -9,7 +9,7 @@ import {
   getPlaylistItems,
   getPlaylists,
 } from "@/api/database";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { FlatList, TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
@@ -39,7 +39,11 @@ const Playlists = () => {
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
       {modalVisible ? (
-        <PlaylistAddModal setVisible={setModalVisible} connector={db} />
+        <PlaylistAddModal
+          setVisible={setModalVisible}
+          connector={db}
+          reloader={loader}
+        />
       ) : (
         <></>
       )}
