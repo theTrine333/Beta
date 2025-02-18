@@ -136,7 +136,7 @@ export const getFavouritesLenght = async (db) => {
 export const getFavourites = async (db) => {
   try {
     const results = await db.getAllAsync(
-      "SELECT * FROM favourites ORDER BY id DESC"
+      "SELECT name,image,link FROM favourites ORDER BY id DESC"
     );
     return results;
   } catch (error) {

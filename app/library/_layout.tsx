@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Tabs() {
   const theme = useColorScheme() ?? "light";
-  const options = ["Downloads", "Favourites", "Playlists"];
+  const options = ["Downloads", "Playlists"];
   const [selected, setSelected] = useState<
     "Downloads" | "Favourites" | "Playlists"
   >("Downloads");

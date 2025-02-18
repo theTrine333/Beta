@@ -76,7 +76,7 @@ const Downloads = () => {
             {
               borderColor: "white",
               height: height * 0.63,
-              paddingBottom: 80,
+              paddingBottom: 40,
               paddingHorizontal: 0,
             },
           ]}

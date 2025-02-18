@@ -14,7 +14,7 @@ export interface rowMusicCardItem {
   name: string;
   image: string;
   link: string;
-  duration: string;
+  duration?: string;
   router?: any;
   isDownload?: boolean;
 }
