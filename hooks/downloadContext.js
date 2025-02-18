@@ -47,13 +47,13 @@ export const DownloadProvider = ({ children }) => {
 
       // Save completed download
       setDownloadedFiles((prev) => [
-        ...prev,
         {
           name: nextFile.name,
           image: nextFile.image,
           duration: nextFile.duration,
           link: uri,
         },
+        ...prev,
       ]);
 
       insertDownload(
@@ -65,10 +65,10 @@ export const DownloadProvider = ({ children }) => {
         uri
       );
 
-      setDownloadQueue((prev) => prev.slice(1)); // Remove downloaded file from queue
-      setProgress(0); // Reset progress
-      setCurrentDownload(null); // Reset current download
-      setIsDownloading(false); // Download complete, reset downloading flag
+      setDownloadQueue((prev) => prev.slice(1));
+      setProgress(0);
+      setCurrentDownload(null);
+      setIsDownloading(false);
     } catch (error) {
       console.error("Download error:", error);
       setIsDownloading(false);
@@ -82,13 +82,11 @@ export const DownloadProvider = ({ children }) => {
     };
     loader();
   }, []);
-  // Effect to start the next download once the previous download is done
   useEffect(() => {
     if (!isDownloading && downloadQueue.length > 0) {
       startNextDownload();
     }
-  }, [isDownloading, downloadQueue.length]); // Only trigger when isDownloading or downloadQueue changes
-
+  }, [isDownloading, downloadQueue.length]);
   return (
     <DownloadContext.Provider
       value={{

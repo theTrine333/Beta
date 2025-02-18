@@ -18,7 +18,12 @@ import {
 import { Colors } from "@/constants/Colors";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { useSQLiteContext } from "expo-sqlite";
-import { deleteFavourite, insertFavourite, isFavourite } from "@/api/database";
+import {
+  deleteFavourite,
+  insertFavourite,
+  isDownload,
+  isFavourite,
+} from "@/api/database";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import {
   DownloadModal,
@@ -50,7 +55,6 @@ const Player = () => {
 
   const [Favourite, setFavourite] = useState(false);
   const [modalVisible, setModalVisible] = useState("error");
-  const [downloadQuality, setDownloadQuality] = useState("");
   const db = useSQLiteContext();
   const router = useRouter();
 
@@ -75,9 +79,22 @@ const Player = () => {
   const [qlt, setQlt] = useState();
 
   useEffect(() => {
+    const checkDownload = async () => {
+      const isInDownload = await isDownload(db, params.Link);
+      if (isInDownload) {
+        setModalVisible(false);
+        loadAndPlay(params.link, params.Name, params.Image);
+        return;
+      }
+    };
+    checkDownload();
     const isFav = async () => {
-      const checkFavourite = await isFavourite(db, params.Name);
-      setFavourite(checkFavourite);
+      try {
+        const checkFavourite = await isFavourite(db, params.Name);
+        setFavourite(checkFavourite);
+      } catch {
+        setFavourite(false);
+      }
     };
     isFav();
 
@@ -89,7 +106,6 @@ const Player = () => {
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
         setQuality(formats["formats"]);
-
         setModalVisible(false);
         loadAndPlay(link.link, params.Name, params.Image);
       } catch (error) {
@@ -107,6 +123,7 @@ const Player = () => {
       loadAndPlay(params.Link, params.Name, params.Image);
       return;
     }
+
     loader();
   }, []);
 

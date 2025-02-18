@@ -22,8 +22,13 @@ import * as Progress from "react-native-progress";
 export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
-  const { addToQueue, isDownloading, currentDownload, progress } =
-    useDownload();
+  const {
+    addToQueue,
+    isDownloading,
+    currentDownload,
+    progress,
+    downloadedFiles,
+  } = useDownload();
   const [downloadQuality, setDownloadQuality] = useState(""); // Selected quality
   const [downloadUrl, setDownloadUrl] = useState(); // Actual download URL
   const [loading, setLoading] = useState(false);
@@ -60,6 +65,14 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
 
   const handleDownload = () => {
     if (!downloadUrl) return;
+    const isAlreadyDownloaded = downloadedFiles.some(
+      (file: any) => file.name === songName
+    );
+
+    if (isAlreadyDownloaded) {
+      Alert.alert("Download", "This file is already downloaded.");
+      return;
+    }
     const file = {
       duration: duration,
       image: songImageLink,

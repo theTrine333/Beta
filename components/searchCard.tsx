@@ -48,6 +48,8 @@ const SearchCard = ({
             ? "Search for a song"
             : inType == "downloads"
             ? "Search in downloads"
+            : inType == "favourites"
+            ? "Search in favourites"
             : "Search in genres"
         }
         placeholderTextColor={"grey"}

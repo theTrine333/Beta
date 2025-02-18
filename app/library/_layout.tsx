@@ -4,6 +4,7 @@ import Downloads from "./downloads";
 import Playlists from "./playlists";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import Favourites from "./favourites";
 const Tab = createMaterialTopTabNavigator();
 
 export default function Tabs() {
@@ -26,6 +27,7 @@ export default function Tabs() {
         }}
       >
         <Tab.Screen name="Downloads" component={Downloads} />
+        <Tab.Screen name="Favourites" component={Favourites} />
         <Tab.Screen name="Playlists" component={Playlists} />
         {/* <Tab.Screen name="DC Comics" component={Dark} /> */}
       </Tab.Navigator>

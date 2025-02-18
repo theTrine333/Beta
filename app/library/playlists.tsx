@@ -51,7 +51,7 @@ const Playlists = () => {
           />
         </TouchableOpacity>
       </View>
-      <ListCard counter={favNumber} title={"Favourites"} router={router} />
+      {/* <ListCard counter={favNumber} title={"Favourites"} router={router} /> */}
     </ThemedView>
   );
 };

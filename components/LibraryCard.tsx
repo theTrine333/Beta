@@ -4,8 +4,10 @@ import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import Styles, { blurhash, width } from "@/style";
 import { Image } from "expo-image";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
+import { Colors } from "@/constants/Colors";
 
 const Card = ({
   name,
@@ -15,6 +17,19 @@ const Card = ({
   router,
   isDownload,
 }: rowMusicCardItem) => {
+  const {
+    pause,
+    resume,
+    position,
+    isPlaying,
+    stop,
+    setLoop,
+    songLink,
+    setSongLink,
+    songName,
+    songImageLink,
+  } = useAudioPlayer();
+  const theme = useColorScheme() ?? "light";
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
@@ -52,18 +67,27 @@ const Card = ({
       />
       <View
         style={{
-          width: width * 0.55,
+          width: width * 0.65,
           marginVertical: 5,
         }}
       >
-        <ThemedText numberOfLines={1} style={{ fontSize: 12 }}>
+        <ThemedText
+          numberOfLines={1}
+          style={{
+            fontSize: 12,
+            color:
+              songName == name
+                ? Colors.Slider.primary
+                : Colors[theme ?? "light"].text,
+          }}
+        >
           {name}
         </ThemedText>
         <ThemedText style={{ fontSize: 11 }}>{duration}</ThemedText>
       </View>
-      <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
+      {/* <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
         <AntDesign name="playcircleo" size={25} color={"grey"} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </TouchableOpacity>
   );
 };

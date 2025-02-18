@@ -49,7 +49,7 @@ export interface genreItemTypes {
 }
 
 export interface SearchCardProps {
-  inType?: "songs" | "genres" | "downloads";
+  inType?: "songs" | "genres" | "downloads" | "favourites";
   shouldNavigate?: boolean;
   setter?: any;
   action?: any;

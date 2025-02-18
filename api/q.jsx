@@ -121,7 +121,6 @@ export async function getHashes(link) {
       referrer: url,
     };
   } catch (error) {
-    console.error("Error fetching data:", error);
     return null;
   }
 }
@@ -201,4 +200,12 @@ export const getSongSearch = async (search) => {
   } catch (error) {
     return null;
   }
+};
+export const shuffleArray = (array) => {
+  let shuffled = [...array]; // Create a copy to avoid modifying the original array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+  }
+  return shuffled;
 };

@@ -88,6 +88,19 @@ export const getDownloadsSearch = async (db, text) => {
   }
 };
 
+export const getFavouritesSearch = async (db, text) => {
+  try {
+    let results = await db.getAllAsync(
+      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM Downloads WHERE name LIKE ?",
+      [`%${text}%`] // Use '%' wildcards within the parameter array
+    );
+    return results;
+  } catch (error) {
+    console.log("Error on downloads search", error);
+
+    return null;
+  }
+};
 export const insertFavourite = async (db, name, image, link, inType) => {
   try {
     await db.runAsync(
@@ -122,17 +135,17 @@ export const getFavouritesLenght = async (db) => {
     const results = await db.getAllAsync("SELECT * FROM favourites");
     return results.length;
   } catch (error) {
-    console.error("Error fetching favourites:", error);
     return [];
   }
 };
 
 export const getFavourites = async (db) => {
   try {
-    const results = await db.getAllAsync("SELECT * FROM favourites");
+    const results = await db.getAllAsync(
+      "SELECT * FROM favourites ORDER BY id DESC"
+    );
     return results;
   } catch (error) {
-    console.error("Error fetching favourites:", error);
     return [];
   }
 };
@@ -145,7 +158,17 @@ export const getDownloads = async (db) => {
     );
     return results;
   } catch (error) {
-    console.error("Error fetching favourites:", error);
+    return [];
+  }
+};
+
+export const isDownload = async (db, location) => {
+  try {
+    const results = await db.getFirstAsync(
+      `SELECT * FROM Downloads where Location="${location}"`
+    );
+    return results !== null;
+  } catch (error) {
     return [];
   }
 };
@@ -153,9 +176,7 @@ export const getDownloads = async (db) => {
 export const deleteFavourite = async (db, name) => {
   try {
     await db.runAsync("DELETE FROM favourites WHERE name = ?", [name]);
-  } catch (error) {
-    console.error("Error deleting favourite:", error);
-  }
+  } catch (error) {}
 };
 
 export const isFavourite = async (db, name) => {
@@ -166,7 +187,6 @@ export const isFavourite = async (db, name) => {
 
     return results !== null;
   } catch (error) {
-    console.error("Error checking favourite:", error);
     return false;
   }
 };

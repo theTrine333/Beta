@@ -1,38 +1,33 @@
 import { StyleSheet, FlatList } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Styles from "@/style";
 import PagerHeader from "@/components/PagerHeader";
-import RowMusicCard from "@/components/RowMusicCard";
 import SearchCard from "@/components/searchCard";
 import { useRouter } from "expo-router";
-import MiniPlayer from "@/components/MiniPlayer";
-
-const data = [
-  {
-    Title: "Recent",
-    url: "recently-viewed",
-    url_type: "local",
-  },
-  {
-    Title: "Most played",
-    url: "most-played",
-    url_type: "local",
-  },
-  {
-    Title: "Willy Paul",
-    url: "willy+paul",
-    url_type: "global",
-  },
-  {
-    Title: "Migos",
-    url: "migos",
-    url_type: "global",
-  },
-];
+import { useEffect, useState } from "react";
+import { getSongSearch, shuffleArray } from "@/api/q";
+import { ResultCardItem } from "@/components/ResultsCard";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [data, setData] = useState<any>([]);
+  const [state, setState] = useState<"idle" | "loading">();
+
+  const loader = async () => {
+    try {
+      setState("loading");
+      const results: any = await getSongSearch("Trending+Songs+In+Kenya");
+      setData(shuffleArray(results));
+      setState("idle");
+    } catch {
+      setState("idle");
+    }
+  };
+
+  useEffect(() => {
+    loader();
+  }, []);
+
   return (
     <ThemedView style={Styles.container}>
       <PagerHeader
@@ -41,19 +36,21 @@ export default function HomeScreen() {
       />
       <ThemedView style={Styles.verticalListContainer}>
         <SearchCard shouldNavigate={true} inType="songs" />
-        {/* <FlatList
+        <FlatList
           showsVerticalScrollIndicator={false}
           data={data}
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={2}
           // keyExtractor={({ item }) =>(item.url)}
           renderItem={({ item }) => (
-            <RowMusicCard
-              Title={item.Title}
-              url={item.url}
-              url_path={item.url_type}
+            <ResultCardItem
+              name={item.Name}
+              link={item.Link}
+              image={item.Poster}
               router={router}
             />
           )}
-        /> */}
+        />
       </ThemedView>
     </ThemedView>
   );

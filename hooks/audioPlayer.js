@@ -19,7 +19,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [songLink, setSongLink] = useState(null);
   const [songName, setSongName] = useState("");
   const [songImageLink, setSongImageLink] = useState("");
-  const [quality, setQuality] = useState();
+  const [quality, setQuality] = useState(false);
 
   useEffect(() => {
     const enableAudioMode = async () => {
@@ -51,7 +51,7 @@ export const AudioPlayerProvider = ({ children }) => {
       setSongName(name);
       setSongImageLink(imageLink);
     } catch (error) {
-      console.error("Error loading sound:", error);
+      stop();
     }
   };
 

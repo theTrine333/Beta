@@ -214,7 +214,7 @@ const RowMusicCard = ({ Title, router }: rowMusicCardProps) => {
         <ThemedText style={[Styles.headText, { fontSize: 15 }]}>
           {Title}
         </ThemedText>
-        {state == "loading" ? (
+        {/* {state == "loading" ? (
           <SkeletonLoader duration={1800}>
             <SkeletonLoader.Item style={Styles.moreLoadingBtn} />
           </SkeletonLoader>
@@ -227,7 +227,7 @@ const RowMusicCard = ({ Title, router }: rowMusicCardProps) => {
               color={Colors[theme ?? "light"].text}
             />
           </TouchableOpacity>
-        )}
+        )} */}
       </View>
       {/* Showing content got from search */}
       {state == "loading" ? (
@@ -250,7 +250,7 @@ const RowMusicCard = ({ Title, router }: rowMusicCardProps) => {
       ) : (
         <FlatList
           data={data.slice(0, 4)}
-          horizontal
+          // horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={Styles.rowMusicIListContainer}
           renderItem={({ item }) => (
