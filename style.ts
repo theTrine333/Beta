@@ -59,8 +59,8 @@ const Styles = StyleSheet.create({
     height: height * 0.05,
   },
   playerImage: {
-    borderRadius: 8,
-    elevation: 4,
+    borderRadius: 1000,
+    elevation: 5,
     width: width * 0.9,
     height: height * 0.4,
     // borderRadius: 150,

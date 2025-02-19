@@ -12,7 +12,7 @@ const AnimatedText = ({ text }) => {
     translateX.setValue(0);
     Animated.timing(translateX, {
       toValue: -1000,
-      duration: 10000,
+      duration: 7000,
       useNativeDriver: true,
     }).start(() => {
       // Optional: Restart the animation when it finishes
@@ -27,7 +27,6 @@ const AnimatedText = ({ text }) => {
           styles.text,
           {
             color: "white",
-
             transform: [{ translateX: translateX }],
           },
         ]}
