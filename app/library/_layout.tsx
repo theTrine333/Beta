@@ -2,7 +2,6 @@ import { ThemedView } from "@/components/ThemedView";
 import Downloads from "./downloads";
 import Playlists from "./playlists";
 import { useColorScheme } from "react-native";
-import Favourites from "./favourites";
 import SegmentedControl from "@/components/SegmentedControls";
 import { useState } from "react";
 
@@ -15,13 +14,7 @@ export default function Tabs() {
   return (
     <ThemedView style={{ flex: 1 }}>
       <SegmentedControl options={options} onChange={setSelected} />
-      {selected == "Downloads" ? (
-        <Downloads />
-      ) : selected == "Favourites" ? (
-        <Favourites />
-      ) : (
-        <Playlists />
-      )}
+      {selected == "Downloads" ? <Downloads /> : <Playlists />}
     </ThemedView>
   );
 }

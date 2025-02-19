@@ -60,6 +60,7 @@ const Player = () => {
     isLoop,
     setLoop,
     seek,
+    songLink,
     setSongLink,
     songImageLink,
     songName,
@@ -67,8 +68,6 @@ const Player = () => {
     setQuality,
     previousSong,
     nextSong,
-    setPrimaryLink,
-    primaryLink,
     setSongImageLink,
     playSpecificTrack,
   } = useAudioPlayer();
@@ -93,11 +92,6 @@ const Player = () => {
   const [qlt, setQlt] = useState();
 
   useEffect(() => {
-    if (params.isDownload) {
-      setPrimaryLink(params.Link);
-    } else {
-      setPrimaryLink(false);
-    }
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -205,7 +199,7 @@ const Player = () => {
         >
           <Ionicons name="arrow-back-outline" size={25} color={"white"} />
         </TouchableOpacity>
-        {primaryLink && songName ? (
+        {songLink?.includes("file://") ? (
           <TouchableOpacity
             onPress={() => {
               setModalVisible("more-options");

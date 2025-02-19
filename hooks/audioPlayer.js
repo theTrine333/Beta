@@ -20,7 +20,6 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isBuffering, setIsBuffering] = useState(false);
   const [isLoop, setLoop] = useState(false);
   const [songLink, setSongLink] = useState(null);
-  const [primaryLink, setPrimaryLink] = useState();
   const [songName, setSongName] = useState("");
   const [songImageLink, setSongImageLink] = useState("");
   const [quality, setQuality] = useState(false);
@@ -217,8 +216,6 @@ export const AudioPlayerProvider = ({ children }) => {
         setDownloadsPlayList,
         favouritesLists,
         setFavouritesLists,
-        primaryLink,
-        setPrimaryLink,
         normalPlayLists,
         setNormalPlayLists,
         genrePlayLists,
