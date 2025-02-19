@@ -77,7 +77,7 @@ export const DownloadProvider = ({ children }) => {
 
   useEffect(() => {
     loader();
-  }, []);
+  }, [downloadQueue.length]);
 
   useEffect(() => {
     if (!isDownloading && downloadQueue.length > 0) {
@@ -89,6 +89,7 @@ export const DownloadProvider = ({ children }) => {
     <DownloadContext.Provider
       value={{
         addToQueue,
+        loader,
         downloadQueue,
         currentDownload,
         progress,

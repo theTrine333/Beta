@@ -26,6 +26,7 @@ const Downloads = () => {
   const router = useRouter();
   const theme = useColorScheme() ?? "light";
   const { playList, setPlaylist } = useAudioPlayer();
+  const [deleteList, setDeleteList] = useState();
   const { downloadQueue, currentDownload, progress, downloadedFiles } =
     useDownload();
   const [data, setData] = useState([]);
@@ -36,10 +37,12 @@ const Downloads = () => {
   const [refresh, setRefresh] = useState(false);
 
   const loader = async () => {
+    setState("loading");
     const results = await getDownloads(db);
     setData(results);
     setPlaylist(results);
     setRefresh(false);
+    setState("idle");
   };
 
   useEffect(() => {
@@ -114,6 +117,7 @@ const Downloads = () => {
                   <DownloadCard
                     title={item.name}
                     image={item.image}
+                    isQueue
                     duration={item.duration}
                   />
                 )}
@@ -130,11 +134,13 @@ const Downloads = () => {
               }
               renderItem={({ item }) => (
                 <Card
+                  connector={db}
                   name={item.name}
                   duration={formatTime(item.duration)}
                   image={item.image}
                   link={item.uri} // Using the uri for downloaded file
                   router={router}
+                  isDeletable
                   isDownload
                 />
               )}

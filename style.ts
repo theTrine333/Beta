@@ -86,11 +86,12 @@ const Styles = StyleSheet.create({
   },
   playerControlsContainer: {
     alignSelf: "center",
+    paddingHorizontal: 20,
     width: width * 0.9,
     padding: 10,
     justifyContent: "center",
     flexDirection: "row",
-    gap: 20,
+    gap: 10,
     // borderWidth: 1,
     borderColor: "white",
     marginTop: 30,

@@ -1,12 +1,13 @@
 import AnimatedText from "@/components/AnimatedTitle";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import Styles, { blurhash } from "@/style";
+import Styles, { blurhash, height, width } from "@/style";
 import {
   AntDesign,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 
 import Slider from "@react-native-community/slider";
@@ -149,7 +150,10 @@ const Player = () => {
 
   return (
     <ThemedView
-      style={[Styles.container, { justifyContent: "center", paddingTop: 0 }]}
+      style={[
+        Styles.container,
+        { justifyContent: "flex-end", paddingTop: 0, paddingBottom: 20 },
+      ]}
     >
       {/* Showing modals */}
       {modalVisible && modalVisible == "download" ? (
@@ -169,7 +173,31 @@ const Player = () => {
         style={StyleSheet.absoluteFill}
         blurRadius={100}
       />
-
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 20,
+          position: "absolute",
+          top: 60,
+          width: width,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            router.back();
+          }}
+        >
+          <Ionicons name="arrow-back-outline" size={25} color={"white"} />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <MaterialCommunityIcons
+            name="dots-vertical"
+            size={25}
+            color={"white"}
+          />
+        </TouchableOpacity>
+      </View>
       <Image
         style={Styles.playerImage}
         source={songImageLink}
@@ -177,8 +205,47 @@ const Player = () => {
         contentFit="cover"
         transition={1000}
       />
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginHorizontal: 10,
+          paddingLeft: 10,
+          paddingRight: 20,
+          marginTop: 20,
 
-      <AnimatedText text={songName} />
+          height: height * 0.06,
+        }}
+      >
+        <TouchableOpacity
+          style={[
+            Styles.playerBtn,
+            { alignItems: "center", justifyContent: "center" },
+          ]}
+          onPress={handleFavourite}
+        >
+          <Ionicons
+            name={Favourite ? "heart" : "heart-outline"}
+            size={25}
+            color={"#e17645"}
+          />
+        </TouchableOpacity>
+        <AnimatedText text={songName} />
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => setLoop(!isLoop)}
+        >
+          {isLoop ? (
+            <FontAwesome6
+              name={"repeat"}
+              size={23}
+              color={Colors.Slider.primary}
+            />
+          ) : (
+            <Ionicons name={"repeat"} size={25} color={"#e17645"} />
+          )}
+        </TouchableOpacity>
+      </View>
 
       <View style={Styles.durationHolder}>
         <ThemedText style={{ color: "white" }}>
@@ -201,6 +268,25 @@ const Player = () => {
       </View>
 
       <View style={Styles.playerControlsContainer}>
+        {/* {quality && duration && !params.isDownload ? ( */}
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            setModalVisible("download");
+          }}
+          // disabled={quality && duration}
+        >
+          {modalVisible == "download" ? (
+            <Ionicons name="cloud-download" size={25} color={"#e17645"} />
+          ) : (
+            <Ionicons
+              name="cloud-download-outline"
+              size={25}
+              color={Colors.Slider.primary}
+            />
+          )}
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={Styles.playerBtn}
           onPress={() => {
@@ -213,7 +299,6 @@ const Player = () => {
             color={Colors.Slider.primary}
           />
         </TouchableOpacity>
-
         <TouchableOpacity style={Styles.playerBtn} onPress={handlePlayPause}>
           {isBuffering ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
@@ -240,71 +325,64 @@ const Player = () => {
             color={Colors.Slider.primary}
           />
         </TouchableOpacity>
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          onPress={() => {
+            setModalVisible("list");
+          }}
+        >
+          <MaterialCommunityIcons
+            name="playlist-music-outline"
+            size={30}
+            color={Colors.Slider.primary}
+          />
+        </TouchableOpacity>
       </View>
 
-      {songName ? (
-        <View style={[Styles.playerControlsContainer, { gap: 20 }]}>
-          <TouchableOpacity style={Styles.playerBtn} onPress={handleFavourite}>
-            <Ionicons
-              name={Favourite ? "heart" : "heart-outline"}
-              size={25}
-              color={"#e17645"}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={Styles.playerBtn}
-            onPress={() => setLoop(!isLoop)}
-          >
-            {isLoop ? (
-              <FontAwesome6
-                name={"repeat"}
-                size={23}
-                color={Colors.Slider.primary}
-              />
-            ) : (
-              <Ionicons name={"repeat"} size={25} color={"#e17645"} />
-            )}
-          </TouchableOpacity>
-
-          {quality && !params.isDownload ? (
-            <TouchableOpacity
-              style={Styles.playerBtn}
-              onPress={() => {
-                setModalVisible("download");
-              }}
-            >
-              {modalVisible == "download" ? (
-                <Ionicons name="cloud-download" size={25} color={"#e17645"} />
-              ) : (
-                <Ionicons
-                  name="cloud-download-outline"
-                  size={25}
-                  color={Colors.Slider.primary}
-                />
-              )}
-            </TouchableOpacity>
-          ) : (
-            <></>
-          )}
-
-          <TouchableOpacity
-            style={Styles.playerBtn}
-            onPress={() => {
-              setModalVisible("list");
+      <View
+        style={[
+          Styles.playerControlsContainer,
+          { marginTop: 5, justifyContent: "space-between" },
+        ]}
+      >
+        <TouchableOpacity style={Styles.playerBtn}>
+          <MaterialIcons
+            name="replay-10"
+            size={25}
+            color={Colors.Slider.primary}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            Styles.playerBtn,
+            {
+              borderWidth: 2,
+              alignSelf: "center",
+              borderRadius: 8,
+              borderColor: Colors.Slider.primary,
+              height: height * 0.04,
+              paddingVertical: 0,
+            },
+          ]}
+        >
+          <ThemedText
+            style={{
+              fontSize: 11,
+              color: Colors.Slider.primary,
+              fontWeight: "bold",
             }}
           >
-            <MaterialCommunityIcons
-              name="playlist-music-outline"
-              size={30}
-              color={Colors.Slider.primary}
-            />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <></>
-      )}
-
+            1.0X
+          </ThemedText>
+        </TouchableOpacity>
+        <TouchableOpacity style={Styles.playerBtn}>
+          <MaterialIcons
+            name="forward-10"
+            size={25}
+            color={Colors.Slider.primary}
+          />
+        </TouchableOpacity>
+      </View>
       <StatusBar hidden={false} />
     </ThemedView>
   );

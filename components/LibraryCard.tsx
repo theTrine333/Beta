@@ -4,10 +4,12 @@ import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import Styles, { blurhash, width } from "@/style";
 import { Image } from "expo-image";
-import { TouchableOpacity, useColorScheme, View } from "react-native";
+import { Alert, TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import { Colors } from "@/constants/Colors";
+import { deleteDownload } from "@/api/database";
+import { useDownload } from "@/hooks/downloadContext";
 
 const Card = ({
   name,
@@ -16,9 +18,28 @@ const Card = ({
   duration,
   router,
   isDownload,
+  isDeletable,
+  connector,
+  list,
+  setList,
 }: rowMusicCardItem) => {
   const { songName } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
+  const { loader } = useDownload();
+
+  const deleteFunc = async () => {
+    Alert.alert("Delete", "Do you wish to delete this item", [
+      { text: "No, It's a mistake", isPreferred: true, style: "cancel" },
+      {
+        text: "Confirm",
+        style: "destructive",
+        onPress: async () => {
+          await deleteDownload(connector, name, loader);
+        },
+      },
+    ]);
+  };
+
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
@@ -45,6 +66,11 @@ const Card = ({
             Link: link,
           },
         });
+      }}
+      onLongPress={() => {
+        if (isDeletable) {
+          deleteFunc();
+        }
       }}
     >
       <Image

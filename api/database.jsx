@@ -1,5 +1,5 @@
 import { get_sub_genre, getGenres } from "./q";
-
+import * as FileSystem from "expo-file-system";
 export const insertSubGenre = async (db, name, link, image, parent) => {
   try {
     await db.runAsync(
@@ -164,6 +164,16 @@ export const getDownloads = async (db) => {
     return results;
   } catch (error) {
     return [];
+  }
+};
+
+export const deleteDownload = async (db, name, loader) => {
+  try {
+    await db.runAsync(`DELETE FROM DOwnloads where Name="${name}"`);
+    await FileSystem.deleteAsync(FileSystem.documentDirectory + name + ".mp3");
+    loader();
+  } catch (error) {
+    console.log("Deleting error : ", error);
   }
 };
 

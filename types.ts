@@ -11,6 +11,10 @@ export interface rowMusicCardProps {
 }
 
 export interface rowMusicCardItem {
+  list?: [];
+  setList?: any;
+  connector?: any;
+  isDeletable?: boolean;
   name: string;
   image: string;
   link: string;
@@ -58,6 +62,7 @@ export interface SearchCardProps {
 }
 
 export interface downloadsModalProps {
+  isQueue?: boolean;
   setVisible?: any;
   router?: any;
   reloader?: any;

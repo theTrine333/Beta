@@ -27,6 +27,7 @@ const AnimatedText = ({ text }) => {
           styles.text,
           {
             color: "white",
+
             transform: [{ translateX: translateX }],
           },
         ]}
@@ -41,8 +42,8 @@ const AnimatedText = ({ text }) => {
 export default AnimatedText;
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
-    minWidth: width * 0.9,
+    // marginTop: 10,
+    minWidth: width * 0.65,
     alignSelf: "center",
     borderColor: "white",
     height: height * 0.03,
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
     overflow: "hidden", // Ensure the text doesn't overflow the container
   },
   text: {
+    flexGrow: 1,
     fontSize: 14,
     position: "absolute", // Position the text absolutely
     right: 0, // Align to the left edge of the container

@@ -52,7 +52,7 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
               paddingBottom: 10,
             }}
           >
-            Playing Queue : {playList.length} Songs
+            Playing : {playList.length} Songs
           </ThemedText>
           <ThemedView style={Styles.plaListContainer}>
             <FlatList
@@ -169,7 +169,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
     };
 
     fetchDownloadLinks();
-  }, []);
+  }, [songLink]);
 
   const handleDownload = () => {
     if (!downloadUrl) return;
@@ -232,13 +232,14 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
               fontWeight: "bold",
               marginTop: 10,
               paddingLeft: 10,
+              alignSelf: "flex-start",
             }}
           >
             Quality:
           </ThemedText>
 
           <Toggle
-            Text={`Low  : ${quality[0].size}`}
+            Text={`Low  : ${quality[0]?.size}`}
             isSelectable
             Parent={downloadQuality}
             setParent={setDownloadQuality}
@@ -286,6 +287,7 @@ export const DownloadCard = ({
   duration,
   position,
   image,
+  isQueue,
 }: downloadsModalProps) => {
   return (
     <ThemedView
@@ -320,6 +322,14 @@ export const DownloadCard = ({
           <Progress.Bar
             height={10}
             progress={position / 100}
+            color={Colors.Slider.primary}
+            width={width * 0.65}
+            borderColor={Colors.Slider.primary}
+          />
+        ) : isQueue ? (
+          <Progress.Bar
+            height={10}
+            indeterminate
             color={Colors.Slider.primary}
             width={width * 0.65}
             borderColor={Colors.Slider.primary}
