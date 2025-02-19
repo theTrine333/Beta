@@ -41,7 +41,6 @@ const Playlist = () => {
       setState("empty");
       return;
     }
-
     setData(results);
     setState("idle");
   };
@@ -54,15 +53,14 @@ const Playlist = () => {
     <ThemedView style={{ flex: 1 }}>
       <Image
         style={Styles.genreImage}
-        source={require("@/assets/images/icon.png")}
+        source={
+          data ? { uri: data[0].image } : require("@/assets/images/icon.png")
+        }
         placeholder={{ blurhash }}
         contentFit="cover"
         transition={1000}
       />
-      <PagerHeader
-        title={params.Title}
-        description={params.Counter + " Songs"}
-      />
+      <PagerHeader title={params.Title} description={"Songs"} />
       <LinearGradient
         colors={["transparent", Colors[theme ?? "light"].background]} // Adjust colors for fade effect
         style={Styles.genreGradient}
@@ -102,17 +100,17 @@ const Playlist = () => {
         >
           <FlatList
             data={data}
-            contentContainerStyle={{ paddingBottom: 120 }}
+            showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl onRefresh={loader} refreshing={refresh} />
             }
             renderItem={({ item }) => (
               <Card
                 name={item.name}
-                duration={item.duration}
                 image={item.image}
-                link={item.link}
+                link={item.link} // Using the uri for downloaded file
                 router={router}
+                isDownload
               />
             )}
           />

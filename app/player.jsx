@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
+  Text,
   TouchableOpacity,
   useColorScheme,
   View,
@@ -35,7 +36,9 @@ import {
 } from "@/api/database";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import {
+  AddToPlalistModal,
   DownloadModal,
+  MoreOptionsModal,
   PlayerErrorModal,
   PlayerLoadingModal,
   PlaylistModal,
@@ -64,6 +67,8 @@ const Player = () => {
     setQuality,
     previousSong,
     nextSong,
+    setPrimaryLink,
+    primaryLink,
     setSongImageLink,
     playSpecificTrack,
   } = useAudioPlayer();
@@ -88,6 +93,11 @@ const Player = () => {
   const [qlt, setQlt] = useState();
 
   useEffect(() => {
+    if (params.isDownload) {
+      setPrimaryLink(params.Link);
+    } else {
+      setPrimaryLink(false);
+    }
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -164,6 +174,10 @@ const Player = () => {
         <PlayerLoadingModal setVisible={setModalVisible} router={router} />
       ) : modalVisible && modalVisible == "list" ? (
         <PlaylistModal setVisible={setModalVisible} />
+      ) : modalVisible && modalVisible == "more-options" ? (
+        <MoreOptionsModal setVisible={setModalVisible} />
+      ) : modalVisible && modalVisible == "add-to-playlist" ? (
+        <AddToPlalistModal setVisible={setModalVisible} />
       ) : (
         <></>
       )}
@@ -173,6 +187,7 @@ const Player = () => {
         style={StyleSheet.absoluteFill}
         blurRadius={100}
       />
+      {/* Top buttons */}
       <View
         style={{
           flexDirection: "row",
@@ -190,13 +205,21 @@ const Player = () => {
         >
           <Ionicons name="arrow-back-outline" size={25} color={"white"} />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <MaterialCommunityIcons
-            name="dots-vertical"
-            size={25}
-            color={"white"}
-          />
-        </TouchableOpacity>
+        {primaryLink && songName ? (
+          <TouchableOpacity
+            onPress={() => {
+              setModalVisible("more-options");
+            }}
+          >
+            <MaterialCommunityIcons
+              name="dots-vertical"
+              size={25}
+              color={"white"}
+            />
+          </TouchableOpacity>
+        ) : (
+          <></>
+        )}
       </View>
       <Image
         style={Styles.playerImage}
@@ -213,7 +236,6 @@ const Player = () => {
           paddingLeft: 10,
           paddingRight: 20,
           marginTop: 20,
-
           height: height * 0.06,
         }}
       >
@@ -231,6 +253,12 @@ const Player = () => {
           />
         </TouchableOpacity>
         <AnimatedText text={songName} />
+        {/* <View style={{ width: width * 0.65 }}>
+          <Text style={{ flexWrap: 1, color: "white" }} numberOfLines={1}>
+            {songName}
+          </Text>
+        </View> */}
+
         <TouchableOpacity
           style={Styles.playerBtn}
           onPress={() => setLoop(!isLoop)}
@@ -309,7 +337,7 @@ const Player = () => {
           )}
           <AntDesign
             name={isPlaying ? "pausecircleo" : "playcircleo"}
-            size={70}
+            size={50}
             color={Colors.Slider.primary}
           />
         </TouchableOpacity>

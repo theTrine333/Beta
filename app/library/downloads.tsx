@@ -79,8 +79,8 @@ const Downloads = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-              height: height * 0.63,
-              paddingBottom: 40,
+              maxHeight: height * 0.55,
+              paddingBottom: 0,
               paddingHorizontal: 0,
             },
           ]}
@@ -88,12 +88,14 @@ const Downloads = () => {
           {/* Active Download Section */}
           {currentDownload && (
             <DownloadCard
+              loaderFunc={loader}
               title={currentDownload.name}
               position={progress}
               image={currentDownload.image}
               duration={currentDownload.duration}
             />
           )}
+
           {/* Queue Section */}
           {downloadQueue.length > 1 && (
             <>
@@ -112,7 +114,6 @@ const Downloads = () => {
                 data={downloadQueue.filter(
                   (item: any) => item.name !== currentDownload?.name
                 )}
-                contentContainerStyle={{ paddingBottom: 120 }}
                 renderItem={({ item }) => (
                   <DownloadCard
                     title={item.name}
@@ -124,11 +125,13 @@ const Downloads = () => {
               />
             </>
           )}
+
           {/* Downloaded Files Section */}
+
           <ThemedView>
             <FlatList
               data={downloadedFiles}
-              contentContainerStyle={{ paddingBottom: 40 }}
+              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }

@@ -22,8 +22,141 @@ import Toggle from "./FormatToggle";
 import { ErrorCard } from "./ResultsCard";
 import { useDownload } from "../hooks/downloadContext"; // Import your context
 import * as Progress from "react-native-progress";
-import { insertPlaylist } from "@/api/database";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { getPlaylists, insertPlaylist } from "@/api/database";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSQLiteContext } from "expo-sqlite";
+import ListCard from "./PlayListCard";
+
+export const AddToPlalistModal = ({ setVisible }: downloadsModalProps) => {
+  const [data, setData] = useState();
+  const { songImageLink, songName, songLink, primaryLink } = useAudioPlayer();
+  const db = useSQLiteContext();
+
+  const loader = async () => {
+    const result = await getPlaylists(db);
+    setData(result);
+
+    // setRefresh(false);
+  };
+  useEffect(() => {
+    loader();
+  }, []);
+  return (
+    <Modal
+      transparent
+      onRequestClose={() => setVisible(false)}
+      animationType="slide"
+    >
+      <ThemedView
+        style={{
+          flex: 1,
+          backgroundColor: "transparent",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ThemedView style={Styles.bottomModal}>
+          <ThemedText style={{ fontFamily: "ExoRegular", paddingBottom: 10 }}>
+            Add to playlist
+          </ThemedText>
+          {/* Divider */}
+          <View
+            style={{
+              width: width * 0.9,
+              marginHorizontal: 20,
+              borderWidth: 1,
+              borderColor: "grey",
+            }}
+          />
+
+          <FlatList
+            data={data}
+            contentContainerStyle={{
+              width: width * 0.85,
+              alignSelf: "flex-start",
+            }}
+            renderItem={({ item }) => (
+              <ListCard
+                counter={item.TotalItems}
+                setFav
+                title={item.Name}
+                setVisible={setVisible}
+                childImage={songImageLink}
+                childLink={primaryLink}
+                childName={songName}
+                connector={db}
+              />
+            )}
+          />
+        </ThemedView>
+      </ThemedView>
+    </Modal>
+  );
+};
+
+export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
+  const { duration, songName, songLink, songImageLink, quality, playList } =
+    useAudioPlayer();
+  const theme = useColorScheme();
+  return (
+    <Modal
+      transparent
+      onRequestClose={() => setVisible(false)}
+      animationType="slide"
+    >
+      <ThemedView
+        style={{
+          flex: 1,
+          backgroundColor: "transparent",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ThemedView style={Styles.bottomModal}>
+          <View
+            style={{
+              borderColor: Colors[theme ?? "light"].text,
+              borderBottomWidth: 1,
+              width: width * 0.95,
+            }}
+          >
+            <ThemedText style={{ textAlign: "left", fontSize: 14 }}>
+              {songName}
+            </ThemedText>
+          </View>
+          <TouchableOpacity
+            style={Styles.moreOptionsItem}
+            onPress={() => {
+              setVisible("add-to-playlist");
+            }}
+          >
+            <AntDesign
+              name="plussquare"
+              color={Colors[theme ?? "light"].text}
+              size={25}
+            />
+            <ThemedText style={{ fontFamily: "ExoRegular" }}>
+              Add to playlist
+            </ThemedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={Styles.moreOptionsItem}>
+            <MaterialCommunityIcons
+              name="send"
+              color={Colors[theme ?? "light"].text}
+              size={25}
+            />
+            <ThemedText style={{ fontFamily: "ExoRegular" }}>Share</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity style={Styles.moreOptionsItem}>
+            <MaterialCommunityIcons name="delete" color={"red"} size={27} />
+            <ThemedText style={{ fontFamily: "ExoRegular", color: "red" }}>
+              Delete
+            </ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </ThemedView>
+    </Modal>
+  );
+};
 
 export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality, playList } =
@@ -67,7 +200,7 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
   );
 };
 
-export const PlayListItem = ({ item }) => {
+export const PlayListItem = ({ item }: any) => {
   const theme = useColorScheme() ?? "light";
   const { playSpecificTrack, songName, removeTrackFromList } = useAudioPlayer();
   return (
@@ -262,13 +395,19 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
                 justifyContent: "center",
                 marginTop: 10,
                 opacity:
-                  !downloadQuality || currentDownload?.name === songName
+                  !downloadQuality ||
+                  currentDownload?.name === songName ||
+                  formatTime(duration).includes("0:00")
                     ? 0.5
                     : 1,
               },
             ]}
             onPress={handleDownload}
-            disabled={!downloadQuality || currentDownload?.name === songName}
+            disabled={
+              !downloadQuality ||
+              currentDownload?.name === songName ||
+              formatTime(duration).includes("0:00")
+            }
           >
             <ThemedText style={{ fontWeight: "bold", fontSize: 18 }}>
               {isDownloading && currentDownload?.name === songName
@@ -287,8 +426,14 @@ export const DownloadCard = ({
   duration,
   position,
   image,
+  loaderFunc,
   isQueue,
 }: downloadsModalProps) => {
+  useEffect(() => {
+    if (position == 100) {
+      loaderFunc();
+    }
+  }, [position]);
   return (
     <ThemedView
       style={[

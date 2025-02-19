@@ -1,5 +1,5 @@
 export interface pagerHeaderProps {
-  title: string;
+  title?: any;
   description?: string;
 }
 
@@ -24,6 +24,12 @@ export interface rowMusicCardItem {
 }
 
 export interface playlistCardItem {
+  connector?: any;
+  setVisible?: any;
+  childName?: string;
+  childImage?: string;
+  childLink?: string;
+  setFav?: boolean;
   title: string;
   counter: number;
   router?: any;
@@ -64,6 +70,7 @@ export interface SearchCardProps {
 export interface downloadsModalProps {
   isQueue?: boolean;
   setVisible?: any;
+  loaderFunc?: any;
   router?: any;
   reloader?: any;
   connector?: any;

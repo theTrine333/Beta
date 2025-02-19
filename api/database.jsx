@@ -210,6 +210,7 @@ export const insertPlaylist = async (db, name) => {
     await db.runAsync("INSERT INTO Playlists(Name) VALUES(?)", [name]);
   } catch (error) {}
 };
+
 export const getPlaylists = async (db) => {
   try {
     const results = await db.getAllAsync(
@@ -229,4 +230,30 @@ export const getPlaylists = async (db) => {
   }
 };
 
-export const getPlaylistItems = async (db, name) => {};
+export const getPlaylistItems = async (db, name) => {
+  try {
+    const results = await db.getAllAsync(
+      `SELECT Name as name,Image as image, Link as link from PlayListItems where Parent="${name}"`
+    );
+    return results;
+  } catch (error) {
+    console.log("Error getting playlist items");
+  }
+};
+
+export const insertPlaylistItem = async (db, name, image, link, parent) => {
+  try {
+    await db.runAsync(
+      "INSERT INTO PlayListItems(Name,Image,Link,Parent) VALUES (?,?,?,?)",
+      [`${name}`, `${image}`, `${link}`, `${parent}`]
+    );
+  } catch (error) {
+    console.log("Error insterting item :" + name + " \n" + error);
+  }
+};
+
+export const deltePlalistItem = async (name, link) => {
+  try {
+    await db.runAsync();
+  } catch (error) {}
+};

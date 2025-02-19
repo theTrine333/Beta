@@ -109,7 +109,6 @@ export default function RootLayout() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen name="genre" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
                 <Stack.Screen name="search" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="Playlist"

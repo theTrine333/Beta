@@ -2,29 +2,57 @@ import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
 import React from "react";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
-import Styles from "@/style";
+import Styles, { height, width } from "@/style";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { playlistCardItem } from "@/types";
+import { insertPlaylistItem } from "@/api/database";
 
-const ListCard = ({ title, counter, router }: playlistCardItem) => {
+const ListCard = ({
+  title,
+  counter,
+  router,
+  setFav,
+  connector,
+  childImage,
+  childLink,
+  childName,
+  setVisible,
+}: playlistCardItem) => {
   const theme = useColorScheme() ?? "light";
+
   return (
     <TouchableOpacity
       style={[
         Styles.libraryCard,
         {
           paddingHorizontal: 10,
+          height: height * 0.06,
+          marginTop: 5,
+          borderWidth: 1,
           justifyContent: "space-between",
           alignItems: "center",
           gap: 10,
         },
       ]}
-      onPress={() => {
-        router.push({
-          pathname: "Playlist",
-          params: { Title: title, Counter: counter },
-        });
+      onPress={async () => {
+        if (router) {
+          router.push({
+            pathname: "Playlist",
+            params: { Title: title, Counter: counter },
+          });
+        }
+        if (setFav) {
+          await insertPlaylistItem(
+            connector,
+            childName,
+            childImage,
+            childLink,
+            title
+          );
+        }
+
+        setVisible(false);
       }}
       onLongPress={() => {}}
     >
@@ -36,7 +64,11 @@ const ListCard = ({ title, counter, router }: playlistCardItem) => {
         />
         <View>
           <ThemedText>{title}</ThemedText>
-          <ThemedText style={{ fontSize: 11 }}>{counter} Songs</ThemedText>
+          {counter ? (
+            <ThemedText style={{ fontSize: 11 }}>{counter} Songs</ThemedText>
+          ) : (
+            <></>
+          )}
         </View>
       </View>
 
