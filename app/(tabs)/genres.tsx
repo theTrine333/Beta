@@ -64,7 +64,7 @@ const Genres = () => {
       />
 
       <ThemedView style={Styles.verticalListContainer}>
-        <SearchCard inType="genres" shouldNavigate />
+        <SearchCard inType="genres" shouldNavigate Parent="genres" />
         {state === "loading" ? (
           <ActivityIndicator />
         ) : (

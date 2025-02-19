@@ -85,8 +85,8 @@ const Player = () => {
   };
 
   const [qlt, setQlt] = useState();
+
   useEffect(() => {
-    // setSongImageLink(params.image);
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -97,6 +97,10 @@ const Player = () => {
     };
 
     isFav();
+  }, [songName]);
+
+  useEffect(() => {
+    // setSongImageLink(params.image);
 
     const loader = async () => {
       try {

@@ -14,6 +14,7 @@ const SearchCard = ({
   action,
   setter,
   word,
+  Parent,
 }: SearchCardProps) => {
   const theme = useColorScheme() ?? "light";
   const router = useRouter();
@@ -26,6 +27,7 @@ const SearchCard = ({
         params: {
           word: Word,
           inType: inType,
+          Parent: Parent,
         },
       });
     }

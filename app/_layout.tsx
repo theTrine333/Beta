@@ -97,10 +97,10 @@ export default function RootLayout() {
   }
 
   return (
-    <AudioPlayerProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Suspense fallback={<LoadingScreen text="Setting up..." />}>
-          <SQLiteProvider databaseName="play.db" useSuspense>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Suspense fallback={<LoadingScreen text="Setting up..." />}>
+        <SQLiteProvider databaseName="play.db" useSuspense>
+          <AudioPlayerProvider>
             <DownloadProvider>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -118,10 +118,10 @@ export default function RootLayout() {
                 <Stack.Screen name="player" options={{ headerShown: false }} />
               </Stack>
             </DownloadProvider>
-          </SQLiteProvider>
-        </Suspense>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AudioPlayerProvider>
+          </AudioPlayerProvider>
+        </SQLiteProvider>
+      </Suspense>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }

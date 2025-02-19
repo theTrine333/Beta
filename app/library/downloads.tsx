@@ -32,6 +32,7 @@ const Downloads = () => {
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
     "idle"
   );
+
   const [refresh, setRefresh] = useState(false);
 
   const loader = async () => {
@@ -47,7 +48,7 @@ const Downloads = () => {
 
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
-      <SearchCard inType="downloads" shouldNavigate />
+      <SearchCard inType="songs" shouldNavigate Parent="downloads" />
       {state == "loading" ? (
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -90,28 +91,6 @@ const Downloads = () => {
               duration={currentDownload.duration}
             />
           )}
-
-          {/* Downloaded Files Section */}
-          <ThemedView>
-            <FlatList
-              data={downloadedFiles}
-              contentContainerStyle={{}}
-              refreshControl={
-                <RefreshControl onRefresh={loader} refreshing={refresh} />
-              }
-              renderItem={({ item }) => (
-                <Card
-                  name={item.name}
-                  duration={formatTime(item.duration)}
-                  image={item.image}
-                  link={item.uri} // Using the uri for downloaded file
-                  router={router}
-                  isDownload
-                />
-              )}
-            />
-          </ThemedView>
-
           {/* Queue Section */}
           {downloadQueue.length > 1 && (
             <>
@@ -141,6 +120,26 @@ const Downloads = () => {
               />
             </>
           )}
+          {/* Downloaded Files Section */}
+          <ThemedView>
+            <FlatList
+              data={downloadedFiles}
+              contentContainerStyle={{ paddingBottom: 40 }}
+              refreshControl={
+                <RefreshControl onRefresh={loader} refreshing={refresh} />
+              }
+              renderItem={({ item }) => (
+                <Card
+                  name={item.name}
+                  duration={formatTime(item.duration)}
+                  image={item.image}
+                  link={item.uri} // Using the uri for downloaded file
+                  router={router}
+                  isDownload
+                />
+              )}
+            />
+          </ThemedView>
         </ThemedView>
       )}
     </ThemedView>

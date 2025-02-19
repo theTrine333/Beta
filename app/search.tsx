@@ -3,8 +3,9 @@ import {
   getFavouritesSearch,
   getGenreSearch,
 } from "@/api/database";
-import { getSongSearch } from "@/api/q";
+import { formatTime, getSongSearch } from "@/api/q";
 import GenreMusicCardItem from "@/components/GenreMusicCardItem";
+import Card from "@/components/LibraryCard";
 import MiniPlayer from "@/components/MiniPlayer";
 import {
   ErrorCard,
@@ -24,6 +25,7 @@ import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 const Search = () => {
   const params = useLocalSearchParams();
   const type = params.inType;
+  const Parent = params.Parent;
   const db = useSQLiteContext();
   const router = useRouter();
   const [data, setData] = useState<any>();
@@ -32,21 +34,25 @@ const Search = () => {
     "idle"
   );
   const [refresh, setRefresh] = useState(false);
-  let { playList } = useAudioPlayer();
+  const { playList, setPlaylist } = useAudioPlayer();
+
   const loader = async () => {
     let results;
     try {
       setState("loading");
-      if (type == "songs") {
+      if (Parent == "songs") {
         results = await getSongSearch(text);
-        playList = results;
-      } else if (type == "downloads") {
+        setPlaylist(results);
+      } else if (Parent == "downloads") {
         results = await getDownloadsSearch(db, text);
-      } else if (type == "favourites") {
+        setPlaylist(results);
+      } else if (Parent == "favourites") {
         results = await getFavouritesSearch(db, text);
-      } else {
+        setPlaylist(results);
+      } else if (Parent == "genres") {
         results = await getGenreSearch(db, text);
       }
+
       if (results.length == 0) {
         setState("empty");
         return;
@@ -64,7 +70,12 @@ const Search = () => {
 
   return (
     <ThemedView style={Styles.container}>
-      <SearchCard word={params.word} action={loader} setter={setText} />
+      <SearchCard
+        word={params.word}
+        action={loader}
+        setter={setText}
+        Parent="songs"
+      />
       <ThemedView
         style={{
           //   borderWidth: 1,
@@ -79,6 +90,26 @@ const Search = () => {
           <ErrorCard />
         ) : state == "empty" ? (
           <NoResultsCard />
+        ) : type == "songs" && Parent == "downloads" ? (
+          <ThemedView>
+            <FlatList
+              data={data}
+              contentContainerStyle={{ paddingBottom: 40 }}
+              refreshControl={
+                <RefreshControl onRefresh={loader} refreshing={refresh} />
+              }
+              renderItem={({ item }) => (
+                <Card
+                  name={item.name}
+                  duration={formatTime(item.duration)}
+                  image={item.image}
+                  link={item.uri} // Using the uri for downloaded file
+                  router={router}
+                  isDownload
+                />
+              )}
+            />
+          </ThemedView>
         ) : type == "songs" ? (
           <FlatList
             data={data}

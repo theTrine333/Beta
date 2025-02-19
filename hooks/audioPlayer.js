@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import { Audio } from "expo-av";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
+import { get_db_downloadLink } from "@/api/database";
+import { useSQLiteContext } from "expo-sqlite";
 
 const AudioPlayerContext = createContext();
 
@@ -27,7 +29,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [genrePlayLists, setGenrePlayLists] = useState([]);
   const [playList, setPlaylist] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const db = useSQLiteContext();
   const enableAudioMode = async () => {
     try {
       await Audio.setAudioModeAsync({
@@ -53,13 +55,15 @@ export const AudioPlayerProvider = ({ children }) => {
 
     if (newIndex < 0 || newIndex >= playList.length) return;
 
-    const { name, image, link } = playList[newIndex];
+    let { name, image, link } = playList[newIndex];
     let uri = playList[newIndex].uri;
-
     setSongName(name);
     setSongImageLink(image);
+    const localLink = await get_db_downloadLink(db, name);
 
-    if (link) {
+    if (localLink) {
+      uri = localLink.uri;
+    } else if (link) {
       try {
         const hashes = await getHashes(link);
         const formats = await getFormats(hashes?.video_hash);
@@ -68,7 +72,6 @@ export const AudioPlayerProvider = ({ children }) => {
         );
         uri = downloadLink?.link;
       } catch (error) {
-        console.error("Error fetching download link:", error);
         return;
       }
     }

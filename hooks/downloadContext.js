@@ -25,9 +25,9 @@ export const DownloadProvider = ({ children }) => {
   };
 
   const startNextDownload = async () => {
-    if (isDownloading || downloadQueue.length === 0) return; // Prevent multiple downloads
-    const nextFile = downloadQueue[0]; // Get the first item in queue
-    setCurrentDownload(nextFile); // Set current file to download
+    if (isDownloading || downloadQueue.length === 0) return;
+    const nextFile = downloadQueue[0];
+    setCurrentDownload(nextFile);
     setIsDownloading(true);
 
     const callback = (downloadProgress) => {
@@ -48,7 +48,7 @@ export const DownloadProvider = ({ children }) => {
     try {
       const { uri } = await downloadResumable.downloadAsync();
 
-      insertDownload(
+      await insertDownload(
         db,
         `${nextFile.name}`,
         `${nextFile.image}`,
@@ -61,24 +61,30 @@ export const DownloadProvider = ({ children }) => {
       setProgress(0);
       setCurrentDownload(null);
       setIsDownloading(false);
-      loader();
     } catch (error) {
       console.error("Download error:", error);
+      FileSystem.deleteAsync(
+        FileSystem.documentDirectory + nextFile.name + ".mp3"
+      );
       setIsDownloading(false);
     }
   };
+
   const loader = async () => {
     const data = await getDownloads(db);
     setDownloadedFiles(data);
   };
+
   useEffect(() => {
     loader();
   }, []);
+
   useEffect(() => {
     if (!isDownloading && downloadQueue.length > 0) {
       startNextDownload();
     }
   }, [isDownloading, downloadQueue.length]);
+
   return (
     <DownloadContext.Provider
       value={{

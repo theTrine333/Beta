@@ -40,7 +40,7 @@ const Favourites = () => {
   }, [songName]);
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
-      <SearchCard inType="favourites" shouldNavigate />
+      <SearchCard inType="songs" shouldNavigate Parent="favourites" />
       {state == "loading" ? (
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -84,7 +84,7 @@ const Favourites = () => {
             renderItem={({ item }) => (
               <Card
                 name={item.name}
-                duration={item.duration}
+                // duration={item.duration}
                 image={item.image}
                 link={item.link}
                 router={router}

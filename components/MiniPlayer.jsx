@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Keyboard,
   StyleSheet,
   TouchableOpacity,
@@ -144,6 +145,10 @@ const MiniPlayer = (props) => {
                   size={25}
                   color={Colors.Slider.primary}
                 />
+              ) : isBuffering ? (
+                <View style={{ justifyContent: "center" }}>
+                  <ActivityIndicator color={Colors.Slider.primary} size={25} />
+                </View>
               ) : (
                 <AntDesign
                   name="playcircleo"

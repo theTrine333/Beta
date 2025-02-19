@@ -75,9 +75,10 @@ export const getGenreSearch = async (db, text) => {
 export const getDownloadsSearch = async (db, text) => {
   try {
     let results = await db.getAllAsync(
-      "SELECT DISTINCT name AS Name, link AS Link, image AS Poster FROM Downloads WHERE name LIKE ?",
+      "SELECT Name as name,Image as image,Duration as duration, location as link FROM Downloads WHERE name LIKE ?",
       [`%${text}%`] // Use '%' wildcards within the parameter array
     );
+
     return results;
   } catch (error) {
     return null;
@@ -121,6 +122,17 @@ export const insertDownload = async (
     );
   } catch (error) {
     console.error("Error inserting download:", error);
+  }
+};
+
+export const get_db_downloadLink = async (db, name) => {
+  try {
+    const result = await db.getFirstAsync(
+      `SELECT Location as uri from Downloads where Name="${name}"`
+    );
+    return result;
+  } catch (error) {
+    console.log("Error fetching download link");
   }
 };
 

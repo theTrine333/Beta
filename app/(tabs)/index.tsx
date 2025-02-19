@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, RefreshControl } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import Styles from "@/style";
 import PagerHeader from "@/components/PagerHeader";
@@ -13,14 +13,15 @@ export default function HomeScreen() {
   const router = useRouter();
   const [data, setData] = useState<any>([]);
   const [state, setState] = useState<"idle" | "loading">();
-  let { playList } = useAudioPlayer();
+  const { playList, setPlaylist } = useAudioPlayer();
+  const [refresh, setRefresh] = useState(false);
   const loader = async () => {
     try {
       setState("loading");
       const results: any = await getSongSearch("Trending+Songs+In+Kenya");
       const shuffleData = shuffleArray(results);
-      playList = shuffleData;
       setData(shuffleData);
+      setPlaylist(shuffleData);
       setState("idle");
     } catch {
       setState("idle");
@@ -38,12 +39,17 @@ export default function HomeScreen() {
         description="The home of free endless music"
       />
       <ThemedView style={Styles.verticalListContainer}>
-        <SearchCard shouldNavigate={true} inType="songs" />
+        <SearchCard shouldNavigate inType="songs" Parent="songs" />
+
         <FlatList
-          showsVerticalScrollIndicator={false}
           data={data}
+          showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
           numColumns={2}
+          contentContainerStyle={{ gap: 10 }}
+          refreshControl={
+            <RefreshControl onRefresh={loader} refreshing={refresh} />
+          }
           renderItem={({ item }) => (
             <ResultCardItem
               name={item.name}
