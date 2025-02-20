@@ -46,11 +46,11 @@ const SearchCard = ({
       <TextInput
         style={[Styles.searchInput, { color: Colors[theme ?? "light"].text }]}
         placeholder={
-          inType == "songs"
+          Parent == "songs"
             ? "Search for a song"
-            : inType == "downloads"
+            : Parent == "downloads"
             ? "Search in downloads"
-            : inType == "favourites"
+            : Parent == "favourites"
             ? "Search in favourites"
             : "Search in genres"
         }

@@ -259,10 +259,22 @@ const Player = () => {
           <Ionicons
             name={Favourite ? "heart" : "heart-outline"}
             size={25}
-            color={"#e17645"}
+            color={"white"}
           />
         </TouchableOpacity>
-        <AnimatedText text={songName} />
+        <ThemedText
+          style={{
+            fontSize: 14,
+            borderColor: "white",
+            // borderWidth: 1,
+            textAlign: "center",
+            width: width * 0.63,
+          }}
+          numberOfLines={1}
+        >
+          {songName}
+        </ThemedText>
+        {/* <AnimatedText text={songName} /> */}
         {/* <View style={{ width: width * 0.65 }}>
           <Text style={{ flexWrap: 1, color: "white" }} numberOfLines={1}>
             {songName}
@@ -275,13 +287,9 @@ const Player = () => {
           hitSlop={20}
         >
           {isLoop ? (
-            <FontAwesome6
-              name={"repeat"}
-              size={23}
-              color={Colors.Slider.primary}
-            />
+            <FontAwesome6 name={"repeat"} size={23} color={"white"} />
           ) : (
-            <Ionicons name={"repeat"} size={25} color={"#e17645"} />
+            <Ionicons name={"repeat"} size={25} color={"white"} />
           )}
         </TouchableOpacity>
       </View>
@@ -308,22 +316,22 @@ const Player = () => {
 
       <View style={Styles.playerControlsContainer}>
         {/* {quality && duration && !params.isDownload ? ( */}
+
         <TouchableOpacity
           hitSlop={20}
-          style={Styles.playerBtn}
+          style={[
+            Styles.playerBtn,
+            { opacity: songLink?.includes("file://") ? 0.5 : 1 },
+          ]}
           onPress={() => {
             setModalVisible("download");
           }}
-          // disabled={quality && duration}
+          disabled={songLink?.includes("file://")}
         >
           {modalVisible == "download" ? (
             <Ionicons name="cloud-download" size={25} color={"#e17645"} />
           ) : (
-            <Ionicons
-              name="cloud-download-outline"
-              size={25}
-              color={Colors.Slider.primary}
-            />
+            <Ionicons name="cloud-download-outline" size={25} color={"white"} />
           )}
         </TouchableOpacity>
 
@@ -334,11 +342,7 @@ const Player = () => {
             previousSong();
           }}
         >
-          <AntDesign
-            name="stepbackward"
-            size={25}
-            color={Colors.Slider.primary}
-          />
+          <AntDesign name="stepbackward" size={25} color={"white"} />
         </TouchableOpacity>
         <TouchableOpacity
           style={Styles.playerBtn}
@@ -347,7 +351,10 @@ const Player = () => {
         >
           {isBuffering && songLink?.includes("https://") ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
-              <ActivityIndicator color={Colors.dark.text} size={"large"} />
+              <ActivityIndicator
+                color={Colors.Slider.background}
+                size={"large"}
+              />
             </View>
           ) : (
             <></>
@@ -355,7 +362,7 @@ const Player = () => {
           <AntDesign
             name={isPlaying ? "pausecircleo" : "playcircleo"}
             size={50}
-            color={Colors.Slider.primary}
+            color={"white"}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -365,11 +372,7 @@ const Player = () => {
             nextSong();
           }}
         >
-          <AntDesign
-            name="stepforward"
-            size={25}
-            color={Colors.Slider.primary}
-          />
+          <AntDesign name="stepforward" size={25} color={"white"} />
         </TouchableOpacity>
         <TouchableOpacity
           style={Styles.playerBtn}
@@ -381,7 +384,7 @@ const Player = () => {
           <MaterialCommunityIcons
             name="playlist-music-outline"
             size={30}
-            color={Colors.Slider.primary}
+            color={"white"}
           />
         </TouchableOpacity>
       </View>
@@ -397,11 +400,7 @@ const Player = () => {
           style={Styles.playerBtn}
           onPress={back10}
         >
-          <MaterialIcons
-            name="replay-10"
-            size={25}
-            color={Colors.Slider.primary}
-          />
+          <MaterialIcons name="replay-10" size={25} color={"white"} />
         </TouchableOpacity>
         {/* Remember to move this after fixing pitch setting */}
         <TouchableOpacity
@@ -413,7 +412,7 @@ const Player = () => {
               borderWidth: 2,
               alignSelf: "center",
               borderRadius: 8,
-              borderColor: Colors.Slider.primary,
+              borderColor: "white",
               height: height * 0.04,
               paddingVertical: 0,
               opacity: 0.5,
@@ -423,7 +422,7 @@ const Player = () => {
           <ThemedText
             style={{
               fontSize: 11,
-              color: Colors.Slider.primary,
+              color: "white",
               fontWeight: "bold",
             }}
           >
@@ -435,14 +434,10 @@ const Player = () => {
           hitSlop={20}
           onPress={forward10}
         >
-          <MaterialIcons
-            name="forward-10"
-            size={25}
-            color={Colors.Slider.primary}
-          />
+          <MaterialIcons name="forward-10" size={25} color={"white"} />
         </TouchableOpacity>
       </View>
-      <StatusBar hidden={false} />
+      <StatusBar hidden={false} style="light" />
     </ThemedView>
   );
 };

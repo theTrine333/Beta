@@ -25,7 +25,7 @@ const Downloads = () => {
   const db = useSQLiteContext();
   const router = useRouter();
   const theme = useColorScheme() ?? "light";
-  const { playList, setPlaylist } = useAudioPlayer();
+  const { playList, setPlaylist, isPlaying } = useAudioPlayer();
   const [deleteList, setDeleteList] = useState();
   const { downloadQueue, currentDownload, progress, downloadedFiles } =
     useDownload();
@@ -79,7 +79,8 @@ const Downloads = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-              maxHeight: height * 0.55,
+
+              maxHeight: isPlaying ? height * 0.55 : height * 0.63,
               paddingBottom: 0,
               paddingHorizontal: 0,
             },
