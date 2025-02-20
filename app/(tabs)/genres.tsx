@@ -9,6 +9,7 @@ import { get_db_Genres, insertGenre } from "@/api/database";
 import { useRouter } from "expo-router";
 import SearchCard from "@/components/searchCard";
 import { shuffleArray } from "@/api/q";
+import { Colors } from "@/constants/Colors";
 
 const PAGE_SIZE = 2; // Load 2 items at a time
 
@@ -68,7 +69,7 @@ const Genres = () => {
       <ThemedView style={Styles.verticalListContainer}>
         <SearchCard inType="genres" shouldNavigate Parent="genres" />
         {state === "loading" ? (
-          <ActivityIndicator />
+          <ActivityIndicator color={Colors.Slider.primary} />
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}

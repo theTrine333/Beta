@@ -37,7 +37,6 @@ const Downloads = () => {
   const [refresh, setRefresh] = useState(false);
 
   const loader = async () => {
-    setState("loading");
     const results = await getDownloads(db);
     setData(results);
     setRefresh(false);
@@ -78,8 +77,10 @@ const Downloads = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-              maxHeight: isPlaying ? height * 0.55 : height * 0.63,
+              maxHeight:
+                isPlaying || currentDownload ? height * 0.55 : height * 0.63,
               paddingBottom: 0,
+              // borderWidth: 1,
               paddingHorizontal: 0,
             },
           ]}
@@ -109,25 +110,28 @@ const Downloads = () => {
               >
                 Queue:
               </ThemedText>
-              <FlatList
-                contentContainerStyle={{
-                  marginBottom: 10,
-                  paddingBottom: 10,
-                  borderColor: Colors[theme ?? "light"].text,
-                  borderBottomWidth: 1,
-                }}
-                data={downloadQueue.filter(
-                  (item: any) => item.name !== currentDownload?.name
-                )}
-                renderItem={({ item }) => (
-                  <DownloadCard
-                    title={item.name}
-                    image={item.image}
-                    isQueue
-                    duration={item.duration}
-                  />
-                )}
-              />
+              <ThemedView style={{ borderWidth: 1, maxHeight: height * 0.2 }}>
+                <FlatList
+                  contentContainerStyle={{
+                    marginBottom: 10,
+                    paddingBottom: 10,
+                    borderWidth: 1,
+                    borderColor: Colors[theme ?? "light"].text,
+                    borderBottomWidth: 1,
+                  }}
+                  data={downloadQueue.filter(
+                    (item: any) => item.name !== currentDownload?.name
+                  )}
+                  renderItem={({ item }) => (
+                    <DownloadCard
+                      title={item.name}
+                      image={item.image}
+                      isQueue
+                      duration={item.duration}
+                    />
+                  )}
+                />
+              </ThemedView>
             </>
           )}
 

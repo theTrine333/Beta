@@ -24,6 +24,7 @@ export interface rowMusicCardItem {
 }
 
 export interface playlistCardItem {
+  loaderFunc?: any;
   connector?: any;
   setVisible?: any;
   childName?: string;
@@ -39,8 +40,8 @@ export interface NoResultCardProp {
   noDesc?: boolean;
 }
 export interface genreTypes {
-  name: string;
-  link: string;
+  name?: any;
+  link?: any;
   db?: any;
   router?: any;
 }

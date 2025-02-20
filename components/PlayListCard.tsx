@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  Alert,
+} from "react-native";
 import React from "react";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
@@ -6,7 +12,7 @@ import Styles, { height, width } from "@/style";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { playlistCardItem } from "@/types";
-import { insertPlaylistItem } from "@/api/database";
+import { deletePlaylist, insertPlaylistItem } from "@/api/database";
 
 const ListCard = ({
   title,
@@ -17,10 +23,10 @@ const ListCard = ({
   childImage,
   childLink,
   childName,
+  loaderFunc,
   setVisible,
 }: playlistCardItem) => {
   const theme = useColorScheme() ?? "light";
-
   return (
     <TouchableOpacity
       style={[
@@ -54,7 +60,25 @@ const ListCard = ({
 
         setVisible(false);
       }}
-      onLongPress={() => {}}
+      onLongPress={() => {
+        if (loaderFunc) {
+          Alert.alert(
+            "Delete playlist",
+            "Do you wish to delete this playlists",
+            [
+              {
+                text: "Confirm",
+                style: "destructive",
+                onPress: async () => {
+                  await deletePlaylist(connector, title, loaderFunc);
+                },
+              },
+
+              { text: "Cancel", style: "cancel", onPress: () => {} },
+            ]
+          );
+        }
+      }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <FontAwesome5

@@ -323,7 +323,7 @@ const Player = () => {
           hitSlop={20}
           style={[
             Styles.playerBtn,
-            { opacity: songLink?.includes("file://") ? 0.5 : 1 },
+            { opacity: !songLink?.includes("file://") ? 1 : 0.5 },
           ]}
           onPress={() => {
             setModalVisible("download");

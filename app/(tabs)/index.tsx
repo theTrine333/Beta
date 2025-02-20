@@ -53,6 +53,7 @@ export default function HomeScreen() {
           renderItem={({ item }) => (
             <ResultCardItem
               name={item.name}
+              isSearch
               link={item.link}
               image={item.image}
               router={router}

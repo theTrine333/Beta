@@ -163,7 +163,7 @@ export const getDownloads = async (db) => {
 
 export const deleteDownload = async (db, name, loader) => {
   try {
-    await db.runAsync(`DELETE FROM DOwnloads where Name="${name}"`);
+    await db.runAsync("DELETE FROM DOwnloads where Name=?", [name]);
     await FileSystem.deleteAsync(FileSystem.documentDirectory + name + ".mp3");
     loader();
   } catch (error) {
@@ -248,6 +248,14 @@ export const insertPlaylistItem = async (db, name, image, link, parent) => {
 
 export const deltePlalistItem = async (db, link) => {
   try {
-    await db.runAsync(`DELETE FROM WHERE PlayListItems where Link=${link}`);
+    await db.runAsync(`DELETE FROM  PlayListItems where Link="${link}"`);
+  } catch (error) {}
+};
+
+export const deletePlaylist = async (db, Title, loaderFunc) => {
+  try {
+    await db.runAsync(`DELETE FROM Playlists where Name="${Title}"`);
+    await db.runAsync(`DELETE FROM PlayListItems WHERE Parent="${Title}"`);
+    await loaderFunc();
   } catch (error) {}
 };

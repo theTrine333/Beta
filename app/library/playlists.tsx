@@ -10,7 +10,13 @@ import {
   getPlaylists,
 } from "@/api/database";
 import { useFocusEffect, useRouter } from "expo-router";
-import { FlatList, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { PlaylistAddModal } from "@/components/CustomModals";
@@ -47,7 +53,11 @@ const Playlists = () => {
       ) : (
         <></>
       )}
-      <View
+      <TouchableOpacity
+        hitSlop={20}
+        onPress={() => {
+          setModalVisible(true);
+        }}
         style={{
           paddingHorizontal: 15,
           flexDirection: "row",
@@ -57,26 +67,26 @@ const Playlists = () => {
         }}
       >
         <ThemedText style={{ fontSize: 13 }}>Playlists</ThemedText>
-        <TouchableOpacity
-          hitSlop={20}
-          onPress={() => {
-            setModalVisible(true);
-          }}
-        >
+        <View>
           <AntDesign
             name="pluscircleo"
             size={20}
             color={Colors[theme ?? "light"].text}
           />
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableOpacity>
       <FlatList
         data={data}
+        refreshControl={
+          <RefreshControl onRefresh={loader} refreshing={refresh} />
+        }
         renderItem={({ item }) => (
           <ListCard
+            connector={db}
             counter={item.TotalItems}
             title={item.Name}
             router={router}
+            loaderFunc={loader}
           />
         )}
       />
