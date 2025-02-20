@@ -44,9 +44,9 @@ const Card = ({
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
-      onPress={() => {
+      onPress={async () => {
         if (list) {
-          loadPlayList();
+          await loadPlayList();
         }
         if (isDownload) {
           router.push({
