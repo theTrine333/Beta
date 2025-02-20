@@ -76,7 +76,12 @@ const Player = () => {
   const [modalVisible, setModalVisible] = useState("error");
   const db = useSQLiteContext();
   const router = useRouter();
-
+  const forward10 = async () => {
+    await seek(position + 10000);
+  };
+  const back10 = async () => {
+    await seek(position - 10000);
+  };
   const handleFavourite = async () => {
     if (songName) {
       if (Favourite) {
@@ -193,6 +198,7 @@ const Player = () => {
         }}
       >
         <TouchableOpacity
+          hitSlop={20}
           onPress={() => {
             router.back();
           }}
@@ -201,6 +207,7 @@ const Player = () => {
         </TouchableOpacity>
         {songLink?.includes("file://") ? (
           <TouchableOpacity
+            hitSlop={20}
             onPress={() => {
               setModalVisible("more-options");
             }}
@@ -234,6 +241,7 @@ const Player = () => {
         }}
       >
         <TouchableOpacity
+          hitSlop={20}
           style={[
             Styles.playerBtn,
             { alignItems: "center", justifyContent: "center" },
@@ -256,6 +264,7 @@ const Player = () => {
         <TouchableOpacity
           style={Styles.playerBtn}
           onPress={() => setLoop(!isLoop)}
+          hitSlop={20}
         >
           {isLoop ? (
             <FontAwesome6
@@ -292,6 +301,7 @@ const Player = () => {
       <View style={Styles.playerControlsContainer}>
         {/* {quality && duration && !params.isDownload ? ( */}
         <TouchableOpacity
+          hitSlop={20}
           style={Styles.playerBtn}
           onPress={() => {
             setModalVisible("download");
@@ -311,6 +321,7 @@ const Player = () => {
 
         <TouchableOpacity
           style={Styles.playerBtn}
+          hitSlop={20}
           onPress={() => {
             previousSong();
           }}
@@ -321,8 +332,12 @@ const Player = () => {
             color={Colors.Slider.primary}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={Styles.playerBtn} onPress={handlePlayPause}>
-          {isBuffering ? (
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          hitSlop={20}
+          onPress={handlePlayPause}
+        >
+          {isBuffering && songLink?.includes("https://") ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
               <ActivityIndicator color={Colors.dark.text} size={"large"} />
             </View>
@@ -337,6 +352,7 @@ const Player = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={Styles.playerBtn}
+          hitSlop={20}
           onPress={() => {
             nextSong();
           }}
@@ -349,6 +365,7 @@ const Player = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={Styles.playerBtn}
+          hitSlop={20}
           onPress={() => {
             setModalVisible("list");
           }}
@@ -367,7 +384,11 @@ const Player = () => {
           { marginTop: 5, justifyContent: "space-between" },
         ]}
       >
-        <TouchableOpacity style={Styles.playerBtn}>
+        <TouchableOpacity
+          hitSlop={20}
+          style={Styles.playerBtn}
+          onPress={back10}
+        >
           <MaterialIcons
             name="replay-10"
             size={25}
@@ -375,6 +396,7 @@ const Player = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity
+          hitSlop={20}
           style={[
             Styles.playerBtn,
             {
@@ -397,7 +419,11 @@ const Player = () => {
             1.0X
           </ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={Styles.playerBtn}>
+        <TouchableOpacity
+          style={Styles.playerBtn}
+          hitSlop={20}
+          onPress={forward10}
+        >
           <MaterialIcons
             name="forward-10"
             size={25}

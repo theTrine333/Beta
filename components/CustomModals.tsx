@@ -545,10 +545,14 @@ export const PlayerLoadingModal = ({
         <ThemedView
           style={[
             Styles.bottomModal,
-            { alignItems: "center", justifyContent: "center" },
+            {
+              alignItems: "center",
+              height: height * 0.3,
+              justifyContent: "center",
+            },
           ]}
         >
-          <ThemedText style={{ margin: 10 }}>Buffering...</ThemedText>
+          <ThemedText style={{ margin: 10 }}>Requesting metadata...</ThemedText>
           <ActivityIndicator size={"large"} color={Colors.Slider.primary} />
         </ThemedView>
       </ThemedView>
@@ -601,7 +605,11 @@ export const PlaylistAddModal = ({
             onChangeText={setPlaylistName}
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSave}
+              hitSlop={20}
+            >
               <ThemedText style={styles.buttonText}>Save</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
