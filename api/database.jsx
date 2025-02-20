@@ -197,7 +197,7 @@ export const deleteFavourite = async (db, name) => {
 export const isFavourite = async (db, name) => {
   try {
     const results = await db.getFirstAsync(
-      `SELECT * FROM favourites WHERE name="${name}"`
+      `SELECT * FROM PlayListItems WHERE Name="${name}" and Parent="favourites"`
     );
 
     return results !== null;
@@ -252,8 +252,8 @@ export const insertPlaylistItem = async (db, name, image, link, parent) => {
   }
 };
 
-export const deltePlalistItem = async (name, link) => {
+export const deltePlalistItem = async (db, link) => {
   try {
-    await db.runAsync();
+    await db.runAsync(`DELETE FROM WHERE PlayListItems where Link=${link}`);
   } catch (error) {}
 };

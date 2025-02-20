@@ -30,7 +30,9 @@ import { formatTime, get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { useSQLiteContext } from "expo-sqlite";
 import {
   deleteFavourite,
+  deltePlalistItem,
   insertFavourite,
+  insertPlaylistItem,
   isDownload,
   isFavourite,
 } from "@/api/database";
@@ -85,11 +87,17 @@ const Player = () => {
   const handleFavourite = async () => {
     if (songName) {
       if (Favourite) {
-        deleteFavourite(db, params.Name);
+        await deltePlalistItem(db, songLink);
         setFavourite(false);
         return;
       }
-      insertFavourite(db, songName, songImageLink, params.Link, "songs");
+      await insertPlaylistItem(
+        db,
+        songName,
+        songImageLink,
+        songLink,
+        "favourites"
+      );
       setFavourite(true);
     }
   };
@@ -395,8 +403,10 @@ const Player = () => {
             color={Colors.Slider.primary}
           />
         </TouchableOpacity>
+        {/* Remember to move this after fixing pitch setting */}
         <TouchableOpacity
           hitSlop={20}
+          disabled
           style={[
             Styles.playerBtn,
             {
@@ -406,6 +416,7 @@ const Player = () => {
               borderColor: Colors.Slider.primary,
               height: height * 0.04,
               paddingVertical: 0,
+              opacity: 0.5,
             },
           ]}
         >

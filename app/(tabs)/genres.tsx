@@ -8,6 +8,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { get_db_Genres, insertGenre } from "@/api/database";
 import { useRouter } from "expo-router";
 import SearchCard from "@/components/searchCard";
+import { shuffleArray } from "@/api/q";
 
 const PAGE_SIZE = 2; // Load 2 items at a time
 
@@ -25,7 +26,8 @@ const Genres = () => {
   const loader = async () => {
     try {
       setState("loading");
-      const localGenres = await get_db_Genres(db);
+      let localGenres = await get_db_Genres(db);
+      localGenres = shuffleArray(localGenres);
       for (const element of localGenres) {
         await insertGenre(db, element.name, element.link);
       }
@@ -35,7 +37,7 @@ const Genres = () => {
       setCurrentIndex(5);
       setState("idle");
       setRefresh(false);
-    } catch {
+    } catch (error) {
       setState("error");
     }
   };
