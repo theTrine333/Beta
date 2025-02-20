@@ -42,13 +42,13 @@ const Search = () => {
       setState("loading");
       if (Parent == "songs") {
         results = await getSongSearch(text);
-        setPlaylist(results);
+        // setPlaylist(results);
       } else if (Parent == "downloads") {
         results = await getDownloadsSearch(db, text);
-        setPlaylist(results);
+        // setPlaylist(results);
       } else if (Parent == "favourites") {
         results = await getFavouritesSearch(db, text);
-        setPlaylist(results);
+        // setPlaylist(results);
       } else if (Parent == "genres") {
         results = await getGenreSearch(db, text);
       }
@@ -100,6 +100,7 @@ const Search = () => {
               }
               renderItem={({ item }) => (
                 <Card
+                  list={data}
                   name={item.name}
                   duration={formatTime(item.duration)}
                   image={item.image}
@@ -122,6 +123,7 @@ const Search = () => {
             }
             renderItem={({ item }) => (
               <ResultCardItem
+                isSearch
                 name={item.name}
                 link={item.link}
                 image={item.image}

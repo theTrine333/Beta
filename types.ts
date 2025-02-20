@@ -52,6 +52,7 @@ export interface toggleButtonProp {
   isSelectable: boolean;
 }
 export interface genreItemTypes {
+  isSearch?: boolean;
   name: string;
   image: string;
   link: string;

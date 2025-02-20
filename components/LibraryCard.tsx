@@ -21,9 +21,8 @@ const Card = ({
   isDeletable,
   connector,
   list,
-  setList,
 }: rowMusicCardItem) => {
-  const { songName } = useAudioPlayer();
+  const { songName, setPlaylist } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
   const { loader } = useDownload();
 
@@ -44,6 +43,9 @@ const Card = ({
     <TouchableOpacity
       style={Styles.libraryCard}
       onPress={() => {
+        if (list) {
+          setPlaylist(list);
+        }
         if (isDownload) {
           router.push({
             pathname: "player",

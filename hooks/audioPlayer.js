@@ -29,6 +29,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [genrePlayLists, setGenrePlayLists] = useState([]);
   const [playList, setPlaylist] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [pitch, setPitch] = useState(1.0); //0.5,1,1.5,2
   const db = useSQLiteContext();
   const enableAudioMode = async () => {
     try {
@@ -42,6 +43,20 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
+  const pitchChanger = async () => {
+    if (pitch < 2) {
+      setPitch(pitch + 0.5);
+    } else {
+      setPitch(0.5);
+    }
+  };
+  // Change pitch
+  useEffect(() => {
+    const pitcher = () => {
+      soundRef?.current?.setRateAsync(pitch);
+    };
+    pitcher();
+  }, [pitch]);
   useEffect(() => {
     enableAudioMode();
     return () => {
@@ -86,9 +101,11 @@ export const AudioPlayerProvider = ({ children }) => {
         {
           shouldPlay: true,
           isLooping: isLoop,
+          rate: pitch,
           staysActiveInBackground: true,
         },
-        onPlaybackStatusUpdate
+        onPlaybackStatusUpdate,
+        false
       );
 
       soundRef.current = sound;
@@ -202,10 +219,12 @@ export const AudioPlayerProvider = ({ children }) => {
         stop,
         loadAndPlay,
         pause,
+        pitch,
         resume,
         seek,
         songLink,
         setSongLink,
+        pitchChanger,
         songName,
         setSongName,
         songImageLink,

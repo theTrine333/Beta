@@ -39,7 +39,7 @@ const Genre = () => {
         setState("empty");
         return;
       }
-      setPlaylist(temp);
+      // setPlaylist(temp);
       setData(temp);
       setState("idle");
     } catch (error) {
@@ -112,6 +112,7 @@ const Genre = () => {
                   link={item.link}
                   isDownload={false}
                   router={router}
+                  list={data}
                 />
               )}
             />

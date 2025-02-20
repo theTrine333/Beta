@@ -1,9 +1,11 @@
 import { getFavourites, getPlaylistItems } from "@/api/database";
 import Card from "@/components/LibraryCard";
+import MiniPlayer from "@/components/MiniPlayer";
 import PagerHeader from "@/components/PagerHeader";
 import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 import Styles, { blurhash, height } from "@/style";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,6 +27,7 @@ const Playlist = () => {
   const [state, setState] = useState<"idle" | "loading" | "error" | "empty">(
     "loading"
   );
+  const { isPlaying } = useAudioPlayer();
   const [data, setData] = useState<any>();
   const router = useRouter();
   const db = useSQLiteContext();
@@ -92,9 +95,9 @@ const Playlist = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-              height: height * 0.53,
-              //   borderWidth: 1,
-              paddingBottom: 0,
+              height: isPlaying ? height * 0.4 : height * 0.45,
+              // borderWidth: 1,
+              paddingBottom: 20,
             },
           ]}
         >
@@ -111,11 +114,13 @@ const Playlist = () => {
                 link={item.link} // Using the uri for downloaded file
                 router={router}
                 isDownload
+                list={data}
               />
             )}
           />
         </ThemedView>
       )}
+      <MiniPlayer style={{ bottom: 10 }} />
       <StatusBar hidden />
     </ThemedView>
   );

@@ -102,9 +102,7 @@ export const insertFavourite = async (db, name, image, link, inType) => {
       "INSERT INTO favourites (name, image, link, inType) VALUES (?, ?, ?, ?)",
       [name, image, link, inType]
     );
-  } catch (error) {
-    console.error("Error inserting favourite:", error);
-  }
+  } catch (error) {}
 };
 
 export const insertDownload = async (
@@ -120,9 +118,7 @@ export const insertDownload = async (
       "INSERT INTO Downloads (Name, Image, Duration,Link, location) VALUES (?, ?, ?, ?, ?)",
       [name, image, duration, link, location]
     );
-  } catch (error) {
-    console.error("Error inserting download:", error);
-  }
+  } catch (error) {}
 };
 
 export const get_db_downloadLink = async (db, name) => {
@@ -131,9 +127,7 @@ export const get_db_downloadLink = async (db, name) => {
       `SELECT Location as uri from Downloads where Name="${name}"`
     );
     return result;
-  } catch (error) {
-    console.log("Error fetching download link");
-  }
+  } catch (error) {}
 };
 
 export const getFavouritesLenght = async (db) => {
@@ -233,7 +227,7 @@ export const getPlaylists = async (db) => {
 export const getPlaylistItems = async (db, name) => {
   try {
     const results = await db.getAllAsync(
-      `SELECT Name as name,Image as image, Link as link from PlayListItems where Parent="${name}"`
+      `SELECT Name as name,Image as image, Link as link from PlayListItems where Parent="${name}" ORDER BY id DESC`
     );
     return results;
   } catch (error) {

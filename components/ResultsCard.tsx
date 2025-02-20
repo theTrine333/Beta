@@ -6,16 +6,22 @@ import { Colors } from "@/constants/Colors";
 import { Image } from "expo-image";
 import Styles, { blurhash } from "@/style";
 import { genreItemTypes, NoResultCardProp } from "@/types";
+import { useAudioPlayer } from "@/hooks/audioPlayer";
 
 export const ResultCardItem = ({
   name,
   link,
   image,
+  isSearch,
   router,
 }: genreItemTypes) => {
+  const { setPlaylist } = useAudioPlayer();
   return (
     <TouchableOpacity
       onPress={() => {
+        if (isSearch) {
+          setPlaylist([{ name: name, link: link, image: image }]);
+        }
         router.push({
           pathname: "player",
           params: {

@@ -40,7 +40,6 @@ const Downloads = () => {
     setState("loading");
     const results = await getDownloads(db);
     setData(results);
-    setPlaylist(results);
     setRefresh(false);
     setState("idle");
   };
@@ -79,7 +78,6 @@ const Downloads = () => {
             Styles.verticalListContainer,
             {
               borderColor: "white",
-
               maxHeight: isPlaying ? height * 0.55 : height * 0.63,
               paddingBottom: 0,
               paddingHorizontal: 0,
@@ -112,6 +110,12 @@ const Downloads = () => {
                 Queue:
               </ThemedText>
               <FlatList
+                contentContainerStyle={{
+                  marginBottom: 10,
+                  paddingBottom: 10,
+                  borderColor: Colors[theme ?? "light"].text,
+                  borderBottomWidth: 1,
+                }}
                 data={downloadQueue.filter(
                   (item: any) => item.name !== currentDownload?.name
                 )}
@@ -138,6 +142,7 @@ const Downloads = () => {
               }
               renderItem={({ item }) => (
                 <Card
+                  list={downloadedFiles}
                   connector={db}
                   name={item.name}
                   duration={formatTime(item.duration)}

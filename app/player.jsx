@@ -59,6 +59,7 @@ const Player = () => {
     isPlaying,
     isBuffering,
     stop,
+    pitchChanger,
     isLoop,
     setLoop,
     seek,
@@ -70,6 +71,7 @@ const Player = () => {
     setQuality,
     previousSong,
     nextSong,
+    pitch,
     setSongImageLink,
     playSpecificTrack,
   } = useAudioPlayer();
@@ -266,7 +268,7 @@ const Player = () => {
           style={{
             fontSize: 14,
             borderColor: "white",
-            // borderWidth: 1,
+            color: "white", // borderWidth: 1,
             textAlign: "center",
             width: width * 0.63,
           }}
@@ -351,10 +353,7 @@ const Player = () => {
         >
           {isBuffering && songLink?.includes("https://") ? (
             <View style={[Styles.playerBtn, Styles.bufferingIndicator]}>
-              <ActivityIndicator
-                color={Colors.Slider.background}
-                size={"large"}
-              />
+              <ActivityIndicator color={"lightgray"} size={"large"} />
             </View>
           ) : (
             <></>
@@ -402,10 +401,9 @@ const Player = () => {
         >
           <MaterialIcons name="replay-10" size={25} color={"white"} />
         </TouchableOpacity>
-        {/* Remember to move this after fixing pitch setting */}
         <TouchableOpacity
           hitSlop={20}
-          disabled
+          // disabled
           style={[
             Styles.playerBtn,
             {
@@ -415,9 +413,9 @@ const Player = () => {
               borderColor: "white",
               height: height * 0.04,
               paddingVertical: 0,
-              opacity: 0.5,
             },
           ]}
+          onPress={pitchChanger}
         >
           <ThemedText
             style={{
@@ -426,7 +424,7 @@ const Player = () => {
               fontWeight: "bold",
             }}
           >
-            1.0X
+            {pitch == 1 ? "1.0" : pitch == 2 ? "2.0" : pitch}X
           </ThemedText>
         </TouchableOpacity>
         <TouchableOpacity
