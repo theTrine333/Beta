@@ -20,9 +20,18 @@ const Card = ({
   isDownload,
   isDeletable,
   connector,
+  index,
   list,
 }: rowMusicCardItem) => {
-  const { songName, setPlaylist, playList } = useAudioPlayer();
+  const {
+    songName,
+    setSongImageLink,
+    setSongName,
+    setPlaylist,
+    playList,
+    isPlaying,
+    playSpecificTrack,
+  } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
   const { loader } = useDownload();
 
@@ -38,16 +47,25 @@ const Card = ({
       },
     ]);
   };
+
   const loadPlayList = async () => {
+    if (playList == list) {
+      playSpecificTrack(name);
+      return;
+    }
     await setPlaylist(list);
   };
+
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
       onPress={async () => {
-        if (list) {
+        setSongName(name);
+        if (list && list != playList) {
           await loadPlayList();
         }
+        playSpecificTrack(name);
+
         if (isDownload) {
           router.push({
             pathname: "player",

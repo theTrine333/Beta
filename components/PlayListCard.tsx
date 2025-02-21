@@ -48,6 +48,7 @@ const ListCard = ({
             params: { Title: title, Counter: counter },
           });
         }
+
         if (setFav) {
           await insertPlaylistItem(
             connector,
@@ -57,10 +58,10 @@ const ListCard = ({
             title
           );
         }
-
         setVisible(false);
       }}
       onLongPress={() => {
+        if (title == "favourites") return;
         if (loaderFunc) {
           Alert.alert(
             "Delete playlist",

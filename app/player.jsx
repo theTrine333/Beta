@@ -151,6 +151,7 @@ const Player = () => {
       setModalVisible(false);
       return;
     }
+
     stop();
 
     if (params?.isDownload) {
@@ -165,15 +166,9 @@ const Player = () => {
   const handlePlayPause = async () => {
     if (isPlaying) {
       pause();
-      return;
     } else {
-      if (progress.position == progress.duration) {
-        seek(0);
-        resume();
-        return;
-      }
+      resume();
     }
-    resume();
   };
 
   return (

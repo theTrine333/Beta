@@ -247,18 +247,22 @@ export const PlayListItem = ({ item }: any) => {
           {item.name}
         </ThemedText>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          removeTrackFromList(item.name);
-        }}
-      >
-        <MaterialCommunityIcons
-          name="window-close"
-          size={23}
-          style={{ alignSelf: "flex-end" }}
-          color={Colors[theme ?? "light"].text}
-        />
-      </TouchableOpacity>
+      {songName == item.name ? (
+        <></>
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
+            removeTrackFromList(item.name);
+          }}
+        >
+          <MaterialCommunityIcons
+            name="window-close"
+            size={23}
+            style={{ alignSelf: "flex-end" }}
+            color={Colors[theme ?? "light"].text}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

@@ -34,7 +34,7 @@ const Genre = () => {
   const loader = async () => {
     try {
       setState("loading");
-      const temp = await getSpecificGenre(params.Link);
+      const temp:any = await getSpecificGenre(params.Link);
       if (temp.length == 0) {
         setState("empty");
         return;

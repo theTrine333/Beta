@@ -16,6 +16,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { formatTime } from "@/api/q";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import TrackPlayer from "react-native-track-player";
 
 const MiniPlayer = (props) => {
   const {
@@ -34,6 +35,11 @@ const MiniPlayer = (props) => {
     songImageLink,
   } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
+  const infoSetter = async () => {
+    const currentTrackIndex = await TrackPlayer.getCurrentTrack();
+  };
+  useEffect(() => {}, []);
+
   const router = useRouter();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -63,15 +69,8 @@ const MiniPlayer = (props) => {
     if (isPlaying) {
       pause();
       return;
-    } else {
-      if (progress.position == progress.duration) {
-        seek(0);
-        resume();
-        return;
-      }
     }
     resume();
-    return;
   };
 
   const handleClose = async () => {

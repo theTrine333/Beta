@@ -50,54 +50,116 @@ export const AudioPlayerProvider = ({ children }) => {
   }, []);
 
   useTrackPlayerEvents([Event.PlaybackState], async (event) => {
-    if (event.state === State.Playing) setIsPlaying(true);
-    else setIsPlaying(false);
+    if (event.state === State.Playing) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
+
+    if (event.state === State.Buffering) {
+      setIsBuffering(true);
+    } else {
+      setIsBuffering(false);
+    }
+
+    const updateCurrentTrack = async () => {
+      const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+      if (currentTrackIndex !== null) {
+        const queue = await TrackPlayer.getQueue();
+        const track = queue[currentTrackIndex];
+        if (track) {
+          setSongImageLink(track.artwork);
+          setSongName(track.title);
+          setSongImageLink(track.artwork);
+        }
+      }
+    };
+    updateCurrentTrack();
   });
+
+  useEffect(() => {}, [songName]);
 
   const loadAndPlay = async (tempIndex) => {
     const newIndex = tempIndex ?? currentIndex;
     if (newIndex < 0 || newIndex >= playList.length) return;
 
-    let { name, image, link } = playList[newIndex];
-    let uri = playList[newIndex].uri;
-    setSongName(name);
-    setSongImageLink(image);
+    const { name, image, link, uri: initialUri } = playList[newIndex];
+    let uri = initialUri;
 
-    const localLink = await get_db_downloadLink(db, name);
-    if (localLink) {
-      uri = localLink.uri;
-    } else if (link) {
-      try {
+    try {
+      const localLink = await get_db_downloadLink(db, name);
+      console.log(localLink);
+      console.log(link);
+
+      if (localLink) {
+        uri = localLink.uri;
+      } else if (link) {
         const hashes = await getHashes(link);
         const formats = await getFormats(hashes?.video_hash);
         const downloadLink = await get_downloadLink(
           formats?.formats[0]?.payload
         );
         uri = downloadLink?.link;
-      } catch (error) {
-        return;
       }
+    } catch (error) {
+      console.error("Error fetching song link:", error);
+      return;
     }
 
-    await TrackPlayer.reset();
-    await TrackPlayer.add({
-      id: name,
-      url: uri,
-      title: name,
-      artwork: image,
-    });
-    await TrackPlayer.play();
+    const queue = await TrackPlayer.getQueue();
+    const existingTrackIndex = queue.findIndex((track) => track.id === name);
+
+    if (existingTrackIndex !== -1) {
+      await TrackPlayer.skip(existingTrackIndex);
+    } else {
+      await TrackPlayer.add({
+        id: name,
+        url: uri,
+        title: name,
+        artwork: image,
+      });
+      await TrackPlayer.play();
+    }
 
     setSongLink(uri);
     setCurrentIndex(newIndex);
   };
 
+  useEffect(() => {
+    let prevPlayList = [];
+    const updateTrackList = async () => {
+      await TrackPlayer.reset();
+      for (const track of playList) {
+        await TrackPlayer.add({
+          id: track.name,
+          url: track.uri,
+          title: track.name,
+          artwork: track.image,
+        });
+      }
+
+      prevPlayList = [...playList];
+    };
+
+    updateTrackList();
+  }, [playList]);
+
   const nextSong = async () => {
     await TrackPlayer.skipToNext();
+    const track = await TrackPlayer.getActiveTrack();
+    if (track) {
+      setSongName(track.title);
+      setSongImageLink(track.artwork);
+    }
   };
 
   const previousSong = async () => {
     await TrackPlayer.skipToPrevious();
+    const track = await TrackPlayer.getActiveTrack();
+    if (track) {
+      setSongName(track.title);
+      setSongImageLink(track.artwork);
+    }
   };
 
   const pause = async () => {
@@ -105,6 +167,9 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const resume = async () => {
+    if (Math.round(progress.position) >= Math.round(progress.duration)) {
+      seek(0);
+    }
     await TrackPlayer.play();
   };
 
@@ -133,8 +198,6 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const addAndPlaySingleTrack = async (track) => {
-    console.log(track);
-
     setPlaylist([track]);
     setCurrentIndex(0);
     await loadAndPlay(0);

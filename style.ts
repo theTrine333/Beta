@@ -31,7 +31,8 @@ const Styles = StyleSheet.create({
   },
   plaListContainer: {
     width: width,
-    height: height * 0.3,
+    minHeight: height * 0.2,
+    maxHeight: height * 0.3,
   },
   miniPlayerContainer: {
     flexDirection: "row",

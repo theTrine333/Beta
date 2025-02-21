@@ -31,6 +31,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-5482160285556109~3178298883"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -47,6 +53,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "admob": {
+        "bannerId": "ca-app-pub-5482160285556109/5399431250",
+        "interstialId": "ca-app-pub-5482160285556109/8488629023",
+        "interstialRewardID": "ca-app-pub-5482160285556109/9719656505"
+      },
       "router": {
         "origin": false
       },

@@ -146,6 +146,7 @@ const Downloads = () => {
               }
               renderItem={({ item, index }) => (
                 <Card
+                  index={index}
                   list={downloadedFiles}
                   connector={db}
                   name={item.name}

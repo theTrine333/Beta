@@ -11,6 +11,7 @@ export default function Tabs() {
   const [selected, setSelected] = useState<
     "Downloads" | "Favourites" | "Playlists"
   >("Downloads");
+
   return (
     <ThemedView style={{ flex: 1 }}>
       <SegmentedControl options={options} onChange={setSelected} />
