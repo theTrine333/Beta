@@ -83,8 +83,8 @@ export const AudioPlayerProvider = ({ children }) => {
     const newIndex = tempIndex ?? currentIndex;
     if (newIndex < 0 || newIndex >= playList.length) return;
 
-    const { name, image, link, uri: initialUri } = playList[newIndex];
-    let uri = initialUri;
+    let { name, image, link, uri: initialUri } = playList[newIndex];
+    // let uri = initialUri;
 
     try {
       const localLink = await get_db_downloadLink(db, name);
@@ -92,6 +92,8 @@ export const AudioPlayerProvider = ({ children }) => {
       console.log(link);
 
       if (localLink) {
+        console.log(localLink);
+
         uri = localLink.uri;
       } else if (link) {
         const hashes = await getHashes(link);

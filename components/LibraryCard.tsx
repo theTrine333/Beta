@@ -20,7 +20,6 @@ const Card = ({
   isDownload,
   isDeletable,
   connector,
-  index,
   list,
 }: rowMusicCardItem) => {
   const {
@@ -61,9 +60,9 @@ const Card = ({
       style={Styles.libraryCard}
       onPress={async () => {
         setSongName(name);
-        if (list && list != playList) {
-          await loadPlayList();
-        }
+        // if (list && list != playList) {
+        //   await loadPlayList();
+        // }
         playSpecificTrack(name);
 
         if (isDownload) {
