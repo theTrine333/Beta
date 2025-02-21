@@ -33,7 +33,7 @@ export const AudioPlayerProvider = ({ children }) => {
   useEffect(() => {
     const setupPlayer = async () => {
       try {
-        await TrackPlayer.setupPlayer();
+        await TrackPlayer.setupPlayer({ autoHandleInterruptions: true });
         await TrackPlayer.updateOptions({
           capabilities: [
             Capability.Play,
@@ -158,6 +158,7 @@ export const AudioPlayerProvider = ({ children }) => {
       await TrackPlayer.setRate(1);
     }
   };
+
   return (
     <AudioPlayerContext.Provider
       value={{

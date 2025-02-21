@@ -118,7 +118,7 @@ export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
               width: width * 0.95,
             }}
           >
-            <ThemedText style={{ textAlign: "left", fontSize: 14 }}>
+            <ThemedText style={{ textAlign: "center", fontSize: 14 }}>
               {songName}
             </ThemedText>
           </View>

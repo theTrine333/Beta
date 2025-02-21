@@ -110,12 +110,12 @@ const Downloads = () => {
               >
                 Queue:
               </ThemedText>
-              <ThemedView style={{ borderWidth: 1, maxHeight: height * 0.2 }}>
+              <ThemedView style={{ maxHeight: height * 0.2 }}>
                 <FlatList
                   contentContainerStyle={{
                     marginBottom: 10,
                     paddingBottom: 10,
-                    borderWidth: 1,
+                    // borderWidth: 1,
                     borderColor: Colors[theme ?? "light"].text,
                     borderBottomWidth: 1,
                   }}
