@@ -35,6 +35,10 @@ export const AudioPlayerProvider = ({ children }) => {
       try {
         await TrackPlayer.setupPlayer({ autoHandleInterruptions: true });
         await TrackPlayer.updateOptions({
+          android: {
+            appKilledPlaybackBehavior:
+              AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+          },
           capabilities: [
             Capability.Play,
             Capability.Pause,
@@ -83,24 +87,19 @@ export const AudioPlayerProvider = ({ children }) => {
     const newIndex = tempIndex ?? currentIndex;
     if (newIndex < 0 || newIndex >= playList.length) return;
 
-    let { name, image, link, uri: initialUri } = playList[newIndex];
-    // let uri = initialUri;
-
+    const { name, image, link } = playList[newIndex];
+    let uri = link; // Default to online link
     try {
       const localLink = await get_db_downloadLink(db, name);
-      console.log(localLink);
-      console.log(link);
-
       if (localLink) {
-        console.log(localLink);
-
-        uri = localLink.uri;
-      } else if (link) {
+        uri = localLink.uri; // Use local file if available
+      } else if (link.startsWith("https")) {
         const hashes = await getHashes(link);
         const formats = await getFormats(hashes?.video_hash);
         const downloadLink = await get_downloadLink(
           formats?.formats[0]?.payload
         );
+
         uri = downloadLink?.link;
       }
     } catch (error) {
@@ -110,13 +109,14 @@ export const AudioPlayerProvider = ({ children }) => {
 
     const queue = await TrackPlayer.getQueue();
     const existingTrackIndex = queue.findIndex((track) => track.id === name);
+    console.log("Finding url : ", uri);
 
     if (existingTrackIndex !== -1) {
       await TrackPlayer.skip(existingTrackIndex);
     } else {
       await TrackPlayer.add({
         id: name,
-        url: uri,
+        url: "https://d371.d2mefast.net/c.php?s=eNoBYACf%252F3507XfJA4nKByA%252FcNKUtO0iLToYm3xO6eiUN306SNc2YTTzB1yMDKYEzzxfQJMMY%252B7VENpMfZqc04CeZs8TilKdJQXzE%252F%252B%252FddB6iHq0dtnAjo9hDIVoqYS71GXS7i4jdY1yLsg%253D",
         title: name,
         artwork: image,
       });
@@ -139,7 +139,6 @@ export const AudioPlayerProvider = ({ children }) => {
           artwork: track.image,
         });
       }
-
       prevPlayList = [...playList];
     };
 
@@ -176,8 +175,8 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const stop = async () => {
-    setSongName("");
-    await TrackPlayer.reset();
+    await TrackPlayer.stop();
+    setIsPlaying(false);
   };
 
   const seek = async (value) => {
@@ -190,16 +189,19 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const playSpecificTrack = async (name) => {
     const index = findTrackIndexByName(name);
+    console.log(playList[0]);
     if (index !== -1) {
-      loadAndPlay(index);
+      await TrackPlayer.skip(index);
     }
   };
 
-  const removeTrackFromList = (name) => {
-    setPlaylist((prevList) => prevList.filter((track) => track.name !== name));
+  const removeTrackFromList = async (index) => {
+    await TrackPlayer.remove(index);
   };
 
   const addAndPlaySingleTrack = async (track) => {
+    console.log(track);
+
     setPlaylist([track]);
     setCurrentIndex(0);
     await loadAndPlay(0);

@@ -6,6 +6,7 @@ import Styles, { blurhash, height, width } from "@/style";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import {
+  ActivityIndicator,
   FlatList,
   RefreshControl,
   ScrollView,
@@ -21,32 +22,50 @@ import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import MiniPlayer from "@/components/MiniPlayer";
 import { AntDesign } from "@expo/vector-icons";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
+
+const PAGE_SIZE = 7;
+
 const Genre = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
+  const [loadingMore, setLoadingMore] = useState(false);
   const [state, setState] = useState<"idle" | "loading" | "error" | "empty">(
     "loading"
   );
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState([]);
+  const [allData, setAllData] = useState([]);
   const router = useRouter();
-  const [refresh, setRefresh] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(5);
+  const [refresh, setRefresh] = useState<any>(false);
 
   const loader = async () => {
     try {
       setState("loading");
-      const temp:any = await getSpecificGenre(params.Link);
+      const temp: any = await getSpecificGenre(params.Link);
+      // console.log(JSON.stringify(temp, undefined, 2));
+
       if (temp.length == 0) {
         setState("empty");
         return;
       }
       // setPlaylist(temp);
-      setData(temp);
+      setAllData(temp);
+      setData(temp.slice(0, 15));
       setState("idle");
     } catch (error) {
       setState("error");
     }
   };
-
+  const loadMore = () => {
+    if (loadingMore || currentIndex >= allData.length) return;
+    setLoadingMore(true);
+    setTimeout(() => {
+      const nextData = allData.slice(currentIndex, currentIndex + PAGE_SIZE);
+      setData((prev) => [...prev, ...nextData]);
+      setCurrentIndex(currentIndex + PAGE_SIZE);
+      setLoadingMore(false);
+    }, 1000);
+  };
   useEffect(() => {
     loader();
   }, []);
@@ -104,17 +123,24 @@ const Genre = () => {
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }
-              renderItem={({ item }) => (
+              renderItem={({ item }: any) => (
                 <Card
                   name={item.name}
-                  duration={item.duration}
+                  duration={item?.duration}
                   image={item.image}
                   link={item.link}
                   isDownload={false}
                   router={router}
-                  list={data}
+                  isOnline
                 />
               )}
+              onEndReached={loadMore} // Trigger pagination
+              onEndReachedThreshold={0.5} // Load more when reaching 50% from bottom
+              ListFooterComponent={
+                loadingMore ? (
+                  <ActivityIndicator size="small" color="blue" />
+                ) : null
+              }
             />
           </ThemedView>
           {/* <TouchableOpacity

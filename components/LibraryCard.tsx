@@ -16,6 +16,7 @@ const Card = ({
   image,
   link,
   duration,
+  isOnline,
   router,
   isDownload,
   isDeletable,
@@ -29,6 +30,7 @@ const Card = ({
     setPlaylist,
     playList,
     isPlaying,
+    addAndPlaySingleTrack,
     playSpecificTrack,
   } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
@@ -60,9 +62,18 @@ const Card = ({
       style={Styles.libraryCard}
       onPress={async () => {
         setSongName(name);
-        // if (list && list != playList) {
-        //   await loadPlayList();
-        // }
+        if (isOnline) {
+          addAndPlaySingleTrack({
+            name: name,
+            image: image,
+            link: link,
+          });
+          // return;
+        }
+        if (list && list != playList && !isOnline) {
+          await loadPlayList();
+        }
+
         playSpecificTrack(name);
 
         if (isDownload) {
@@ -121,9 +132,9 @@ const Card = ({
         </ThemedText>
         <ThemedText style={{ fontSize: 11 }}>{duration}</ThemedText>
       </View>
-      {/* <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
+      <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
         <AntDesign name="playcircleo" size={25} color={"grey"} />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 };

@@ -20,7 +20,6 @@ import TrackPlayer from "react-native-track-player";
 
 const MiniPlayer = (props) => {
   const {
-    loadAndPlay,
     pause,
     resume,
     progress,
@@ -91,7 +90,7 @@ const MiniPlayer = (props) => {
 
   return (
     <>
-      {songName == "" || isKeyboardVisible ? (
+      {songName == "" || isKeyboardVisible || !isPlaying ? (
         <></>
       ) : (
         <ThemedView

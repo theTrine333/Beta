@@ -87,6 +87,8 @@ const Player = () => {
   const [Favourite, setFavourite] = useState(false);
   const [modalVisible, setModalVisible] = useState("error");
   const db = useSQLiteContext();
+  const [info, setInfo] = useState();
+
   const router = useRouter();
   const forward10 = async () => {
     console.log(progress.position);
@@ -130,12 +132,10 @@ const Player = () => {
   }, [songName]);
 
   useEffect(() => {
-    // setSongImageLink(params.image);
-
     const loader = async () => {
       try {
         setModalVisible("loading");
-        const hashes = await getHashes(params.Link);
+        const hashes = await getHashes(params.Link || params.link);
         setSongLink(params.Link);
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
@@ -144,6 +144,8 @@ const Player = () => {
         playSpecificTrack(params.Name);
         // loadAndPlay(link.link, params.Name, params.Image);
       } catch (error) {
+        console.log(error);
+
         setModalVisible("error");
       }
     };

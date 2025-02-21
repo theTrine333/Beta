@@ -16,6 +16,7 @@ export interface rowMusicCardItem {
   setList?: any;
   connector?: any;
   isDeletable?: boolean;
+  isOnline?: boolean;
   name: string;
   image: string;
   link: string;

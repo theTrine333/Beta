@@ -26,6 +26,7 @@ import { getPlaylists, insertPlaylist } from "@/api/database";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import ListCard from "./PlayListCard";
+import TrackPlayer from "react-native-track-player";
 
 export const AddToPlalistModal = ({ setVisible }: downloadsModalProps) => {
   const [data, setData] = useState();
@@ -159,9 +160,16 @@ export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
 };
 
 export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
-  const { duration, songName, songLink, songImageLink, quality, playList } =
+  const { duration, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
-
+  const [data, setData] = useState([]);
+  const loader = async () => {
+    const queue: any = await TrackPlayer.getQueue();
+    setData(queue);
+  };
+  useEffect(() => {
+    loader();
+  }, []);
   return (
     <Modal
       transparent
@@ -185,13 +193,19 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
               paddingBottom: 10,
             }}
           >
-            Playing : {playList.length} Songs
+            Playing : {data.length} Songs
           </ThemedText>
           <ThemedView style={Styles.plaListContainer}>
             <FlatList
-              data={playList}
+              data={data}
               contentContainerStyle={{ paddingLeft: 10, paddingRight: 10 }}
-              renderItem={({ item }) => <PlayListItem item={item} />}
+              renderItem={({ item, index }) => (
+                <PlayListItem
+                  item={item}
+                  index={index}
+                  setVisible={setVisible}
+                />
+              )}
             />
           </ThemedView>
         </ThemedView>
@@ -200,7 +214,7 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
   );
 };
 
-export const PlayListItem = ({ item }: any) => {
+export const PlayListItem = ({ item, index, setVisible }: any) => {
   const theme = useColorScheme() ?? "light";
   const { playSpecificTrack, songName, removeTrackFromList } = useAudioPlayer();
   return (
@@ -209,7 +223,6 @@ export const PlayListItem = ({ item }: any) => {
         paddingHorizontal: 10,
         borderColor: "grey",
         flexDirection: "row",
-        // borderBottomWidth: 0.5,
         marginTop: 10,
       }}
     >
@@ -220,7 +233,7 @@ export const PlayListItem = ({ item }: any) => {
           alignItems: "center",
         }}
         onPress={() => {
-          playSpecificTrack(item.name);
+          playSpecificTrack(item.title);
         }}
       >
         <MaterialCommunityIcons
@@ -228,7 +241,7 @@ export const PlayListItem = ({ item }: any) => {
           size={20}
           style={{ alignSelf: "flex-end" }}
           color={
-            songName == item.name
+            songName == item.title
               ? Colors.Slider.primary
               : Colors[theme ?? "light"].text
           }
@@ -238,21 +251,22 @@ export const PlayListItem = ({ item }: any) => {
             fontSize: 13,
             width: width * 0.75,
             color:
-              songName == item.name
+              songName == item.title
                 ? Colors.Slider.primary
                 : Colors[theme ?? "light"].text,
           }}
           numberOfLines={1}
         >
-          {item.name}
+          {item.title}
         </ThemedText>
       </TouchableOpacity>
-      {songName == item.name ? (
+      {songName == item.title ? (
         <></>
       ) : (
         <TouchableOpacity
           onPress={() => {
-            removeTrackFromList(item.name);
+            setVisible(false);
+            removeTrackFromList(index);
           }}
         >
           <MaterialCommunityIcons
