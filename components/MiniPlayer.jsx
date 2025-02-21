@@ -22,8 +22,7 @@ const MiniPlayer = (props) => {
     loadAndPlay,
     pause,
     resume,
-    position,
-    duration,
+    progress,
     isPlaying,
     isBuffering,
     isLoop,
@@ -65,14 +64,14 @@ const MiniPlayer = (props) => {
       pause();
       return;
     } else {
-      if (position == duration) {
+      if (progress.position == progress.duration) {
         seek(0);
         resume();
         return;
       }
-      resume();
-      return;
     }
+    resume();
+    return;
   };
 
   const handleClose = async () => {
@@ -130,7 +129,9 @@ const MiniPlayer = (props) => {
               {songName}
             </ThemedText>
             <ThemedText style={{ fontSize: 10, opacity: 0.5 }}>
-              {formatTime(position) + "/" + formatTime(duration)}
+              {formatTime(progress.position) +
+                "/" +
+                formatTime(progress.duration)}
             </ThemedText>
           </TouchableOpacity>
           {/* Buttons */}

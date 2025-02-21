@@ -1,5 +1,5 @@
 import * as Cheerio from "react-native-cheerio";
-
+// import * as Sharing from "expo-sharing";
 const genreUrl = "https://musicza.co.za/";
 
 export const getGenres = async () => {
@@ -59,10 +59,12 @@ export const get_sub_genre = async (genre_url) => {
     return [];
   }
 };
-export const formatTime = (millis) => {
-  const minutes = Math.floor(millis / 60000);
-  const seconds = ((millis % 60000) / 1000).toFixed(0);
-  return `${minutes}:${parseInt(seconds) < 10 ? "0" : ""}${seconds}`;
+export const formatTime = (seconds) => {
+  let minutes = Math.floor(seconds / 60);
+  let secs = Math.floor(seconds % 60);
+  minutes = minutes > 0 ? minutes : 0;
+  secs = secs > 0 ? secs : 0;
+  return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
 };
 export const getSpecificGenre = async (url) => {
   try {
@@ -93,6 +95,10 @@ export const getSpecificGenre = async (url) => {
     return null;
   }
 };
+
+export async function shareFile(name) {
+  await Sharing.share();
+}
 
 export function extractAudioHash(script) {
   const match = script.match(/Api\.track\('([^']+)'\)/);

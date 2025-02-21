@@ -1,6 +1,6 @@
 {
   "name": "tubidy",
-  "main": "expo-router/entry",
+  "main": "custom-entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",

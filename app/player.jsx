@@ -36,6 +36,15 @@ import {
   isDownload,
   isFavourite,
 } from "@/api/database";
+
+import TrackPlayer, {
+  Capability,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+  Event,
+} from "react-native-track-player";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import {
   AddToPlalistModal,
@@ -54,8 +63,7 @@ const Player = () => {
     loadAndPlay,
     pause,
     resume,
-    position,
-    duration,
+    progress,
     isPlaying,
     isBuffering,
     stop,
@@ -81,10 +89,12 @@ const Player = () => {
   const db = useSQLiteContext();
   const router = useRouter();
   const forward10 = async () => {
-    await seek(position + 10000);
+    console.log(progress.position);
+
+    await seek(progress.position + 10);
   };
   const back10 = async () => {
-    await seek(position - 10000);
+    await seek(progress.position - 10);
   };
   const handleFavourite = async () => {
     if (songName) {
@@ -157,14 +167,13 @@ const Player = () => {
       pause();
       return;
     } else {
-      if (position == duration) {
+      if (progress.position == progress.duration) {
         seek(0);
         resume();
         return;
       }
-      resume();
-      return;
     }
+    resume();
   };
 
   return (
@@ -298,13 +307,13 @@ const Player = () => {
 
       <View style={Styles.durationHolder}>
         <ThemedText style={{ color: "white" }}>
-          {formatTime(position)}
+          {formatTime(progress.position)}
         </ThemedText>
         <Slider
           style={Styles.playerSlider}
           minimumValue={0}
-          maximumValue={duration}
-          value={position}
+          maximumValue={progress.duration}
+          value={progress.position}
           onSlidingComplete={seek}
           minimumTrackTintColor="#e17645"
           maximumTrackTintColor="#4a4a4a"
@@ -312,7 +321,7 @@ const Player = () => {
         />
 
         <ThemedText style={{ color: "white" }}>
-          {formatTime(duration)}
+          {formatTime(progress.duration - progress.position)}
         </ThemedText>
       </View>
 

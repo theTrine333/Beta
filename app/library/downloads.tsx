@@ -27,7 +27,7 @@ const Downloads = () => {
   const theme = useColorScheme() ?? "light";
   const { playList, setPlaylist, isPlaying } = useAudioPlayer();
   const [deleteList, setDeleteList] = useState();
-  const { downloadQueue, currentDownload, progress, downloadedFiles } =
+  const { downloadQueue, currentDownload, Progress, downloadedFiles } =
     useDownload();
   const [data, setData] = useState([]);
   const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
@@ -90,7 +90,7 @@ const Downloads = () => {
             <DownloadCard
               loaderFunc={loader}
               title={currentDownload.name}
-              position={progress}
+              position={Progress}
               image={currentDownload.image}
               duration={currentDownload.duration}
             />
@@ -144,7 +144,7 @@ const Downloads = () => {
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <Card
                   list={downloadedFiles}
                   connector={db}

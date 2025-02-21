@@ -8,7 +8,7 @@ const DownloadContext = createContext();
 export const DownloadProvider = ({ children }) => {
   const [downloadQueue, setDownloadQueue] = useState([]);
   const [currentDownload, setCurrentDownload] = useState(null); // File being downloaded
-  const [progress, setProgress] = useState(0); // Current download progress
+  const [Progress, setProgress] = useState(0); // Current download progress
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadedFiles, setDownloadedFiles] = useState([]);
   const [imageLink, setImageLink] = useState(null);
@@ -92,7 +92,7 @@ export const DownloadProvider = ({ children }) => {
         loader,
         downloadQueue,
         currentDownload,
-        progress,
+        Progress,
         downloadedFiles,
         isDownloading,
       }}

@@ -264,13 +264,13 @@ export const PlayListItem = ({ item }: any) => {
 };
 
 export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
-  const { duration, songName, songLink, songImageLink, quality } =
+  const { progress, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
   const {
     addToQueue,
     isDownloading,
     currentDownload,
-    progress,
+    Progress,
     downloadedFiles,
   } = useDownload();
   const [downloadQuality, setDownloadQuality] = useState(""); // Selected quality
@@ -316,7 +316,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
       return;
     }
     const file = {
-      duration: duration,
+      duration: progress.duration,
       image: songImageLink,
       name: songName,
       uri: downloadUrl,
@@ -352,7 +352,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
                 {songName}
               </ThemedText>
               <ThemedText style={{ fontSize: 11 }}>
-                Duration : {formatTime(duration)}
+                Duration : {formatTime(progress.duration)}
               </ThemedText>
             </ThemedView>
           </View>
@@ -397,7 +397,7 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
                 opacity:
                   !downloadQuality ||
                   currentDownload?.name === songName ||
-                  formatTime(duration).includes("0:00")
+                  formatTime(progress.duration).includes("0:00")
                     ? 0.5
                     : 1,
               },
@@ -406,12 +406,12 @@ export const DownloadModal = ({ setVisible }: downloadsModalProps) => {
             disabled={
               !downloadQuality ||
               currentDownload?.name === songName ||
-              formatTime(duration).includes("0:00")
+              formatTime(progress.duration).includes("0:00")
             }
           >
             <ThemedText style={{ fontWeight: "bold", fontSize: 18 }}>
               {isDownloading && currentDownload?.name === songName
-                ? `Downloading... ${Math.round(progress)}%`
+                ? `Downloading... ${Math.round(Progress)}%`
                 : "Download"}
             </ThemedText>
           </TouchableOpacity>

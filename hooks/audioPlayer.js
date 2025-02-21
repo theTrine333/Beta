@@ -1,11 +1,11 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { Audio } from "expo-av";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import TrackPlayer, {
+  Capability,
+  Event,
+  State,
+  useProgress,
+  useTrackPlayerEvents,
+} from "react-native-track-player";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { get_db_downloadLink } from "@/api/database";
 import { useSQLiteContext } from "expo-sqlite";
@@ -13,10 +13,8 @@ import { useSQLiteContext } from "expo-sqlite";
 const AudioPlayerContext = createContext();
 
 export const AudioPlayerProvider = ({ children }) => {
-  const soundRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [position, setPosition] = useState(0);
-  const [duration, setDuration] = useState(1);
+  const progress = useProgress();
   const [isBuffering, setIsBuffering] = useState(false);
   const [isLoop, setLoop] = useState(false);
   const [songLink, setSongLink] = useState(null);
@@ -29,53 +27,43 @@ export const AudioPlayerProvider = ({ children }) => {
   const [genrePlayLists, setGenrePlayLists] = useState([]);
   const [playList, setPlaylist] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [pitch, setPitch] = useState(1.0); //0.5,1,1.5,2
+  const [pitch, setPitch] = useState(1.0);
   const db = useSQLiteContext();
-  const enableAudioMode = async () => {
-    try {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-      });
-    } catch (error) {
-      console.error("Error enabling audio mode:", error);
-    }
-  };
 
-  const pitchChanger = async () => {
-    if (pitch < 2) {
-      setPitch(pitch + 0.5);
-    } else {
-      setPitch(0.5);
-    }
-  };
-  // Change pitch
   useEffect(() => {
-    const pitcher = () => {
-      soundRef?.current?.setRateAsync(pitch);
+    const setupPlayer = async () => {
+      try {
+        await TrackPlayer.setupPlayer();
+        await TrackPlayer.updateOptions({
+          capabilities: [
+            Capability.Play,
+            Capability.Pause,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
+          ],
+        });
+      } catch (error) {
+        // console.error("Error setting up TrackPlayer:", error);
+      }
     };
-    pitcher();
-  }, [pitch]);
-  useEffect(() => {
-    enableAudioMode();
-    return () => {
-      soundRef.current?.unloadAsync();
-    };
+    setupPlayer();
   }, []);
 
-  const loadAndPlay = async (tempIndex) => {
-    enableAudioMode();
-    const newIndex = tempIndex ?? currentIndex;
+  useTrackPlayerEvents([Event.PlaybackState], async (event) => {
+    if (event.state === State.Playing) setIsPlaying(true);
+    else setIsPlaying(false);
+  });
 
+  const loadAndPlay = async (tempIndex) => {
+    const newIndex = tempIndex ?? currentIndex;
     if (newIndex < 0 || newIndex >= playList.length) return;
 
     let { name, image, link } = playList[newIndex];
     let uri = playList[newIndex].uri;
     setSongName(name);
     setSongImageLink(image);
-    const localLink = await get_db_downloadLink(db, name);
 
+    const localLink = await get_db_downloadLink(db, name);
     if (localLink) {
       uri = localLink.uri;
     } else if (link) {
@@ -91,100 +79,42 @@ export const AudioPlayerProvider = ({ children }) => {
       }
     }
 
-    try {
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync();
-      }
+    await TrackPlayer.reset();
+    await TrackPlayer.add({
+      id: name,
+      url: uri,
+      title: name,
+      artwork: image,
+    });
+    await TrackPlayer.play();
 
-      const { sound } = await Audio.Sound.createAsync(
-        { uri },
-        {
-          shouldPlay: true,
-          isLooping: isLoop,
-          rate: pitch,
-          staysActiveInBackground: true,
-        },
-        onPlaybackStatusUpdate,
-        false
-      );
-
-      soundRef.current = sound;
-      setIsPlaying(true);
-      setSongLink(uri);
-      setCurrentIndex(newIndex);
-
-      setTimeout(() => {
-        setSongImageLink(playList[newIndex]?.image);
-        setSongName(playList[newIndex]?.name);
-      }, 100);
-    } catch (error) {
-      stop();
-    }
+    setSongLink(uri);
+    setCurrentIndex(newIndex);
   };
 
-  const onPlaybackStatusUpdate = (status) => {
-    if (!status.isLoaded) return;
-    setPosition(status.positionMillis);
-    setDuration(status.durationMillis);
-    setIsPlaying(status.isPlaying);
-    setIsBuffering(status.isBuffering);
-    if (status.didJustFinish) {
-      setCurrentIndex((prevIndex) => {
-        if (!isLoop && prevIndex < playList.length - 1) {
-          nextSong();
-          return prevIndex + 1;
-        } else if (isLoop) {
-          loadAndPlay(prevIndex);
-          return prevIndex;
-        }
-        return prevIndex;
-      });
-    }
+  const nextSong = async () => {
+    await TrackPlayer.skipToNext();
   };
 
-  const nextSong = () => {
-    if (currentIndex < playList.length - 1) {
-      loadAndPlay(currentIndex + 1);
-    }
-  };
-
-  const previousSong = () => {
-    if (currentIndex > 0) {
-      loadAndPlay(currentIndex - 1);
-    }
+  const previousSong = async () => {
+    await TrackPlayer.skipToPrevious();
   };
 
   const pause = async () => {
-    if (soundRef.current) {
-      await soundRef.current.pauseAsync();
-      setIsPlaying(false);
-    }
+    await TrackPlayer.pause();
   };
 
   const resume = async () => {
-    if (soundRef.current) {
-      await soundRef.current.playAsync();
-      setIsPlaying(true);
-    }
+    await TrackPlayer.play();
   };
 
   const stop = async () => {
-    if (soundRef.current) {
-      await soundRef.current.stopAsync();
-      await soundRef.current.unloadAsync();
-      soundRef.current = null;
-    }
-    setIsPlaying(false);
-    setPosition(0);
-    setDuration(1);
-    setSongLink(null);
     setSongName("");
+    await TrackPlayer.reset();
   };
 
   const seek = async (value) => {
-    if (soundRef.current) {
-      await soundRef.current.setPositionAsync(value);
-    }
+    await TrackPlayer.seekTo(value);
   };
 
   const findTrackIndexByName = (name) => {
@@ -201,23 +131,43 @@ export const AudioPlayerProvider = ({ children }) => {
   const removeTrackFromList = (name) => {
     setPlaylist((prevList) => prevList.filter((track) => track.name !== name));
   };
-  const addAndPlaySingleTrack = (track) => {
-    setPlaylist([track]); // Set the playlist to only contain this track
-    setCurrentIndex(0); // Reset index to 0
-    loadAndPlay(0); // Play the newly added track immediately
+
+  const addAndPlaySingleTrack = async (track) => {
+    console.log(track);
+
+    setPlaylist([track]);
+    setCurrentIndex(0);
+    await loadAndPlay(0);
   };
 
+  const pitchChanger = async () => {
+    if (pitch == 0.5) {
+      setPitch(1);
+      await TrackPlayer.setRate(1);
+    } else if (pitch == 1) {
+      setPitch(1.5);
+      await TrackPlayer.setRate(1.5);
+    } else if (pitch == 1.5) {
+      setPitch(2);
+      await TrackPlayer.setRate(2);
+    } else if (pitch == 2) {
+      setPitch(0.5);
+      await TrackPlayer.setRate(0.5);
+    } else {
+      setPitch(1);
+      await TrackPlayer.setRate(1);
+    }
+  };
   return (
     <AudioPlayerContext.Provider
       value={{
         isPlaying,
-        position,
-        duration,
         isBuffering,
         isLoop,
         setLoop,
         stop,
         loadAndPlay,
+        progress,
         pause,
         pitch,
         resume,

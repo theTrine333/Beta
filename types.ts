@@ -12,6 +12,7 @@ export interface rowMusicCardProps {
 
 export interface rowMusicCardItem {
   list?: [];
+  index?: any;
   setList?: any;
   connector?: any;
   isDeletable?: boolean;

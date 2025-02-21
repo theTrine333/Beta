@@ -21,6 +21,7 @@ import Styles, { blurhash } from "@/style";
 import { LinearGradient } from "expo-linear-gradient";
 import { AudioPlayerProvider } from "@/hooks/audioPlayer";
 import { DownloadProvider } from "@/hooks/downloadContext";
+import { setupPlayer } from "@/services/PlayerSetup";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -78,6 +79,12 @@ export default function RootLayout() {
     PacifioRegular: require("../assets/fonts/Pacifico-Regular.ttf"),
   });
 
+  useEffect(() => {
+    async function initPlayer() {
+      // await setupPlayer();
+    }
+    initPlayer();
+  }, []);
   useEffect(() => {
     loadDatabase()
       .then(() => {
