@@ -21,7 +21,7 @@ export default function HomeScreen() {
       const results: any = await getSongSearch("Trending+Songs+In+Kenya");
       const shuffleData = shuffleArray(results);
       setData(shuffleData);
-      setPlaylist(shuffleData);
+      // setPlaylist(shuffleData);
       setState("idle");
     } catch {
       setState("idle");

@@ -26,7 +26,7 @@ const Card = ({ name, image, link, duration, router }: rowMusicCardItem) => {
         const track = {
           name: name,
           image: image,
-          link: link,
+          uri: link,
           duration: duration,
         };
         addAndPlaySingleTrack(track);

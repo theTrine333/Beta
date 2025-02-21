@@ -80,7 +80,6 @@ const Player = () => {
     previousSong,
     nextSong,
     pitch,
-    setSongImageLink,
     playSpecificTrack,
   } = useAudioPlayer();
 
@@ -91,8 +90,6 @@ const Player = () => {
 
   const router = useRouter();
   const forward10 = async () => {
-    console.log(progress.position);
-
     await seek(progress.position + 10);
   };
   const back10 = async () => {
@@ -119,6 +116,7 @@ const Player = () => {
   const [qlt, setQlt] = useState();
 
   useEffect(() => {
+    setSongLink(params?.Link);
     const isFav = async () => {
       try {
         const checkFavourite = await isFavourite(db, params.Name);
@@ -135,16 +133,18 @@ const Player = () => {
     const loader = async () => {
       try {
         setModalVisible("loading");
-        const hashes = await getHashes(params.Link || params.link);
-        setSongLink(params.Link);
+        const hashes = await getHashes(songLink);
+        console.log("Song link ; ", songLink);
+
+        // setSongLink(params.Link);
         const formats = await getFormats(hashes?.video_hash);
         const link = await get_downloadLink(formats["formats"][0]?.payload);
         setQuality(formats["formats"]);
         setModalVisible(false);
-        playSpecificTrack(params.Name);
+        // playSpecificTrack(params.Name);
         // loadAndPlay(link.link, params.Name, params.Image);
       } catch (error) {
-        console.log(error);
+        console.log("Loading error : ", error);
 
         setModalVisible("error");
       }
@@ -158,7 +158,7 @@ const Player = () => {
 
     if (params?.isDownload) {
       setModalVisible(false);
-      playSpecificTrack(params.Name);
+      // playSpecificTrack(params.Name);
       return;
     }
 
@@ -365,7 +365,7 @@ const Player = () => {
             <></>
           )}
           <AntDesign
-            name={isPlaying ? "pausecircleo" : "playcircleo"}
+            name={!isPlaying ? "playcircleo" : "pausecircleo"}
             size={50}
             color={"white"}
           />

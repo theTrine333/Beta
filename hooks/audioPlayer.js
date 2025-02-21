@@ -71,7 +71,7 @@ export const AudioPlayerProvider = ({ children }) => {
       if (currentTrackIndex !== null) {
         const queue = await TrackPlayer.getQueue();
         const track = queue[currentTrackIndex];
-        if (track) {
+        if (track && isPlaying) {
           setSongImageLink(track.artwork);
           setSongName(track.title);
           setSongImageLink(track.artwork);
@@ -81,25 +81,50 @@ export const AudioPlayerProvider = ({ children }) => {
     updateCurrentTrack();
   });
 
-  useEffect(() => {}, [songName]);
+  const streamSong = async (url, name = "Streamed Song", image = null) => {
+    if (!url) {
+      console.error("No URL provided for streaming");
+      return;
+    }
+    const hashes = await getHashes(url);
+    const formats = await getFormats(hashes?.video_hash);
+    const downloadLink = await get_downloadLink(formats?.formats[0]?.payload);
+    setQuality(formats["formats"]);
+
+    let uri = downloadLink?.link;
+    try {
+      await TrackPlayer.reset(); // Clear queue
+      setSongLink(url);
+      await TrackPlayer.add({
+        id: name,
+        url: uri,
+        title: name,
+        artwork: image || "https://example.com/default-artwork.jpg",
+      });
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error("Error streaming song:", error);
+    }
+  };
 
   const loadAndPlay = async (tempIndex) => {
     const newIndex = tempIndex ?? currentIndex;
     if (newIndex < 0 || newIndex >= playList.length) return;
 
     const { name, image, link } = playList[newIndex];
-    let uri = link; // Default to online link
+    let uri = link;
+
     try {
       const localLink = await get_db_downloadLink(db, name);
       if (localLink) {
-        uri = localLink.uri; // Use local file if available
-      } else if (link.startsWith("https")) {
+        uri = localLink.uri;
+      } else if (link) {
         const hashes = await getHashes(link);
         const formats = await getFormats(hashes?.video_hash);
         const downloadLink = await get_downloadLink(
           formats?.formats[0]?.payload
         );
-
+        console.log("Download link", downloadLink);
         uri = downloadLink?.link;
       }
     } catch (error) {
@@ -109,14 +134,14 @@ export const AudioPlayerProvider = ({ children }) => {
 
     const queue = await TrackPlayer.getQueue();
     const existingTrackIndex = queue.findIndex((track) => track.id === name);
-    console.log("Finding url : ", uri);
+    console.log("Final url : ", uri);
 
     if (existingTrackIndex !== -1) {
       await TrackPlayer.skip(existingTrackIndex);
     } else {
       await TrackPlayer.add({
         id: name,
-        url: "https://d371.d2mefast.net/c.php?s=eNoBYACf%252F3507XfJA4nKByA%252FcNKUtO0iLToYm3xO6eiUN306SNc2YTTzB1yMDKYEzzxfQJMMY%252B7VENpMfZqc04CeZs8TilKdJQXzE%252F%252B%252FddB6iHq0dtnAjo9hDIVoqYS71GXS7i4jdY1yLsg%253D",
+        url: uri,
         title: name,
         artwork: image,
       });
@@ -175,6 +200,7 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const stop = async () => {
+    await setSongName("");
     await TrackPlayer.stop();
     setIsPlaying(false);
   };
@@ -189,7 +215,7 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const playSpecificTrack = async (name) => {
     const index = findTrackIndexByName(name);
-    console.log(playList[0]);
+    // console.log("Playlist item : ", playList);
     if (index !== -1) {
       await TrackPlayer.skip(index);
     }
@@ -200,8 +226,6 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const addAndPlaySingleTrack = async (track) => {
-    console.log(track);
-
     setPlaylist([track]);
     setCurrentIndex(0);
     await loadAndPlay(0);
@@ -262,6 +286,7 @@ export const AudioPlayerProvider = ({ children }) => {
         nextSong,
         previousSong,
         playSpecificTrack,
+        streamSong,
         addAndPlaySingleTrack,
         removeTrackFromList,
       }}

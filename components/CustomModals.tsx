@@ -163,13 +163,16 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality } =
     useAudioPlayer();
   const [data, setData] = useState([]);
+
   const loader = async () => {
     const queue: any = await TrackPlayer.getQueue();
     setData(queue);
   };
+
   useEffect(() => {
     loader();
   }, []);
+
   return (
     <Modal
       transparent
@@ -193,7 +196,8 @@ export const PlaylistModal = ({ setVisible }: downloadsModalProps) => {
               paddingBottom: 10,
             }}
           >
-            Playing : {data.length} Songs
+            Playing :
+            {data.length > 1 ? data.length + " Songs" : data.length + " Song"}
           </ThemedText>
           <ThemedView style={Styles.plaListContainer}>
             <FlatList

@@ -28,9 +28,8 @@ const Card = ({
     setSongImageLink,
     setSongName,
     setPlaylist,
+    streamSong,
     playList,
-    isPlaying,
-    addAndPlaySingleTrack,
     playSpecificTrack,
   } = useAudioPlayer();
   const theme = useColorScheme() ?? "light";
@@ -50,32 +49,25 @@ const Card = ({
   };
 
   const loadPlayList = async () => {
-    if (playList == list) {
-      playSpecificTrack(name);
+    setSongName(name);
+    setSongImageLink(image);
+    if (list && list != playList && !isOnline) {
+      await setPlaylist(list);
+      await playSpecificTrack(name);
+      await playSpecificTrack(name);
+    }
+    if (isOnline) {
+      streamSong(link, name, image);
       return;
     }
-    await setPlaylist(list);
+    await playSpecificTrack(name);
   };
 
   return (
     <TouchableOpacity
       style={Styles.libraryCard}
       onPress={async () => {
-        setSongName(name);
-        if (isOnline) {
-          addAndPlaySingleTrack({
-            name: name,
-            image: image,
-            link: link,
-          });
-          // return;
-        }
-        if (list && list != playList && !isOnline) {
-          await loadPlayList();
-        }
-
-        playSpecificTrack(name);
-
+        loadPlayList();
         if (isDownload) {
           router.push({
             pathname: "player",
