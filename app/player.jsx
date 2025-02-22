@@ -432,6 +432,18 @@ const Player = () => {
           <MaterialIcons name="forward-10" size={25} color={"white"} />
         </TouchableOpacity>
       </View>
+      {/* BAnner should be here */}
+      {/* <View
+        style={{
+          borderWidth: 1,
+          width: width,
+          // position: "absolute",
+          // bottom: 0,
+          alignSelf: "flex-end",
+          height: height * 0.06,
+          borderColor: "white",
+        }}
+      ></View> */}
       <StatusBar hidden={false} style="light" />
     </ThemedView>
   );
