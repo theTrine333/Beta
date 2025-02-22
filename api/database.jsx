@@ -167,7 +167,7 @@ export const deleteDownload = async (db, name, loader) => {
     await FileSystem.deleteAsync(FileSystem.documentDirectory + name + ".mp3");
     loader();
   } catch (error) {
-    console.log("Deleting error : ", error);
+    // console.log("Deleting error : ", error);
   }
 };
 
@@ -233,7 +233,7 @@ export const getPlaylistItems = async (db, name) => {
     // Name as name,Image as image,Duration as duration,Location as uri
     return results;
   } catch (error) {
-    console.log("Error getting playlist items");
+    // console.log("Error getting playlist items");
   }
 };
 
@@ -244,7 +244,7 @@ export const insertPlaylistItem = async (db, name, image, link, parent) => {
       [`${name}`, `${image}`, `${link}`, `${parent}`]
     );
   } catch (error) {
-    console.log("Error insterting item :" + name + " \n" + error);
+    // console.log("Error insterting item :" + name + " \n" + error);
   }
 };
 

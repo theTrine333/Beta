@@ -27,7 +27,7 @@ export default function TabLayout() {
             position: "absolute",
             width: width * 0.9,
             alignItems: "center",
-            bottom: 7,
+            bottom: 10,
             left: 20,
           },
         }}

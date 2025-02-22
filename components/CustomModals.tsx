@@ -534,6 +534,46 @@ export const DownloadCard = ({
   );
 };
 
+export const GenrePlayLister = ({ setVisible, list }: downloadsModalProps) => {
+  useEffect(() => {
+    console.log(list[0]);
+  }, []);
+  return (
+    <Modal
+      transparent
+      onRequestClose={() => {
+        setVisible(false);
+      }}
+      animationType="slide"
+    >
+      <ThemedView
+        style={{
+          flex: 1,
+          backgroundColor: "transparent",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ThemedView style={[Styles.bottomModal, { paddingHorizontal: 0 }]}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignSelf: "flex-start",
+              paddingHorizontal: 10,
+            }}
+          >
+            <ThemedText>Stream</ThemedText>
+            <ThemedText
+              style={{ color: Colors.Slider.primary, fontFamily: "SpaceMono" }}
+            >
+              IT
+            </ThemedText>
+          </View>
+        </ThemedView>
+      </ThemedView>
+    </Modal>
+  );
+};
+
 export const PlayerErrorModal = ({
   setVisible,
   quiter,

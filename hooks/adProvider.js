@@ -21,7 +21,6 @@ export const AdProvider = ({ children }) => {
   const [rewardedLoaded, setRewardedLoaded] = useState(false);
 
   useEffect(() => {
-    // Create Interstitial Ad
     const interstitial = InterstitialAd.createForAdRequest(
       interstitialAdUnitId,
       {
@@ -50,14 +49,13 @@ export const AdProvider = ({ children }) => {
       loadInterstitialAd(); // Load next interstitial ad
     });
     interstitial.addAdEventListener(AdEventType.ERROR, () => {
-      console.log("Interstitial Ad failed to load. Retrying...");
       setTimeout(loadInterstitialAd, 5000); // Retry after 5 seconds
     });
 
     // Rewarded Interstitial Ad event listeners
-    rewardedInterstitial.addAdEventListener(RewardedAdEventType.LOADED, () =>
-      setRewardedLoaded(true)
-    );
+    rewardedInterstitial.addAdEventListener(RewardedAdEventType.LOADED, () => {
+      setRewardedLoaded(true);
+    });
     rewardedInterstitial.addAdEventListener(AdEventType.CLOSED, () => {
       setRewardedLoaded(false);
       loadRewardedAd(); // Load next rewarded interstitial ad
@@ -69,7 +67,6 @@ export const AdProvider = ({ children }) => {
       }
     );
     rewardedInterstitial.addAdEventListener(AdEventType.ERROR, () => {
-      console.log("Rewarded Interstitial Ad failed to load. Retrying...");
       setTimeout(loadRewardedAd, 5000); // Retry after 5 seconds
     });
 
@@ -83,14 +80,14 @@ export const AdProvider = ({ children }) => {
       if (interstitialLoaded) {
         interstitial.show();
       }
-    }, 3 * 60 * 1000); // 5 minutes
+    }, 5 * 60 * 1000);
 
     // Show rewarded interstitial ad every 10 minutes
     const rewardedInterval = setInterval(() => {
       if (rewardedLoaded) {
         rewardedInterstitial.show();
       }
-    }, 7 * 60 * 1000); // 10 minutes
+    }, 12 * 60 * 1000);
 
     return () => {
       clearInterval(interstitialInterval);

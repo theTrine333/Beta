@@ -42,7 +42,7 @@ const Playlist = () => {
       results = await getFavourites(db);
     } else {
       results = await getPlaylistItems(db, params.Title);
-      console.log("Playlist : ", JSON.stringify(results, undefined, 2));
+      // console.log("Playlist : ", JSON.stringify(results, undefined, 2));
     }
     if (results.length == 0) {
       setState("empty");

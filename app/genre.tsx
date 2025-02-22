@@ -22,7 +22,9 @@ import { ErrorCard, NoResultsCard } from "@/components/ResultsCard";
 import MiniPlayer from "@/components/MiniPlayer";
 import { AntDesign } from "@expo/vector-icons";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
+import { GenrePlayLister } from "@/components/CustomModals";
 const PAGE_SIZE = 7;
 
 const Genre = () => {
@@ -35,9 +37,9 @@ const Genre = () => {
   const [data, setData] = useState<any[]>([]);
   const [allData, setAllData] = useState<any[]>([]);
   const router = useRouter();
-  const [currentIndex, setCurrentIndex] = useState(5);
+  const [currentIndex, setCurrentIndex] = useState(15);
   const [refresh, setRefresh] = useState<any>(false);
-
+  const [listVisible, setListVisible] = useState(false);
   const loader = async () => {
     try {
       setState("loading");
@@ -47,11 +49,6 @@ const Genre = () => {
         setState("empty");
         return;
       }
-
-      // // Remove duplicates based on 'id' or 'name'
-      // const uniqueData: any[] = Array.from(
-      //   new Map(temp.map((item: any) => [item.name, item])).values()
-      // );
 
       setAllData(temp);
       setData(temp.slice(0, 15));
@@ -89,6 +86,12 @@ const Genre = () => {
         colors={["transparent", Colors[theme ?? "light"].background]} // Adjust colors for fade effect
         style={Styles.genreGradient}
       />
+      {listVisible && allData.length > 0 ? (
+        <GenrePlayLister setVisible={setListVisible} list={allData} />
+      ) : (
+        <></>
+      )}
+
       {state == "loading" ? (
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -147,7 +150,23 @@ const Genre = () => {
                     size="small"
                     color={Colors.Slider.primary}
                   />
-                ) : null
+                ) : (
+                  <ThemedView
+                    style={{
+                      position: "absolute",
+                      bottom: 0,
+                      borderColor: "white",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    <BannerAd
+                      size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                      unitId={
+                        Constants.default.expoConfig?.extra?.admob?.bannerId
+                      }
+                    />
+                  </ThemedView>
+                )
               }
             />
           </ThemedView>
@@ -159,8 +178,7 @@ const Genre = () => {
               top: width * 0.93,
             }}
             onPress={() => {
-              // playList = data;
-              // loadAndPlay();
+              setListVisible(true);
             }}
           >
             <AntDesign name="play" color={Colors.Slider.primary} size={50} />

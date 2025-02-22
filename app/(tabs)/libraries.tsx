@@ -21,20 +21,6 @@ const Libraries = () => {
       <ThemedView style={{ marginTop: 0, paddingHorizontal: 0, flex: 1 }}>
         <Tabs />
       </ThemedView>
-      <ThemedView
-        style={{
-          position: "absolute",
-          bottom: 40,
-          // borderWidth: 1,
-          backgroundColor: "transparent",
-          borderColor: "white",
-        }}
-      >
-        <BannerAd
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
-        />
-      </ThemedView>
     </ThemedView>
   );
 };
