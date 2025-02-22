@@ -20,6 +20,8 @@ import { DownloadCard } from "@/components/CustomModals";
 import { formatTime } from "@/api/q";
 import { Colors } from "@/constants/Colors";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
 
 const Downloads = () => {
   const db = useSQLiteContext();
@@ -50,6 +52,7 @@ const Downloads = () => {
   return (
     <ThemedView style={[Styles.container, { padding: 10, paddingTop: 10 }]}>
       <SearchCard inType="songs" shouldNavigate Parent="downloads" />
+
       {state == "loading" ? (
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -95,7 +98,6 @@ const Downloads = () => {
               duration={currentDownload.duration}
             />
           )}
-
           {/* Queue Section */}
           {downloadQueue.length > 1 && (
             <>
@@ -134,9 +136,7 @@ const Downloads = () => {
               </ThemedView>
             </>
           )}
-
           {/* Downloaded Files Section */}
-
           <ThemedView>
             <FlatList
               data={downloadedFiles}

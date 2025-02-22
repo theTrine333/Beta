@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { getSongSearch, shuffleArray } from "@/api/q";
 import { ResultCardItem } from "@/components/ResultsCard";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
-
+import * as Constants from "expo-constants";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 export default function HomeScreen() {
   const router = useRouter();
   const [data, setData] = useState<any>([]);
@@ -59,6 +60,20 @@ export default function HomeScreen() {
               router={router}
             />
           )}
+        />
+      </ThemedView>
+      <ThemedView
+        style={{
+          position: "absolute",
+          bottom: 40,
+          // borderWidth: 1,
+          backgroundColor: "transparent",
+          borderColor: "white",
+        }}
+      >
+        <BannerAd
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
         />
       </ThemedView>
     </ThemedView>

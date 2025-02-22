@@ -2,8 +2,8 @@ import React, { createContext, useEffect, useState } from "react";
 import {
   InterstitialAd,
   RewardedInterstitialAd,
-  TestIds,
   AdEventType,
+  RewardedAdEventType,
 } from "react-native-google-mobile-ads";
 import * as Contstants from "expo-constants";
 
@@ -55,7 +55,7 @@ export const AdProvider = ({ children }) => {
     });
 
     // Rewarded Interstitial Ad event listeners
-    rewardedInterstitial.addAdEventListener(AdEventType.LOADED, () =>
+    rewardedInterstitial.addAdEventListener(RewardedAdEventType.LOADED, () =>
       setRewardedLoaded(true)
     );
     rewardedInterstitial.addAdEventListener(AdEventType.CLOSED, () => {
@@ -63,7 +63,7 @@ export const AdProvider = ({ children }) => {
       loadRewardedAd(); // Load next rewarded interstitial ad
     });
     rewardedInterstitial.addAdEventListener(
-      AdEventType.EARNED_REWARD,
+      RewardedAdEventType.EARNED_REWARD,
       (reward) => {
         console.log("User earned reward:", reward);
       }
@@ -83,14 +83,14 @@ export const AdProvider = ({ children }) => {
       if (interstitialLoaded) {
         interstitial.show();
       }
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 3 * 60 * 1000); // 5 minutes
 
     // Show rewarded interstitial ad every 10 minutes
     const rewardedInterval = setInterval(() => {
       if (rewardedLoaded) {
         rewardedInterstitial.show();
       }
-    }, 10 * 60 * 1000); // 10 minutes
+    }, 7 * 60 * 1000); // 10 minutes
 
     return () => {
       clearInterval(interstitialInterval);

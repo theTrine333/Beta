@@ -21,7 +21,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
 const Search = () => {
   const params = useLocalSearchParams();
   const type = params.inType;
@@ -97,6 +98,7 @@ const Search = () => {
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }
+              ListFooterComponentStyle={{ marginTop: 10 }}
               renderItem={({ item, index }) => (
                 <Card
                   index={index}
@@ -153,6 +155,19 @@ const Search = () => {
             )}
           />
         )}
+      </ThemedView>
+      <ThemedView
+        style={{
+          position: "absolute",
+          bottom: 1,
+          // borderWidth: 1,
+          borderColor: "white",
+        }}
+      >
+        <BannerAd
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
+        />
       </ThemedView>
       <MiniPlayer style={{ bottom: 20 }} router={router} />
     </ThemedView>

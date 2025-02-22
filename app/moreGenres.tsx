@@ -14,7 +14,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import { FlatList, RefreshControl, useColorScheme } from "react-native";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
 const moreGenres = () => {
   const params = useLocalSearchParams();
   const db = useSQLiteContext();
@@ -70,6 +71,19 @@ const moreGenres = () => {
               router={router}
             />
           )}
+        />
+      </ThemedView>
+      <ThemedView
+        style={{
+          position: "absolute",
+          bottom: 0,
+          borderColor: "white",
+          backgroundColor: "transparent",
+        }}
+      >
+        <BannerAd
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
         />
       </ThemedView>
       <MiniPlayer style={{ bottom: 10 }} />

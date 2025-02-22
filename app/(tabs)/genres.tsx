@@ -10,7 +10,8 @@ import { useRouter } from "expo-router";
 import SearchCard from "@/components/searchCard";
 import { shuffleArray } from "@/api/q";
 import { Colors } from "@/constants/Colors";
-
+import * as Constants from "expo-constants";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 const PAGE_SIZE = 2; // Load 2 items at a time
 
 const Genres = () => {
@@ -65,7 +66,6 @@ const Genres = () => {
         title="Genres"
         description="The home of free endless music"
       />
-
       <ThemedView style={Styles.verticalListContainer}>
         <SearchCard inType="genres" shouldNavigate Parent="genres" />
         {state === "loading" ? (
@@ -90,7 +90,24 @@ const Genres = () => {
             ListFooterComponent={
               loadingMore ? (
                 <ActivityIndicator size="small" color={Colors.Slider.primary} />
-              ) : null
+              ) : (
+                <ThemedView
+                  style={{
+                    // position: "absolute",
+                    // bottom: 40,
+                    // borderWidth: 1,
+                    backgroundColor: "transparent",
+                    borderColor: "white",
+                  }}
+                >
+                  <BannerAd
+                    size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                    unitId={
+                      Constants.default.expoConfig?.extra?.admob?.bannerId
+                    }
+                  />
+                </ThemedView>
+              )
             }
           />
         )}

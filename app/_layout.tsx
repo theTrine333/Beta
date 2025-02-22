@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState, Suspense } from "react";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import {
@@ -9,8 +9,6 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { Suspense, useState } from "react";
 import "react-native-reanimated";
 import { SQLiteProvider } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
@@ -24,6 +22,8 @@ import Styles, { blurhash } from "@/style";
 import { LinearGradient } from "expo-linear-gradient";
 import { AudioPlayerProvider } from "@/hooks/audioPlayer";
 import { DownloadProvider } from "@/hooks/downloadContext";
+import { AdProvider } from "@/hooks/adProvider"; // Import the AdProvider
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,9 +37,7 @@ const loadDatabase = async () => {
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(
       `${FileSystem.documentDirectory}SQLite`,
-      {
-        intermediates: true,
-      }
+      { intermediates: true }
     );
     await FileSystem.downloadAsync(dbUri, dbFilePath);
   }
@@ -57,9 +55,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     loadDatabase()
-      .then(() => {
-        setDbLoaded(true);
-      })
+      .then(() => setDbLoaded(true))
       .catch((e) => console.error("Database load error: ", e));
   }, []);
 
@@ -85,10 +81,10 @@ export default function RootLayout() {
         />
         <ActivityIndicator
           size={32}
-          style={{ marginTop: 10 }}
+          style={{ marginTop: 10, alignSelf: "center" }}
           color={Colors.Slider.primary}
         />
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
       </View>
     );
   }
@@ -103,20 +99,35 @@ export default function RootLayout() {
         <SQLiteProvider databaseName="play.db" useSuspense>
           <AudioPlayerProvider>
             <DownloadProvider>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="moreGenres"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="genre" options={{ headerShown: false }} />
-                <Stack.Screen name="search" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="Playlist"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="player" options={{ headerShown: false }} />
-              </Stack>
+              <AdProvider>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="moreGenres"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen name="genre" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="search"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Playlist"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="player"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="notification.click"
+                    options={{ headerShown: false }}
+                  />
+                </Stack>
+              </AdProvider>
             </DownloadProvider>
           </AudioPlayerProvider>
         </SQLiteProvider>

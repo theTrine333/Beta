@@ -20,7 +20,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { PlaylistAddModal } from "@/components/CustomModals";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
 const Playlists = () => {
   const db = useSQLiteContext();
   const router = useRouter();
@@ -80,6 +81,13 @@ const Playlists = () => {
         refreshControl={
           <RefreshControl onRefresh={loader} refreshing={refresh} />
         }
+        ListFooterComponent={() => (
+          <BannerAd
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
+          />
+        )}
+        ListFooterComponentStyle={{ marginTop: 10 }}
         renderItem={({ item }) => (
           <ListCard
             connector={db}

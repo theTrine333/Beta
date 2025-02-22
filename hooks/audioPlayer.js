@@ -123,7 +123,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!playlist || !Array.isArray(playlist) || playlist.length === 0) return;
 
     if (playList !== playlist) {
-      console.log("Not the same ");
+      // console.log("Not the same ");
     }
     await TrackPlayer.reset(); // Clear previous queue
     const tracks = playlist.map(({ name, image, uri }) => ({
