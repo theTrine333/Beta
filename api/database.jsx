@@ -75,8 +75,8 @@ export const getGenreSearch = async (db, text) => {
 export const getDownloadsSearch = async (db, text) => {
   try {
     let results = await db.getAllAsync(
-      "SELECT Name as name,Image as image,Duration as duration, location as link FROM Downloads WHERE name LIKE ?",
-      [`%${text}%`] // Use '%' wildcards within the parameter array
+      "SELECT Name as name,Image as image,Duration as duration, location as uri FROM Downloads WHERE name LIKE ?",
+      [`%${text}%`]
     );
 
     return results;

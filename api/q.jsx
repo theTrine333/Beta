@@ -102,7 +102,7 @@ export async function shareFile(name) {
   const status = await Sharing.isAvailableAsync();
   const location = FileSystem.documentDirectory + name + ".mp3";
   if (status) {
-    await Sharing.shareAsync(location);
+    await Sharing.shareAsync(location, { dialogTitle: "Beta : Play" });
   } else {
     Alert.alert(
       "Share not supported",
@@ -241,5 +241,3 @@ export const shuffleArray = (array) => {
   }
   return shuffled;
 };
-
-export const shareSong = async (name) => {};

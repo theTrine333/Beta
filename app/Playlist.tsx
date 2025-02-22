@@ -14,6 +14,7 @@ import SkeletonLoader from "expo-skeleton-loader";
 import { useSQLiteContext } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
+import * as FileSystem from "expo-file-system";
 import {
   FlatList,
   RefreshControl,
@@ -24,9 +25,11 @@ import {
 const Playlist = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
+
   const [state, setState] = useState<"idle" | "loading" | "error" | "empty">(
     "loading"
   );
+
   const { isPlaying } = useAudioPlayer();
   const [data, setData] = useState<any>();
   const router = useRouter();
@@ -39,6 +42,7 @@ const Playlist = () => {
       results = await getFavourites(db);
     } else {
       results = await getPlaylistItems(db, params.Title);
+      console.log("Playlist : ", JSON.stringify(results, undefined, 2));
     }
     if (results.length == 0) {
       setState("empty");
@@ -108,11 +112,16 @@ const Playlist = () => {
               <RefreshControl onRefresh={loader} refreshing={refresh} />
             }
             contentContainerStyle={{ gap: 3 }}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <Card
+                index={index}
                 name={item.name}
                 image={item.image}
-                link={item.link} // Using the uri for downloaded file
+                link={
+                  FileSystem.documentDirectory +
+                  `${item.name}`.replace(" ", "%20") +
+                  ".mp3"
+                } // Using the uri for downloaded file
                 router={router}
                 isDownload
                 list={data}

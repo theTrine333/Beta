@@ -5,7 +5,7 @@
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "beta",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
     "ios": {

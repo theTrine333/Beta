@@ -10,6 +10,7 @@ import { useAudioPlayer } from "@/hooks/audioPlayer";
 import { Colors } from "@/constants/Colors";
 import { deleteDownload } from "@/api/database";
 import { useDownload } from "@/hooks/downloadContext";
+import TrackPlayer from "react-native-track-player";
 
 const Card = ({
   name,
@@ -18,6 +19,7 @@ const Card = ({
   duration,
   isOnline,
   router,
+  index,
   isDownload,
   isDeletable,
   connector,
@@ -30,8 +32,10 @@ const Card = ({
     setPlaylist,
     streamSong,
     playList,
+    loadPlaylistAndPlay,
     playSpecificTrack,
   } = useAudioPlayer();
+
   const theme = useColorScheme() ?? "light";
   const { loader } = useDownload();
 
@@ -52,15 +56,17 @@ const Card = ({
     setSongName(name);
     setSongImageLink(image);
     if (list && list != playList && !isOnline) {
-      await setPlaylist(list);
-      await playSpecificTrack(name);
-      await playSpecificTrack(name);
+      await TrackPlayer.reset();
+      // await setPlaylist(list);
+
+      // await playSpecificTrack(name);
     }
     if (isOnline && name != songName) {
       streamSong(link, name, image);
       return;
     }
-    await playSpecificTrack(name);
+    await loadPlaylistAndPlay(list, index);
+    // await playSpecificTrack(name);
   };
 
   return (

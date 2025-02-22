@@ -61,7 +61,6 @@ const Player = () => {
   const params = useLocalSearchParams();
   const theme = useColorScheme() ?? "light";
   const {
-    loadAndPlay,
     pause,
     resume,
     progress,
@@ -141,8 +140,6 @@ const Player = () => {
       // playSpecificTrack(params.Name);
       return;
     }
-
-    TrackPlayer.play();
   }, []);
 
   const handlePlayPause = async () => {

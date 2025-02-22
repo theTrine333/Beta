@@ -42,7 +42,6 @@ const Search = () => {
       setState("loading");
       if (Parent == "songs") {
         results = await getSongSearch(text);
-        // setPlaylist(results);
       } else if (Parent == "downloads") {
         results = await getDownloadsSearch(db, text);
         // setPlaylist(results);
@@ -94,18 +93,21 @@ const Search = () => {
           <ThemedView>
             <FlatList
               data={data}
-              contentContainerStyle={{ paddingBottom: 40 }}
+              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl onRefresh={loader} refreshing={refresh} />
               }
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <Card
+                  index={index}
                   list={data}
+                  connector={db}
                   name={item.name}
                   duration={formatTime(item.duration)}
                   image={item.image}
                   link={item.uri} // Using the uri for downloaded file
                   router={router}
+                  isDeletable
                   isDownload
                 />
               )}

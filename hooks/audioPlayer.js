@@ -6,9 +6,11 @@ import TrackPlayer, {
   useProgress,
   useTrackPlayerEvents,
 } from "react-native-track-player";
+import * as Linking from "expo-linking";
 import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 import { get_db_downloadLink } from "@/api/database";
 import { useSQLiteContext } from "expo-sqlite";
+import { useRouter } from "expo-router";
 
 const AudioPlayerContext = createContext();
 
@@ -23,6 +25,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [IsStreaming, setIsStreaming] = useState(false);
   const [quality, setQuality] = useState(false);
   const [downloadsPlayList, setDownloadsPlayList] = useState([]);
+  const router = useRouter();
   const [favouritesLists, setFavouritesLists] = useState([]);
   const [normalPlayLists, setNormalPlayLists] = useState([]);
   const [genrePlayLists, setGenrePlayLists] = useState([]);
@@ -116,50 +119,27 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  const loadAndPlay = async (tempIndex) => {
-    const newIndex = tempIndex ?? currentIndex;
-    if (newIndex < 0 || newIndex >= playList.length) return;
+  const loadPlaylistAndPlay = async (playlist, startIndex = 0) => {
+    if (!playlist || !Array.isArray(playlist) || playlist.length === 0) return;
 
-    const { name, image, link } = playList[newIndex];
-    let uri = link;
-
-    try {
-      const localLink = await get_db_downloadLink(db, name);
-      if (localLink) {
-        uri = localLink.uri;
-      } else if (link) {
-        const hashes = await getHashes(link);
-        const formats = await getFormats(hashes?.video_hash);
-        const downloadLink = await get_downloadLink(
-          formats?.formats[0]?.payload
-        );
-        console.log("Download link", downloadLink);
-        uri = downloadLink?.link;
-      }
-    } catch (error) {
-      console.error("Error fetching song link:", error);
-      return;
+    if (playList !== playlist) {
+      console.log("Not the same ");
     }
+    await TrackPlayer.reset(); // Clear previous queue
+    const tracks = playlist.map(({ name, image, uri }) => ({
+      id: name,
+      url: uri,
+      title: name,
+      artwork: image,
+    }));
 
-    const queue = await TrackPlayer.getQueue();
-    const existingTrackIndex = queue.findIndex((track) => track.id === name);
-    console.log("Final url : ", uri);
+    await TrackPlayer.add(tracks); // Load new tracks
 
-    if (existingTrackIndex !== -1) {
-      await TrackPlayer.skip(existingTrackIndex);
-    } else {
-      await TrackPlayer.add({
-        id: name,
-        url: uri,
-        title: name,
-        artwork: image,
-      });
-      TrackPlayer.play();
+    if (startIndex >= 0 && startIndex < tracks.length) {
+      setSongLink(tracks[startIndex].url);
+      await TrackPlayer.skip(startIndex);
+      await TrackPlayer.play(); // Autoplay
     }
-
-    await TrackPlayer.play();
-    setSongLink(uri);
-    setCurrentIndex(newIndex);
   };
 
   useEffect(() => {
@@ -210,7 +190,7 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const stop = async () => {
-    await setSongName("");
+    setSongName("");
     await TrackPlayer.stop();
     setIsPlaying(false);
   };
@@ -219,14 +199,13 @@ export const AudioPlayerProvider = ({ children }) => {
     await TrackPlayer.seekTo(value);
   };
 
-  const findTrackIndexByName = (name) => {
+  const findTrackIndexByName = async (name) => {
     return playList.findIndex((track) => track.name === name);
   };
 
   const playSpecificTrack = async (name) => {
     if (songName == name) return;
     const index = findTrackIndexByName(name);
-    // console.log("Playlist item : ", playList);
     if (index !== -1) {
       await TrackPlayer.skip(index);
     }
@@ -239,7 +218,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const addAndPlaySingleTrack = async (track) => {
     setPlaylist([track]);
     setCurrentIndex(0);
-    await loadAndPlay(0);
+    // await loadAndPlay(0);
   };
 
   const pitchChanger = async () => {
@@ -269,7 +248,7 @@ export const AudioPlayerProvider = ({ children }) => {
         isLoop,
         setLoop,
         stop,
-        loadAndPlay,
+        // loadAndPlay,
         progress,
         pause,
         pitch,
@@ -285,6 +264,7 @@ export const AudioPlayerProvider = ({ children }) => {
         songImageLink,
         setSongImageLink,
         quality,
+        loadPlaylistAndPlay,
         setQuality,
         downloadsPlayList,
         setDownloadsPlayList,

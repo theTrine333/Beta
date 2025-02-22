@@ -14,7 +14,6 @@ const Card = ({ name, image, link, duration, router }: rowMusicCardItem) => {
     playSpecificTrack,
     addAndPlaySingleTrack,
     playList,
-    loadAndPlay,
   } = useAudioPlayer();
 
   const theme = useColorScheme() ?? "light";

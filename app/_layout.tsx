@@ -1,13 +1,16 @@
+import { Stack } from "expo-router";
+import { useEffect } from "react";
+import * as Linking from "expo-linking";
+import { useRouter } from "expo-router";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import "react-native-reanimated";
 import { SQLiteProvider } from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
@@ -21,7 +24,7 @@ import Styles, { blurhash } from "@/style";
 import { LinearGradient } from "expo-linear-gradient";
 import { AudioPlayerProvider } from "@/hooks/audioPlayer";
 import { DownloadProvider } from "@/hooks/downloadContext";
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+
 SplashScreen.preventAutoHideAsync();
 
 const loadDatabase = async () => {
@@ -42,34 +45,8 @@ const loadDatabase = async () => {
   }
 };
 
-const LoadingScreen = ({ text = "Loading..." }) => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: Colors.dark.background,
-    }}
-  >
-    <Image
-      style={Styles.genreImage}
-      source={require("@/assets/images/icon.png")}
-      placeholder={{ blurhash }}
-      contentFit="cover"
-      transition={1000}
-    />
-    <LinearGradient
-      colors={["transparent", Colors.dark.background]} // Adjust colors for fade effect
-      style={Styles.genreGradient}
-    />
-    <ActivityIndicator
-      size={32}
-      style={{ marginTop: 10 }}
-      color={Colors.Slider.primary}
-    />
-    <StatusBar style="dark" />
-  </View>
-);
-
 export default function RootLayout() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const [dbLoaded, setDbLoaded] = useState(false);
   const [loaded] = useFonts({
@@ -93,12 +70,36 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <LoadingScreen />;
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>
+        <Image
+          style={Styles.genreImage}
+          source={require("@/assets/images/icon.png")}
+          placeholder={{ blurhash }}
+          contentFit="cover"
+          transition={1000}
+        />
+        <LinearGradient
+          colors={["transparent", Colors.dark.background]}
+          style={Styles.genreGradient}
+        />
+        <ActivityIndicator
+          size={32}
+          style={{ marginTop: 10 }}
+          color={Colors.Slider.primary}
+        />
+        <StatusBar style="dark" />
+      </View>
+    );
   }
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Suspense fallback={<LoadingScreen text="Setting up..." />}>
+      <Suspense
+        fallback={
+          <ActivityIndicator size="large" color={Colors.Slider.primary} />
+        }
+      >
         <SQLiteProvider databaseName="play.db" useSuspense>
           <AudioPlayerProvider>
             <DownloadProvider>
