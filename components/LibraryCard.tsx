@@ -106,7 +106,7 @@ const Card = ({
       />
       <View
         style={{
-          width: width * 0.65,
+          width: width * 0.63,
           marginVertical: 5,
         }}
       >
@@ -124,7 +124,14 @@ const Card = ({
         </ThemedText>
         <ThemedText style={{ fontSize: 11 }}>{duration}</ThemedText>
       </View>
-      <TouchableOpacity style={{ justifyContent: "center" }} hitSlop={20}>
+      <TouchableOpacity
+        style={{
+          justifyContent: "center",
+
+          borderColor: "white",
+        }}
+        hitSlop={20}
+      >
         <AntDesign name="playcircleo" size={25} color={"grey"} />
       </TouchableOpacity>
     </TouchableOpacity>

@@ -534,11 +534,18 @@ export const DownloadCard = ({
   );
 };
 
-export const PlayerErrorModal = ({ setVisible }: downloadsModalProps) => {
+export const PlayerErrorModal = ({
+  setVisible,
+  quiter,
+}: downloadsModalProps) => {
+  const { isStreaming, setIsStreaming } = useAudioPlayer();
   return (
     <Modal
       transparent
-      onRequestClose={() => setVisible(false)}
+      onRequestClose={() => {
+        setVisible(false);
+        setIsStreaming(false);
+      }}
       animationType="slide"
     >
       <ThemedView

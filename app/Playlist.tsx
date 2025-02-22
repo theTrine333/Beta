@@ -107,6 +107,7 @@ const Playlist = () => {
             refreshControl={
               <RefreshControl onRefresh={loader} refreshing={refresh} />
             }
+            contentContainerStyle={{ gap: 3 }}
             renderItem={({ item }) => (
               <Card
                 name={item.name}

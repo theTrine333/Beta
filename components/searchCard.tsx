@@ -66,11 +66,7 @@ const SearchCard = ({
         onSubmitEditing={handleSubmit}
       />
       <TouchableOpacity onPress={handleSubmit}>
-        <AntDesign
-          name="search1"
-          color={Colors[theme ?? "light"].text}
-          size={25}
-        />
+        <AntDesign name="search1" color={Colors.Slider.primary} size={25} />
       </TouchableOpacity>
     </ThemedView>
   );

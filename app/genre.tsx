@@ -48,13 +48,13 @@ const Genre = () => {
         return;
       }
 
-      // Remove duplicates based on 'id' or 'name'
-      const uniqueData: any[] = Array.from(
-        new Map(temp.map((item: any) => [item.name, item])).values()
-      );
+      // // Remove duplicates based on 'id' or 'name'
+      // const uniqueData: any[] = Array.from(
+      //   new Map(temp.map((item: any) => [item.name, item])).values()
+      // );
 
-      setAllData(uniqueData);
-      setData(uniqueData.slice(0, 15));
+      setAllData(temp);
+      setData(temp.slice(0, 15));
       setState("idle");
     } catch (error) {
       setState("error");
@@ -143,12 +143,15 @@ const Genre = () => {
               onEndReachedThreshold={0.5} // Load more when reaching 50% from bottom
               ListFooterComponent={
                 loadingMore ? (
-                  <ActivityIndicator size="small" color="blue" />
+                  <ActivityIndicator
+                    size="small"
+                    color={Colors.Slider.primary}
+                  />
                 ) : null
               }
             />
           </ThemedView>
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={{
               position: "absolute",
               alignSelf: "center",
@@ -156,12 +159,12 @@ const Genre = () => {
               top: width * 0.93,
             }}
             onPress={() => {
-              playList = data;
-              loadAndPlay();
+              // playList = data;
+              // loadAndPlay();
             }}
           >
             <AntDesign name="play" color={Colors.Slider.primary} size={50} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </>
       )}
       <StatusBar hidden={true} />

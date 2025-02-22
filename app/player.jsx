@@ -51,6 +51,7 @@ import {
   DownloadModal,
   MoreOptionsModal,
   PlayerErrorModal,
+  setIsStreaming,
   PlayerLoadingModal,
   PlaylistModal,
 } from "@/components/CustomModals";
@@ -72,6 +73,7 @@ const Player = () => {
     setLoop,
     seek,
     songLink,
+    IsStreaming,
     setSongLink,
     songImageLink,
     songName,
@@ -125,27 +127,14 @@ const Player = () => {
         setFavourite(false);
       }
     };
-
     isFav();
   }, [songName]);
 
   useEffect(() => {
-    const loader = async () => {
-      try {
-        setModalVisible("loading");
-        setModalVisible(false);
-      } catch (error) {
-        console.log("Loading error : ", error);
-
-        setModalVisible("error");
-      }
-    };
     if (params?.from || params.Name == songName) {
       setModalVisible(false);
       return;
     }
-
-    stop();
 
     if (params?.isDownload) {
       setModalVisible(false);
@@ -153,7 +142,7 @@ const Player = () => {
       return;
     }
 
-    loader();
+    TrackPlayer.play();
   }, []);
 
   const handlePlayPause = async () => {
@@ -174,16 +163,19 @@ const Player = () => {
       {/* Showing modals */}
       {modalVisible && modalVisible == "download" ? (
         <DownloadModal setVisible={setModalVisible} />
-      ) : modalVisible && modalVisible == "error" ? (
-        <PlayerErrorModal setVisible={setModalVisible} />
-      ) : modalVisible && modalVisible == "loading" ? (
-        <PlayerLoadingModal setVisible={setModalVisible} router={router} />
       ) : modalVisible && modalVisible == "list" ? (
         <PlaylistModal setVisible={setModalVisible} />
       ) : modalVisible && modalVisible == "more-options" ? (
         <MoreOptionsModal setVisible={setModalVisible} />
       ) : modalVisible && modalVisible == "add-to-playlist" ? (
         <AddToPlalistModal setVisible={setModalVisible} />
+      ) : IsStreaming == "error" ? (
+        <PlayerErrorModal
+          setVisible={setModalVisible}
+          quiter={setIsStreaming}
+        />
+      ) : IsStreaming ? (
+        <PlayerLoadingModal setVisible={setModalVisible} router={router} />
       ) : (
         <></>
       )}

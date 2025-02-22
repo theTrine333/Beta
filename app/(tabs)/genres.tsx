@@ -89,7 +89,7 @@ const Genres = () => {
             onEndReachedThreshold={0.5} // Load more when reaching 50% from bottom
             ListFooterComponent={
               loadingMore ? (
-                <ActivityIndicator size="small" color="blue" />
+                <ActivityIndicator size="small" color={Colors.Slider.primary} />
               ) : null
             }
           />

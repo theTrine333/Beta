@@ -20,6 +20,7 @@ export const AudioPlayerProvider = ({ children }) => {
   const [songLink, setSongLink] = useState(null);
   const [songName, setSongName] = useState("");
   const [songImageLink, setSongImageLink] = useState("");
+  const [IsStreaming, setIsStreaming] = useState(false);
   const [quality, setQuality] = useState(false);
   const [downloadsPlayList, setDownloadsPlayList] = useState([]);
   const [favouritesLists, setFavouritesLists] = useState([]);
@@ -35,10 +36,6 @@ export const AudioPlayerProvider = ({ children }) => {
       try {
         await TrackPlayer.setupPlayer({ autoHandleInterruptions: true });
         await TrackPlayer.updateOptions({
-          android: {
-            appKilledPlaybackBehavior:
-              AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-          },
           capabilities: [
             Capability.Play,
             Capability.Pause,
@@ -47,7 +44,7 @@ export const AudioPlayerProvider = ({ children }) => {
           ],
         });
       } catch (error) {
-        // console.error("Error setting up TrackPlayer:", error);
+        console.error("Error setting up TrackPlayer:", error);
       }
     };
     setupPlayer();
@@ -82,16 +79,26 @@ export const AudioPlayerProvider = ({ children }) => {
   });
 
   const streamSong = async (url, name = "Streamed Song", image = null) => {
+    setIsStreaming(true);
     if (!url) {
+      setIsStreaming("error");
       console.error("No URL provided for streaming");
       return;
     }
+
+    const timeout = setTimeout(async () => {
+      await TrackPlayer.stop();
+      setIsStreaming("error");
+    }, 20000);
+
     const hashes = await getHashes(url);
     const formats = await getFormats(hashes?.video_hash);
     const downloadLink = await get_downloadLink(formats?.formats[0]?.payload);
     setQuality(formats["formats"]);
 
     let uri = downloadLink?.link;
+    setIsStreaming(false);
+    clearTimeout(timeout);
     try {
       await TrackPlayer.reset(); // Clear queue
       setSongLink(uri);
@@ -103,6 +110,8 @@ export const AudioPlayerProvider = ({ children }) => {
       });
       await TrackPlayer.play();
     } catch (error) {
+      setIsStreaming("error");
+      clearTimeout(timeout);
       console.error("Error streaming song:", error);
     }
   };
@@ -145,9 +154,10 @@ export const AudioPlayerProvider = ({ children }) => {
         title: name,
         artwork: image,
       });
-      await TrackPlayer.play();
+      TrackPlayer.play();
     }
 
+    await TrackPlayer.play();
     setSongLink(uri);
     setCurrentIndex(newIndex);
   };
@@ -214,6 +224,7 @@ export const AudioPlayerProvider = ({ children }) => {
   };
 
   const playSpecificTrack = async (name) => {
+    if (songName == name) return;
     const index = findTrackIndexByName(name);
     // console.log("Playlist item : ", playList);
     if (index !== -1) {
@@ -262,12 +273,14 @@ export const AudioPlayerProvider = ({ children }) => {
         progress,
         pause,
         pitch,
+        setIsStreaming,
         resume,
         seek,
         songLink,
         setSongLink,
         pitchChanger,
         songName,
+        IsStreaming,
         setSongName,
         songImageLink,
         setSongImageLink,

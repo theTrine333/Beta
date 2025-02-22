@@ -72,6 +72,7 @@ export interface SearchCardProps {
 }
 
 export interface downloadsModalProps {
+  quiter?: any;
   isQueue?: boolean;
   setVisible?: any;
   loaderFunc?: any;

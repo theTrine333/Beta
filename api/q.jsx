@@ -106,7 +106,8 @@ export async function shareFile(name) {
   } else {
     Alert.alert(
       "Share not supported",
-      "Sorry this devices doen't support this feature yet"
+      "Sorry this devices doen't support this feature yet",
+      [{ text: "Ok", onPress: () => {}, style: "default" }]
     );
   }
 }
@@ -180,6 +181,20 @@ export async function get_downloadLink(load) {
     const data = await response.json();
     return data;
   } catch (error) {
+    return null;
+  }
+}
+
+export async function oneTimeDownloadLink(link) {
+  try {
+    const hashes = await getHashes(link);
+    const formats = await getFormats(hashes?.video_hash);
+    const downloadLink = await get_downloadLink(formats?.formats[0]?.payload);
+
+    let uri = downloadLink?.link;
+
+    return uri;
+  } catch (e) {
     return null;
   }
 }

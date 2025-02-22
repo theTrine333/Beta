@@ -227,8 +227,10 @@ export const getPlaylists = async (db) => {
 export const getPlaylistItems = async (db, name) => {
   try {
     const results = await db.getAllAsync(
-      `SELECT Name as name,Image as image, Link as link from PlayListItems where Parent="${name}" ORDER BY id DESC`
+      `SELECT DISTINCT Name as name,Image as image, Link as link,Link as uri from PlayListItems where Parent="${name}" ORDER BY id DESC`
     );
+
+    // Name as name,Image as image,Duration as duration,Location as uri
     return results;
   } catch (error) {
     console.log("Error getting playlist items");
