@@ -29,7 +29,6 @@ export const DownloadProvider = ({ children }) => {
     const nextFile = downloadQueue[0];
     setCurrentDownload(nextFile);
     setIsDownloading(true);
-
     const callback = (downloadProgress) => {
       const progressPercent =
         (downloadProgress.totalBytesWritten /

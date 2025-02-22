@@ -15,13 +15,16 @@ export const ResultCardItem = ({
   isSearch,
   router,
 }: genreItemTypes) => {
-  const { setPlaylist, setSongImageLink } = useAudioPlayer();
+  const { setPlaylist, setSongName, setSongImageLink, streamSong } =
+    useAudioPlayer();
   return (
     <TouchableOpacity
       onPress={() => {
         setSongImageLink(image);
+        setSongName(name);
         if (isSearch) {
-          setPlaylist([{ name: name, link: link, image: image }]);
+          // setPlaylist([{ name: name, link: link, image: image }]);
+          streamSong(link, name, image);
         }
         router.push({
           pathname: "player",

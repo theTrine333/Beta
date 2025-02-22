@@ -94,12 +94,12 @@ export const AudioPlayerProvider = ({ children }) => {
     let uri = downloadLink?.link;
     try {
       await TrackPlayer.reset(); // Clear queue
-      setSongLink(url);
+      setSongLink(uri);
       await TrackPlayer.add({
         id: name,
         url: uri,
         title: name,
-        artwork: image || "https://example.com/default-artwork.jpg",
+        artwork: image || require("@/assets/images/icon.png"),
       });
       await TrackPlayer.play();
     } catch (error) {

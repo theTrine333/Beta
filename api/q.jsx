@@ -1,5 +1,7 @@
 import * as Cheerio from "react-native-cheerio";
-// import * as Sharing from "expo-sharing";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
+import { Alert } from "react-native";
 const genreUrl = "https://musicza.co.za/";
 
 export const getGenres = async () => {
@@ -97,7 +99,16 @@ export const getSpecificGenre = async (url) => {
 };
 
 export async function shareFile(name) {
-  await Sharing.share();
+  const status = await Sharing.isAvailableAsync();
+  const location = FileSystem.documentDirectory + name + ".mp3";
+  if (status) {
+    await Sharing.shareAsync(location);
+  } else {
+    Alert.alert(
+      "Share not supported",
+      "Sorry this devices doen't support this feature yet"
+    );
+  }
 }
 
 export function extractAudioHash(script) {
@@ -215,3 +226,5 @@ export const shuffleArray = (array) => {
   }
   return shuffled;
 };
+
+export const shareSong = async (name) => {};

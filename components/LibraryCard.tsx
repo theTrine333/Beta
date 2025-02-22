@@ -56,7 +56,7 @@ const Card = ({
       await playSpecificTrack(name);
       await playSpecificTrack(name);
     }
-    if (isOnline) {
+    if (isOnline && name != songName) {
       streamSong(link, name, image);
       return;
     }

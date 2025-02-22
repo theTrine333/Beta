@@ -32,8 +32,8 @@ const Genre = () => {
   const [state, setState] = useState<"idle" | "loading" | "error" | "empty">(
     "loading"
   );
-  const [data, setData] = useState([]);
-  const [allData, setAllData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
+  const [allData, setAllData] = useState<any[]>([]);
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(5);
   const [refresh, setRefresh] = useState<any>(false);
@@ -42,20 +42,25 @@ const Genre = () => {
     try {
       setState("loading");
       const temp: any = await getSpecificGenre(params.Link);
-      // console.log(JSON.stringify(temp, undefined, 2));
 
-      if (temp.length == 0) {
+      if (temp.length === 0) {
         setState("empty");
         return;
       }
-      // setPlaylist(temp);
-      setAllData(temp);
-      setData(temp.slice(0, 15));
+
+      // Remove duplicates based on 'id' or 'name'
+      const uniqueData: any[] = Array.from(
+        new Map(temp.map((item: any) => [item.name, item])).values()
+      );
+
+      setAllData(uniqueData);
+      setData(uniqueData.slice(0, 15));
       setState("idle");
     } catch (error) {
       setState("error");
     }
   };
+
   const loadMore = () => {
     if (loadingMore || currentIndex >= allData.length) return;
     setLoadingMore(true);

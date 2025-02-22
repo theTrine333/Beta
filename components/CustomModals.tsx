@@ -16,7 +16,13 @@ import { downloadsModalProps } from "@/types";
 import { Image } from "expo-image";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import { ThemedText } from "./ThemedText";
-import { formatTime, get_downloadLink, getFormats, getHashes } from "@/api/q";
+import {
+  formatTime,
+  get_downloadLink,
+  getFormats,
+  getHashes,
+  shareFile,
+} from "@/api/q";
 import { Colors } from "@/constants/Colors";
 import Toggle from "./FormatToggle";
 import { ErrorCard } from "./ResultsCard";
@@ -139,7 +145,13 @@ export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
             </ThemedText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={Styles.moreOptionsItem}>
+          <TouchableOpacity
+            style={Styles.moreOptionsItem}
+            onPress={() => {
+              shareFile(songName);
+              setVisible(false);
+            }}
+          >
             <MaterialCommunityIcons
               name="send"
               color={Colors[theme ?? "light"].text}

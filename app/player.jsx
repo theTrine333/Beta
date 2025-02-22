@@ -133,16 +133,7 @@ const Player = () => {
     const loader = async () => {
       try {
         setModalVisible("loading");
-        const hashes = await getHashes(songLink);
-        console.log("Song link ; ", songLink);
-
-        // setSongLink(params.Link);
-        const formats = await getFormats(hashes?.video_hash);
-        const link = await get_downloadLink(formats["formats"][0]?.payload);
-        setQuality(formats["formats"]);
         setModalVisible(false);
-        // playSpecificTrack(params.Name);
-        // loadAndPlay(link.link, params.Name, params.Image);
       } catch (error) {
         console.log("Loading error : ", error);
 
