@@ -78,14 +78,18 @@ export const AdProvider = ({ children }) => {
     // Show interstitial ad every 5 minutes
     const interstitialInterval = setInterval(() => {
       if (interstitialLoaded) {
-        interstitial.show();
+        try {
+          interstitial.show();
+        } catch (eror) {}
       }
     }, 5 * 60 * 1000);
 
     // Show rewarded interstitial ad every 10 minutes
     const rewardedInterval = setInterval(() => {
       if (rewardedLoaded) {
-        rewardedInterstitial.show();
+        try {
+          rewardedInterstitial.show();
+        } catch (error) {}
       }
     }, 12 * 60 * 1000);
 
