@@ -5,6 +5,7 @@ import TrackPlayer, {
   Event,
   RepeatMode,
   State,
+  TrackType,
   useProgress,
   useTrackPlayerEvents,
 } from "react-native-track-player";
@@ -15,7 +16,7 @@ import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 const AudioPlayerContext = createContext();
 
 export const AudioPlayerProvider = ({ children }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const progress = useProgress();
   const [isBuffering, setIsBuffering] = useState(false);
   const [isLoop, setLoop] = useState(false);
@@ -119,6 +120,7 @@ export const AudioPlayerProvider = ({ children }) => {
         url: uri,
         title: name,
         artwork: image || require("@/assets/images/icon.png"),
+        type: TrackType.SmoothStreaming,
       });
       await TrackPlayer.play();
     } catch (error) {
@@ -132,7 +134,7 @@ export const AudioPlayerProvider = ({ children }) => {
     if (!playlist || !Array.isArray(playlist) || playlist.length === 0) return;
     if (playList !== playlist) {
     }
-    await TrackPlayer.reset(); // Clear previous queue
+    // await TrackPlayer.reset(); // Clear previous queue
     const tracks = playlist.map(({ name, image, uri }) => ({
       id: name,
       url: uri,
