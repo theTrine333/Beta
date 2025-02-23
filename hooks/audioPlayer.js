@@ -1,16 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import TrackPlayer, {
   Capability,
   Event,
+  RepeatMode,
   State,
   useProgress,
   useTrackPlayerEvents,
 } from "react-native-track-player";
-import * as Linking from "expo-linking";
-import { get_downloadLink, getFormats, getHashes } from "@/api/q";
-import { get_db_downloadLink } from "@/api/database";
 import { useSQLiteContext } from "expo-sqlite";
-import { useRouter } from "expo-router";
+import { get_db_downloadLink } from "@/api/database";
+import { get_downloadLink, getFormats, getHashes } from "@/api/q";
 
 const AudioPlayerContext = createContext();
 
@@ -47,12 +47,22 @@ export const AudioPlayerProvider = ({ children }) => {
           ],
         });
       } catch (error) {
-        console.error("Error setting up TrackPlayer:", error);
+        // console.error("Error setting up TrackPlayer:", error);
       }
     };
     setupPlayer();
   }, []);
+  const setRepeat = async () => {
+    if (isLoop) {
+      await TrackPlayer.setRepeatMode(RepeatMode.Track);
+      return;
+    }
+    await TrackPlayer.setRepeatMode(RepeatMode.Off);
+  };
 
+  useEffect(() => {
+    setRepeat();
+  }, [isLoop]);
   useTrackPlayerEvents([Event.PlaybackState], async (event) => {
     if (event.state === State.Playing) {
       setIsPlaying(true);
@@ -72,7 +82,6 @@ export const AudioPlayerProvider = ({ children }) => {
         const queue = await TrackPlayer.getQueue();
         const track = queue[currentTrackIndex];
         if (track && isPlaying) {
-          setSongImageLink(track.artwork);
           setSongName(track.title);
           setSongImageLink(track.artwork);
         }
@@ -92,7 +101,7 @@ export const AudioPlayerProvider = ({ children }) => {
     const timeout = setTimeout(async () => {
       await TrackPlayer.stop();
       setIsStreaming("error");
-    }, 20000);
+    }, 15000);
 
     const hashes = await getHashes(url);
     const formats = await getFormats(hashes?.video_hash);
@@ -121,9 +130,7 @@ export const AudioPlayerProvider = ({ children }) => {
 
   const loadPlaylistAndPlay = async (playlist, startIndex = 0) => {
     if (!playlist || !Array.isArray(playlist) || playlist.length === 0) return;
-
     if (playList !== playlist) {
-      // console.log("Not the same ");
     }
     await TrackPlayer.reset(); // Clear previous queue
     const tracks = playlist.map(({ name, image, uri }) => ({
@@ -136,7 +143,7 @@ export const AudioPlayerProvider = ({ children }) => {
     await TrackPlayer.add(tracks); // Load new tracks
 
     if (startIndex >= 0 && startIndex < tracks.length) {
-      setSongLink(tracks[startIndex].url);
+      setSongLink(tracks.uri);
       await TrackPlayer.skip(startIndex);
       await TrackPlayer.play(); // Autoplay
     }

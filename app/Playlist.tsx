@@ -114,9 +114,12 @@ const Playlist = () => {
             contentContainerStyle={{ gap: 3 }}
             renderItem={({ item, index }) => (
               <Card
+                id={item.id}
                 index={index}
+                connector={db}
                 name={item.name}
                 image={item.image}
+                loaderFunc={loader}
                 link={
                   FileSystem.documentDirectory +
                   `${item.name}`.replace(" ", "%20") +
@@ -125,6 +128,8 @@ const Playlist = () => {
                 router={router}
                 isDownload
                 list={data}
+                isInPlaylist
+                headPlaylist={params.Title}
               />
             )}
           />

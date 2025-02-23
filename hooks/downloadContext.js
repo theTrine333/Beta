@@ -61,7 +61,7 @@ export const DownloadProvider = ({ children }) => {
       setCurrentDownload(null);
       setIsDownloading(false);
     } catch (error) {
-      console.error("Download error:", error);
+      // console.error("Download error:", error);
       FileSystem.deleteAsync(
         FileSystem.documentDirectory + nextFile.name + ".mp3"
       );

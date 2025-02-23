@@ -45,6 +45,10 @@ const Genre = () => {
       setState("loading");
       const temp: any = await getSpecificGenre(params.Link);
 
+      if (temp == null) {
+        setState("error");
+        return;
+      }
       if (temp.length === 0) {
         setState("empty");
         return;
@@ -170,7 +174,7 @@ const Genre = () => {
               }
             />
           </ThemedView>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               position: "absolute",
               alignSelf: "center",
@@ -182,7 +186,7 @@ const Genre = () => {
             }}
           >
             <AntDesign name="play" color={Colors.Slider.primary} size={50} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </>
       )}
       <StatusBar hidden={true} />

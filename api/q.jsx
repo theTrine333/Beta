@@ -70,12 +70,18 @@ export const formatTime = (seconds) => {
 };
 export const getSpecificGenre = async (url) => {
   try {
+    let inGenres = [];
+    const timer = setTimeout(() => {
+      inGenres = null;
+      return null;
+    }, 10 * 1000);
+
     const response = await fetch(url);
+    clearTimeout(timer);
     const html = await response.text();
     const $ = Cheerio.load(html);
 
     const items = $(".video-list.row .col-lg-6");
-    const inGenres = [];
 
     items.each((index, video) => {
       const time = $(video).find("time.duration").text().trim();
@@ -91,9 +97,9 @@ export const getSpecificGenre = async (url) => {
         duration: time,
       });
     });
-
     return inGenres;
   } catch (error) {
+    clearImmediate(timer);
     return null;
   }
 };
@@ -195,6 +201,7 @@ export async function oneTimeDownloadLink(link) {
 
     return uri;
   } catch (e) {
+    // console.log(e);
     return null;
   }
 }

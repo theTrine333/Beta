@@ -49,7 +49,7 @@ export const AdProvider = ({ children }) => {
       loadInterstitialAd(); // Load next interstitial ad
     });
     interstitial.addAdEventListener(AdEventType.ERROR, () => {
-      setTimeout(loadInterstitialAd, 5000); // Retry after 5 seconds
+      setTimeout(loadInterstitialAd, 3 * 60 * 1000); // Retry after 5 seconds
     });
 
     // Rewarded Interstitial Ad event listeners
@@ -63,11 +63,11 @@ export const AdProvider = ({ children }) => {
     rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
       (reward) => {
-        console.log("User earned reward:", reward);
+        // console.log("User earned reward:", reward);
       }
     );
     rewardedInterstitial.addAdEventListener(AdEventType.ERROR, () => {
-      setTimeout(loadRewardedAd, 5000); // Retry after 5 seconds
+      setTimeout(loadRewardedAd, 3 * 60 * 1000); // Retry after 5 seconds
     });
 
     setInterstitialAd(interstitial);

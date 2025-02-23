@@ -11,15 +11,19 @@ export interface rowMusicCardProps {
 }
 
 export interface rowMusicCardItem {
+  id?: number;
   list?: [];
   index?: any;
   setList?: any;
   connector?: any;
   isDeletable?: boolean;
+  isInPlaylist?: boolean;
   isOnline?: boolean;
   name: string;
   image: string;
+  loaderFunc?: any;
   link: string;
+  headPlaylist?: any;
   duration?: string;
   router?: any;
   isDownload?: boolean;

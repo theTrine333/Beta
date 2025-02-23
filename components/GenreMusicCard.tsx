@@ -16,10 +16,13 @@ import { Colors } from "@/constants/Colors";
 import GenreMusicCardItem from "./GenreMusicCardItem";
 import { get_sub_genre } from "@/api/q";
 import { get_sub_genres, insertGenre, insertSubGenre } from "@/api/database";
-
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
+import * as Constants from "expo-constants";
 const MusicCard = ({ name, link, db, router }: genreTypes) => {
   const theme = useColorScheme() ?? "light";
-  const [state, setState] = useState<"idle" | "loading" | "error">("loading");
+  const [state, setState] = useState<"idle" | "loading" | "empty" | "error">(
+    "loading"
+  );
   const [data, setData] = useState();
   const [fullData, setFullData] = useState();
 
@@ -36,6 +39,10 @@ const MusicCard = ({ name, link, db, router }: genreTypes) => {
           link
         );
       });
+      if (subGenre.length == 0) {
+        setState("empty");
+        return;
+      }
 
       setData(subGenre.slice(0, 4));
       setFullData(subGenre);
@@ -53,6 +60,23 @@ const MusicCard = ({ name, link, db, router }: genreTypes) => {
     <>
       {state == "error" ? (
         <></>
+      ) : state == "empty" ? (
+        <ThemedView
+          style={{
+            // position: "absolute",
+            // bottom: 1,
+            // borderWidth: 1,
+            alignItems: "center",
+            marginTop: 5,
+            backgroundColor: "transparent",
+            borderColor: "white",
+          }}
+        >
+          <BannerAd
+            size={BannerAdSize.LEADERBOARD}
+            unitId={Constants.default.expoConfig?.extra?.admob?.bannerId}
+          />
+        </ThemedView>
       ) : (
         <ThemedView style={Styles.rowMusicCardsContainer}>
           {/* Showing title and nav button */}

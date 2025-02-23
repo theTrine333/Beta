@@ -29,7 +29,8 @@ const Genres = () => {
     try {
       setState("loading");
       let localGenres = await get_db_Genres(db);
-      localGenres = shuffleArray(localGenres);
+      // localGenres = shuffleArray(localGenres);
+
       for (const element of localGenres) {
         await insertGenre(db, element.name, element.link);
       }

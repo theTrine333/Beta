@@ -31,6 +31,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import {
   deleteFavourite,
   deltePlalistItem,
+  get_db_downloadLink,
   insertFavourite,
   insertPlaylistItem,
   isDownload,
@@ -88,7 +89,7 @@ const Player = () => {
   const [modalVisible, setModalVisible] = useState("error");
   const db = useSQLiteContext();
   const [info, setInfo] = useState();
-
+  const [downloaded, setDownloaded] = useState(false);
   const router = useRouter();
   const forward10 = async () => {
     await seek(progress.position + 10);
@@ -118,8 +119,17 @@ const Player = () => {
 
   useEffect(() => {
     setSongLink(params?.Link);
+
     const isFav = async () => {
       try {
+        const isD = await get_db_downloadLink(db, params.Name);
+        if (
+          isD.uri ||
+          params?.isDownload ||
+          params?.Link.startsWith("file://")
+        ) {
+          setDownloaded(true);
+        }
         const checkFavourite = await isFavourite(db, params.Name);
         setFavourite(checkFavourite);
       } catch {
@@ -163,7 +173,7 @@ const Player = () => {
       ) : modalVisible && modalVisible == "list" ? (
         <PlaylistModal setVisible={setModalVisible} />
       ) : modalVisible && modalVisible == "more-options" ? (
-        <MoreOptionsModal setVisible={setModalVisible} />
+        <MoreOptionsModal setVisible={setModalVisible} connector={db} />
       ) : modalVisible && modalVisible == "add-to-playlist" ? (
         <AddToPlalistModal setVisible={setModalVisible} />
       ) : IsStreaming == "error" ? (
@@ -201,7 +211,7 @@ const Player = () => {
         >
           <Ionicons name="arrow-back-outline" size={25} color={"white"} />
         </TouchableOpacity>
-        {songLink?.includes("file://") ? (
+        {downloaded ? (
           <TouchableOpacity
             hitSlop={20}
             onPress={() => {
@@ -238,9 +248,14 @@ const Player = () => {
       >
         <TouchableOpacity
           hitSlop={20}
+          disabled={!downloaded}
           style={[
             Styles.playerBtn,
-            { alignItems: "center", justifyContent: "center" },
+            {
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: !downloaded ? 0.5 : 1,
+            },
           ]}
           onPress={handleFavourite}
         >
@@ -304,7 +319,6 @@ const Player = () => {
 
       <View style={Styles.playerControlsContainer}>
         {/* {quality && duration && !params.isDownload ? ( */}
-
         <TouchableOpacity
           hitSlop={20}
           style={[

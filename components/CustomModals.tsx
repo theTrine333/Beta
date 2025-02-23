@@ -21,6 +21,7 @@ import {
   get_downloadLink,
   getFormats,
   getHashes,
+  oneTimeDownloadLink,
   shareFile,
 } from "@/api/q";
 import { Colors } from "@/constants/Colors";
@@ -28,7 +29,7 @@ import Toggle from "./FormatToggle";
 import { ErrorCard } from "./ResultsCard";
 import { useDownload } from "../hooks/downloadContext"; // Import your context
 import * as Progress from "react-native-progress";
-import { getPlaylists, insertPlaylist } from "@/api/database";
+import { deleteDownload, getPlaylists, insertPlaylist } from "@/api/database";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import ListCard from "./PlayListCard";
@@ -100,10 +101,20 @@ export const AddToPlalistModal = ({ setVisible }: downloadsModalProps) => {
   );
 };
 
-export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
+export const MoreOptionsModal = ({
+  setVisible,
+  connector,
+}: downloadsModalProps) => {
   const { duration, songName, songLink, songImageLink, quality, playList } =
     useAudioPlayer();
   const theme = useColorScheme();
+  const deleteSong = async () => {
+    await deleteDownload(connector, songName, async () => {
+      await TrackPlayer.stop();
+      await TrackPlayer.reset();
+      setVisible(false);
+    });
+  };
   return (
     <Modal
       transparent
@@ -159,7 +170,7 @@ export const MoreOptionsModal = ({ setVisible }: downloadsModalProps) => {
             />
             <ThemedText style={{ fontFamily: "ExoRegular" }}>Share</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity style={Styles.moreOptionsItem}>
+          <TouchableOpacity style={Styles.moreOptionsItem} onPress={deleteSong}>
             <MaterialCommunityIcons name="delete" color={"red"} size={27} />
             <ThemedText style={{ fontFamily: "ExoRegular", color: "red" }}>
               Delete
@@ -248,8 +259,10 @@ export const PlayListItem = ({ item, index, setVisible }: any) => {
           gap: 10,
           alignItems: "center",
         }}
-        onPress={() => {
-          playSpecificTrack(item.title);
+        onPress={async () => {
+          await TrackPlayer.skip(index);
+          setVisible(false);
+          // playSpecificTrack(item.title);
         }}
       >
         <MaterialCommunityIcons
@@ -535,9 +548,17 @@ export const DownloadCard = ({
 };
 
 export const GenrePlayLister = ({ setVisible, list }: downloadsModalProps) => {
+  const loader = async () => {
+    list?.forEach(async (listItem) => {
+      const actualLink = await oneTimeDownloadLink(listItem.link);
+    });
+  };
+  const [readyList, setReadyList] = useState();
+
   useEffect(() => {
-    console.log(list[0]);
+    // loader();
   }, []);
+
   return (
     <Modal
       transparent
@@ -557,16 +578,37 @@ export const GenrePlayLister = ({ setVisible, list }: downloadsModalProps) => {
           <View
             style={{
               flexDirection: "row",
-              alignSelf: "flex-start",
-              paddingHorizontal: 10,
+              alignSelf: "center",
+              alignItems: "flex-end",
+              marginHorizontal: 10,
+              borderBottomWidth: 1,
+              height: height * 0.04,
+              // paddingHorizontal: 10,
+              borderColor: "grey",
+              width: width * 0.9,
             }}
           >
-            <ThemedText>Stream</ThemedText>
+            <ThemedText style={{ fontSize: 20, fontWeight: "bold" }}>
+              Stream
+            </ThemedText>
             <ThemedText
-              style={{ color: Colors.Slider.primary, fontFamily: "SpaceMono" }}
+              style={{
+                color: Colors.Slider.primary,
+                fontSize: 20,
+                fontFamily: "SpaceMono",
+                fontWeight: "bold",
+              }}
             >
               IT
             </ThemedText>
+          </View>
+          <View style={{ marginTop: 10 }}>
+            <Progress.Bar
+              width={width * 0.9}
+              indeterminate
+              borderRadius={3}
+              color={Colors.Slider.primary}
+            />
           </View>
         </ThemedView>
       </ThemedView>

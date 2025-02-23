@@ -8,22 +8,26 @@ import { Alert, TouchableOpacity, useColorScheme, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useAudioPlayer } from "@/hooks/audioPlayer";
 import { Colors } from "@/constants/Colors";
-import { deleteDownload } from "@/api/database";
+import { deleteDownload, deltePlalistItem } from "@/api/database";
 import { useDownload } from "@/hooks/downloadContext";
 import TrackPlayer from "react-native-track-player";
 
 const Card = ({
+  id,
   name,
   image,
   link,
   duration,
   isOnline,
+  loaderFunc,
   router,
   index,
   isDownload,
   isDeletable,
   connector,
   list,
+  isInPlaylist,
+  headPlaylist,
 }: rowMusicCardItem) => {
   const {
     songName,
@@ -39,6 +43,24 @@ const Card = ({
   const theme = useColorScheme() ?? "light";
   const { loader } = useDownload();
 
+  const removeFav = async () => {
+    Alert.alert(
+      "Remove from playlist",
+      "Do you wish to remove from this item from the playlist",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          isPreferred: true,
+          onPress: async () => {
+            await deltePlalistItem(connector, headPlaylist, id);
+            await loaderFunc();
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
   const deleteFunc = async () => {
     Alert.alert("Delete", "Do you wish to delete this item", [
       { text: "No, It's a mistake", isPreferred: true, style: "cancel" },
@@ -57,9 +79,6 @@ const Card = ({
     setSongImageLink(image);
     if (list && list != playList && !isOnline) {
       await TrackPlayer.reset();
-      // await setPlaylist(list);
-
-      // await playSpecificTrack(name);
     }
     if (isOnline && name != songName) {
       streamSong(link, name, image);
@@ -100,6 +119,9 @@ const Card = ({
       onLongPress={() => {
         if (isDeletable) {
           deleteFunc();
+        }
+        if (isInPlaylist) {
+          removeFav();
         }
       }}
     >
